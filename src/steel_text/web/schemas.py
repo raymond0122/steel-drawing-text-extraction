@@ -1,0 +1,107 @@
+"""Response bodies of the web UI's API. index.html reads exactly these fields."""
+
+from __future__ import annotations
+
+from typing import Literal
+
+from pydantic import BaseModel
+
+from ..dedup import DedupConfig
+from ..geometry import BBox
+from ..pipeline import TruthCheck
+
+
+class PageInfo(BaseModel):
+    width: int
+    height: int
+    preview: str  # PNG data URL, downscaled for the browser
+
+
+class Tiling(BaseModel):
+    tile_size: int
+    overlap: int
+    tiles: list[BBox]
+
+
+class Chunk(BaseModel):
+    text: str
+    bbox: BBox
+    tile: int
+
+
+class MergedChunk(Chunk):
+    id: str  # matches the LLM's str_id
+
+
+class DedupDecisionOut(BaseModel):
+    dropped: Chunk
+    kept: Chunk
+    reason: str
+    region: BBox
+    crop: str  # PNG data URL of the region, full resolution
+
+
+class DedupInfo(BaseModel):
+    config: DedupConfig
+    decisions: list[DedupDecisionOut]
+
+
+class FailedBatch(BaseModel):
+    batch: int
+    error: str
+
+
+class LlmInfo(BaseModel):
+    ok: bool
+    batch_size: int
+    batches: int
+    failed: list[FailedBatch]
+
+
+class LabelOut(BaseModel):
+    str_id: str
+    label: str
+    kind: str
+    bbox: BBox
+    raw_text: str
+
+
+class TileTiming(BaseModel):
+    """Where one tile's time went. Requests, errors and waits are only counted for the Azure client."""
+
+    ms: int = 0
+    requests: int = 0
+    errors: int = 0  # rate-limited (429), 5xx or network errors
+    waiting_ms: int = 0  # polling intervals and retry backoff
+
+
+class Timings(BaseModel):
+    ocr: int
+    llm: int
+    tiles: list[TileTiming]  # one entry per tile, in tile order
+    llm_batches: list[int]  # one entry per batch, in batch order
+
+
+class RunResponse(BaseModel):
+    mode: Literal["live", "offline"]
+    source: Literal["upload", "synthetic"]
+    page: PageInfo
+    tiling: Tiling
+    raw: list[Chunk]
+    merged: list[MergedChunk]
+    dedup: DedupInfo
+    llm: LlmInfo
+    labels: list[LabelOut]
+    truth_check: TruthCheck | None  # only for the synthetic drawing
+    labels_xlsx: str  # the label sheet as a data URL
+    timings_ms: Timings
+
+
+class LiveStatus(BaseModel):
+    """Which live-mode settings are filled in. Never the values themselves."""
+
+    env_file: bool
+    azure_endpoint: bool
+    azure_key: bool
+    openai_key: bool
+    openai_model: str

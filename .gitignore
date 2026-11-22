@@ -1,0 +1,12 @@
+out/
+.env
+*.db
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+steel_framing_plan_S-201_400dpi/
+steel_framing_plan_S-201_400dpi.zip
+*.egg-info/
+build/
