@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from steel_text.azure_ocr import AzureOcrError, AzureReadClient
+from steel_text.azure_ocr import AzureOcrError, AzureReadClient, retry_after_seconds
 
 SUCCEEDED = {
     "status": "succeeded",
@@ -62,6 +62,31 @@ def test_429_honours_retry_after_then_succeeds():
     assert sleeps == [3.0, 2.0]  # Retry-After, then one poll interval
 
 
+def test_long_retry_after_is_capped():
+    sleeps: list[float] = []
+    session = FakeSession(
+        post=[FakeResponse(429, {"Retry-After": "3600"}), ACCEPTED], get=[FakeResponse(200, body=SUCCEEDED)]
+    )
+    make_client(session, sleeps).analyze(b"png")
+    assert sleeps == [60.0]
+
+
+def test_retry_after_as_an_http_date_on_503():
+    sleeps: list[float] = []
+    past = "Wed, 21 Oct 2015 07:28:00 GMT"  # already passed: retry at once
+    session = FakeSession(
+        post=[FakeResponse(503, {"Retry-After": past}), ACCEPTED], get=[FakeResponse(200, body=SUCCEEDED)]
+    )
+    make_client(session, sleeps).analyze(b"png")
+    assert sleeps == [0.0]
+
+
+def test_retry_after_parsing():
+    assert retry_after_seconds("7") == 7.0
+    assert retry_after_seconds("Wed, 21 Oct 2015 07:28:00 GMT") == 0.0
+    assert retry_after_seconds("soon") is None and retry_after_seconds(None) is None
+
+
 def test_transient_errors_back_off_exponentially_and_give_up():
     sleeps: list[float] = []
     session = FakeSession(post=[FakeResponse(503)] * 5)
@@ -107,6 +132,22 @@ def test_polling_times_out():
     )
     with pytest.raises(AzureOcrError, match="timed out"):
         client.analyze(b"png")
+
+
+def test_client_error_while_polling_fails_at_once():
+    sleeps: list[float] = []
+    session = FakeSession(post=[ACCEPTED], get=[FakeResponse(404, body="operation not found")])
+    with pytest.raises(AzureOcrError, match="HTTP 404"):
+        make_client(session, sleeps).analyze(b"png")
+    assert session.calls == ["POST", "GET"] and sleeps == []  # no 5-minute wait for the poll timeout
+
+
+def test_network_errors_on_every_poll_attempt_fail_the_tile():
+    sleeps: list[float] = []
+    session = FakeSession(post=[ACCEPTED], get=[requests.ConnectionError("reset")] * 5)
+    with pytest.raises(AzureOcrError, match="network errors"):
+        make_client(session, sleeps).analyze(b"png")
+    assert sleeps == [1.0, 2.0, 4.0, 8.0]
 
 
 def test_read_tile_parses_lines_and_skips_empty_text():

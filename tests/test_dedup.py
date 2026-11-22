@@ -1,6 +1,12 @@
+from PIL import Image
+
 from steel_text.dedup import DedupDecision, merge_tile_results
+from steel_text.mock_clients import SimulatedOcr
+from steel_text.ocr_stage import run_tiled_ocr
 from steel_text.ocr_types import OcrChunk
+from steel_text.sample_drawing import GroundTruthText
 from steel_text.text_norm import is_fragment, tokens
+from steel_text.tiling import Tile
 
 
 def texts(chunks):
@@ -43,6 +49,51 @@ def test_higher_confidence_wins_between_conflicting_readings():
     good = OcrChunk("C50", (2000, 4600, 2120, 4680), conf=0.95)
     bad = OcrChunk("CS0", (2001, 4601, 2121, 4681), conf=0.40)
     assert texts(merge_tile_results([bad, good])) == ["C50"]
+
+
+def test_label_printed_twice_in_one_tile_stays_twice():
+    a = OcrChunk("W310X39", (100, 100, 410, 160), tile_index=0)
+    b = OcrChunk("W310X39", (100, 175, 410, 235), tile_index=0)  # centres 75 px apart
+    assert texts(merge_tile_results([a, b])) == ["W310X39", "W310X39"]
+
+
+def test_short_label_next_to_a_longer_one_is_kept():
+    same_tile = [OcrChunk("C50", (0, 0, 60, 30), tile_index=0), OcrChunk("C500", (0, 40, 80, 70), tile_index=0)]
+    assert texts(merge_tile_results(same_tile)) == ["C50", "C500"]
+    # From two tiles the boxes still don't overlap, so neither is a piece of the other.
+    two_tiles = [OcrChunk("C50", (0, 0, 60, 30), tile_index=0), OcrChunk("C500", (0, 40, 80, 70), tile_index=1)]
+    assert texts(merge_tile_results(two_tiles)) == ["C50", "C500"]
+
+
+def test_text_outside_the_area_two_tiles_share_is_not_merged():
+    tiles = [Tile(0, 0, 1000, 1000), Tile(800, 0, 1800, 1000)]  # they share x 800..1000
+    left = OcrChunk("C50", (930, 100, 990, 130), conf=0.9, tile_index=0)  # in the shared area: read by both
+    left_again = OcrChunk("C50", (931, 100, 991, 130), conf=0.8, tile_index=1)
+    right = OcrChunk("C50", (1005, 100, 1065, 130), conf=0.8, tile_index=1)  # a second C50, only tile 1 sees it
+    assert texts(merge_tile_results([left, left_again, right], tiles=tiles)) == ["C50", "C50"]
+
+
+def test_log_points_at_the_chunk_that_survived():
+    # Rule 1 ignores the text: B loses to A, then C replaces A. B's decision must now say C was kept.
+    a = OcrChunk("AAAAAAAA", (0, 0, 300, 60), conf=0.5, tile_index=0)
+    b = OcrChunk("BBBBBBB", (1, 0, 301, 60), conf=0.4, tile_index=1)
+    c = OcrChunk("CCCCCC", (0, 1, 300, 61), conf=0.9, tile_index=2)
+    log: list[DedupDecision] = []
+    merged = merge_tile_results([a, b, c], log=log)
+    assert merged == [c] and len(log) == 2
+    assert all(d.kept is c for d in log)
+
+
+def test_tiled_ocr_merges_overlap_duplicates_but_keeps_repeated_labels():
+    truth = [
+        GroundTruthText("W310X39", "W310X39", (100, 100, 410, 160), "W310X39"),  # printed twice, close
+        GroundTruthText("W310X39", "W310X39", (100, 175, 410, 235), "W310X39"),  # together, in tile 0 only
+        GroundTruthText("C50", "C50", (850, 500, 970, 560), "C50"),  # in the overlap: read by both tiles
+    ]
+    page = Image.new("RGB", (1800, 1000), "white")
+    ocr = run_tiled_ocr(page, SimulatedOcr(truth), adaptive=False, tile_size=1000, overlap=200, request_sleep_s=0)
+    assert len(ocr.tiles) == 2 and len(ocr.raw) == 4
+    assert texts(ocr.merged) == ["C50", "W310X39", "W310X39"]
 
 
 def test_tokens_keep_asterisk():

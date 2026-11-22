@@ -23,11 +23,10 @@ from .label_sheet import write_label_sheet
 from .llm_filter import FilterResult
 from .ocr_stage import TiledOcrResult
 from .overlay import draw_boxes, draw_dedup_closeups, draw_tile_grid, save_preview
+from .page_image import PageTooLargeError, open_page
 from .pipeline import MissingCredentialsError, check_truth, make_clients, run_pipeline
 from .sample_drawing import GroundTruthText, load_truth, save_sample
 from .settings import load_settings
-
-Image.MAX_IMAGE_PIXELS = None  # large drawings exceed PIL's default safety limit
 
 RAW_OCR_COLOR = (220, 38, 38)  # red: every OCR line, before dedup
 MERGED_OCR_COLOR = (22, 140, 60)  # green: OCR lines after dedup
@@ -55,10 +54,10 @@ def load_page(image: Path | None, out: Path) -> tuple[Image.Image, list[GroundTr
     the synthetic drawing and its ground truth are written to `out` and read back.
     """
     if image:
-        return Image.open(image).convert("RGB"), None
+        return open_page(image), None
     img_path, truth_path = save_sample(out)
     print(f"Synthetic drawing: {img_path}")
-    return Image.open(img_path).convert("RGB"), load_truth(truth_path)
+    return open_page(img_path), load_truth(truth_path)
 
 
 def write_ocr_outputs(page: Image.Image, ocr: TiledOcrResult, out: Path) -> None:
@@ -113,7 +112,11 @@ def main() -> int:
     out: Path = args.out
     out.mkdir(parents=True, exist_ok=True)
 
-    page, truth = load_page(args.image, out)
+    try:
+        page, truth = load_page(args.image, out)
+    except PageTooLargeError as e:
+        print(f"Page image too large: {e}")
+        return 2
     settings = load_settings() if args.live else None
     try:
         ocr_client, labeler = make_clients(

@@ -5,23 +5,30 @@ Overlapping tiles cause two kinds of noise:
   * fragments:  text crossing a tile edge comes back cut off, e.g. "SEE"
                 from one tile and "SEE NOTE 6" from its neighbour
 
+Both come from two tiles reading the same area, so only chunks from two
+different tiles, inside the area both tiles cover, are compared. One OCR pass
+doesn't read a text twice: chunks from the same tile are always kept, even a
+label printed twice close together.
+
 Two passes remove them. Every decision is recorded in `log` (DedupDecision)
 so the demo can show why each chunk was dropped.
 """
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 from . import geometry as g
 from .ocr_types import OcrChunk
 from .text_norm import digit_tokens, is_fragment, norm_text, tokens
+from .tiling import Tile
 
 
 @dataclass
 class DedupDecision:
     dropped: OcrChunk
-    kept: OcrChunk
+    kept: OcrChunk  # the chunk that survived the merge; updated if a later chunk replaces it
     reason: str
 
     def __str__(self) -> str:
@@ -50,6 +57,29 @@ def _better(a: OcrChunk, b: OcrChunk) -> OcrChunk:
     if g.area(a.bbox) != g.area(b.bbox):
         return a if g.area(a.bbox) > g.area(b.bbox) else b
     return a
+
+
+def _from_overlap(a: OcrChunk, b: OcrChunk, tiles: Sequence[Tile] | None) -> bool:
+    """Could a and b be two readings of one text? Only if two different tiles read them where they overlap.
+
+    Chunks with no tile (tile_index -1) are always compared. Without `tiles`,
+    any two different tiles count.
+    """
+    if a.tile_index < 0 or b.tile_index < 0:
+        return True
+    if a.tile_index == b.tile_index:
+        return False
+    if tiles is None:
+        return True
+    shared = g.intersection_box(tiles[a.tile_index].box, tiles[b.tile_index].box)
+    return shared is not None and g.intersection_area(a.bbox, shared) > 0 and g.intersection_area(b.bbox, shared) > 0
+
+
+def _redirect(log: list[DedupDecision] | None, old: OcrChunk, new: OcrChunk) -> None:
+    """`new` has replaced `old`: earlier decisions that kept `old` now point at `new`."""
+    for d in log or ():
+        if d.kept is old:
+            d.kept = new
 
 
 def _near(a: g.BBox, b: g.BBox, cfg: DedupConfig) -> tuple[bool, float, float]:
@@ -85,9 +115,10 @@ def _resolve(c: OcrChunk, k: OcrChunk, cfg: DedupConfig) -> tuple[OcrChunk, str]
             return long_, f"fragment (overlap={ov:.2f})"
         return _better(c, k), f"overlapping box (overlap={ov:.2f})"
 
-    # 4) substring relationship with slightly different boxes
-    if tc and tk and (tc in tk or tk in tc):
-        return (c if len(tc) >= len(tk) else k), "substring nearby"
+    # 4) substring relationship with slightly different, overlapping boxes.
+    #    Boxes that don't overlap are two texts, e.g. "C50" printed just above "C500".
+    if tc and tk and (tc in tk or tk in tc) and g.intersection_area(c.bbox, k.bbox) > 0:
+        return (c if len(tc) >= len(tk) else k), "substring overlapping"
 
     # 5) shares a number, one side is a short phrase ("TE 6" vs "SEE NOTE 6")
     ts_c, ts_k = tokens(tc), tokens(tk)
@@ -99,20 +130,24 @@ def _resolve(c: OcrChunk, k: OcrChunk, cfg: DedupConfig) -> tuple[OcrChunk, str]
 
 
 def dedup_chunks(
-    chunks: list[OcrChunk], cfg: DedupConfig = DedupConfig(), log: list[DedupDecision] | None = None
+    chunks: list[OcrChunk],
+    cfg: DedupConfig = DedupConfig(),
+    log: list[DedupDecision] | None = None,
+    tiles: Sequence[Tile] | None = None,
 ) -> list[OcrChunk]:
     """Pass 1. Longest text first, so full strings are kept before their fragments show up."""
     ordered = sorted(chunks, key=lambda c: (len(norm_text(c.text)), c.conf, g.area(c.bbox)), reverse=True)
     kept: list[OcrChunk] = []
     for c in ordered:
         for idx, k in enumerate(kept):
-            res = _resolve(c, k, cfg)
+            res = _resolve(c, k, cfg) if _from_overlap(c, k, tiles) else None
             if res is None:
                 continue
             winner, reason = res
             loser = k if winner is c else c
             if winner is c:
                 kept[idx] = c
+                _redirect(log, k, c)
             if log is not None:
                 log.append(DedupDecision(dropped=loser, kept=winner, reason=reason))
             break
@@ -122,7 +157,10 @@ def dedup_chunks(
 
 
 def drop_leftover_fragments(
-    chunks: list[OcrChunk], cfg: DedupConfig = DedupConfig(), log: list[DedupDecision] | None = None
+    chunks: list[OcrChunk],
+    cfg: DedupConfig = DedupConfig(),
+    log: list[DedupDecision] | None = None,
+    tiles: Sequence[Tile] | None = None,
 ) -> list[OcrChunk]:
     """Pass 2. Remove short strings that are still fragments of a nearby longer string."""
     ordered = sorted(chunks, key=lambda c: len(norm_text(c.text)), reverse=True)
@@ -132,19 +170,25 @@ def drop_leftover_fragments(
         drop_for = None
         for k in kept:
             tk = norm_text(k.text)
-            if not tc or not tk or tc == tk or not _near(c.bbox, k.bbox, cfg)[0]:
+            if not tc or not tk or tc == tk or not _from_overlap(c, k, tiles) or not _near(c.bbox, k.bbox, cfg)[0]:
                 continue
-            if tc in tk or is_fragment(c.text, k.text):
+            if (tc in tk and g.intersection_area(c.bbox, k.bbox) > 0) or is_fragment(c.text, k.text):
                 drop_for = k
                 break
         if drop_for is None:
             kept.append(c)
-        elif log is not None:
-            log.append(DedupDecision(dropped=c, kept=drop_for, reason="leftover fragment"))
+        else:
+            _redirect(log, c, drop_for)
+            if log is not None:
+                log.append(DedupDecision(dropped=c, kept=drop_for, reason="leftover fragment"))
     return kept
 
 
 def merge_tile_results(
-    chunks: list[OcrChunk], cfg: DedupConfig = DedupConfig(), log: list[DedupDecision] | None = None
+    chunks: list[OcrChunk],
+    cfg: DedupConfig = DedupConfig(),
+    log: list[DedupDecision] | None = None,
+    tiles: Sequence[Tile] | None = None,
 ) -> list[OcrChunk]:
-    return drop_leftover_fragments(dedup_chunks(chunks, cfg, log), cfg, log)
+    """Both passes. Pass the tiles the chunks came from, so only their overlap areas are compared."""
+    return drop_leftover_fragments(dedup_chunks(chunks, cfg, log, tiles), cfg, log, tiles)

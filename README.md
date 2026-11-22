@@ -39,7 +39,7 @@ source .venv/Scripts/activate                  # Git Bash on Windows; PowerShell
 pip install -e ".[dev]"                        # the app, plus pytest, ruff and mypy for development
 
 steel-demo                                     # offline: synthetic drawing, simulated OCR and LLM, no API keys
-python -m pytest                               # 59 tests
+python -m pytest                               # 77 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # web UI, then open http://127.0.0.1:8000
@@ -57,10 +57,10 @@ The web UI runs the same flow in the browser and shows each step on the drawing:
 
 - **Built for human review, not a final answer.** Each label keeps its box on the drawing and the raw OCR text, so a reviewer can find it and see what the LLM corrected. In place of the sponsor's spreadsheets, the synthetic drawing comes with a ground-truth file, and the demo and web UI report which expected labels were found or missed.
 - **Overlapping tiles.** Large drawings can exceed 10,000 px, and small text is missed when the page is sent whole. Tiles overlap by 300 px, so text cut at one tile's edge is complete in its neighbour.
-- **Duplicates and cut-off pieces from tile edges are merged.** Text in an overlap band is read by two tiles, and text crossing an edge can come back cut off: one tile reads `"SEE"` while its neighbour reads `"SEE NOTE 6"`. Dedup keeps one full reading of each text and logs why it dropped the others.
-- **The LLM cannot invent locations.** Under a strict JSON schema it returns only an ID and a label. Boxes are joined back from the OCR results by ID, and unknown IDs are dropped.
-- **Transient errors are retried, bad LLM batches are skipped.** Azure calls retry on 429, 5xx and network errors, honouring `Retry-After`. A failed LLM batch is logged and the remaining batches continue.
-- **Auth tokens cannot be swapped.** Access and refresh JWTs carry a `type` claim. Login gives the same error for an unknown user and a wrong password.
+- **Duplicates and cut-off pieces from tile edges are merged.** Text in an overlap band is read by two tiles, and text crossing an edge can come back cut off: one tile reads `"SEE"` while its neighbour reads `"SEE NOTE 6"`. Dedup keeps one full reading of each text and logs why it dropped the others. Only text that two different tiles read, inside the area both cover, is compared, so a label printed twice stays twice.
+- **The LLM cannot invent locations.** Under a strict JSON schema it returns only an ID and a label. Boxes are joined back from the OCR results by ID, and IDs that weren't in the batch, or repeat, are dropped.
+- **Transient errors are retried, bad LLM batches are skipped.** Azure calls retry on 429, 5xx and network errors, honouring `Retry-After` up to 60 s. A failed LLM batch is logged and the remaining batches continue.
+- **Auth tokens cannot be swapped.** Access and refresh JWTs carry a `type` claim. Login gives the same error, in about the same time, for an unknown user and a wrong password.
 
 Thresholds, retry rules and the web UI are described in [docs/DESIGN.md](docs/DESIGN.md).
 
@@ -80,7 +80,7 @@ Thresholds, retry rules and the web UI are described in [docs/DESIGN.md](docs/DE
 ```
 src/steel_text/   one package, installed with pip install -e .
   pipeline.py     the flow shared by the demo and the web UI, and its parts: geometry, tiling, dedup, Azure client,
-                  tiled OCR, LLM filter, Excel label sheet, mocks, sample drawing, overlays
+                  tiled OCR, LLM filter, Excel label sheet, page loading, mocks, sample drawing, overlays
   settings.py     every setting the app reads, from the environment and .env
   http.py         the slice of an HTTP client the Azure and OpenAI clients use, so tests and the web UI can stand in
   auth/           FastAPI app, password hashing and JWT, SQLite user store

@@ -84,3 +84,12 @@ def test_truth_check_reports_missing_and_unexpected_labels():
     check = check_truth(truth, entries)
     assert check.expected == ["C50", "W310X39"]
     assert check.missing == ["W310X39"] and check.unexpected == ["L64X64X6.4"] and check.found == 1
+
+
+def test_truth_check_counts_repeated_labels():
+    truth = [GroundTruthText("C50", "C50", BOX, "C50")] * 2  # printed twice
+    once = [LabelEntry("0", "C50", "C", BOX, "C50")]
+    check = check_truth(truth, once)
+    assert check.expected == ["C50", "C50"] and check.missing == ["C50"] and check.found == 1
+    three_times = once * 3
+    assert check_truth(truth, three_times).unexpected == ["C50"]

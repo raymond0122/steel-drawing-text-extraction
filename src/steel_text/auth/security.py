@@ -29,6 +29,15 @@ def verify_password(password: str, hashed: str) -> bool:
     return _pwd.verify(password, hashed)
 
 
+def burn_password_check() -> None:
+    """Take as long as one real password check, without checking anything.
+
+    Login calls this for an unknown username, so the response time is the same
+    as for a wrong password and doesn't reveal which usernames exist.
+    """
+    _pwd.dummy_verify()
+
+
 def create_token(username: str, kind: TokenKind, secret: str) -> str:
     """The kind is stored in the token so an access and a refresh token cannot be swapped."""
     ttl = ACCESS_TTL if kind == "access" else REFRESH_TTL

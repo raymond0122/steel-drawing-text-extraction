@@ -36,7 +36,9 @@ Tiles always overlap by 300 px, so text cut at one tile's edge is complete in it
 
 ## Dedup (`steel_text/dedup.py`)
 
-Two chunks are compared only if they are **near**. Near means any one of these holds:
+Only chunks read by **two different tiles, inside the area both tiles cover,** are compared. One OCR pass doesn't read a text twice, so chunks from the same tile are always kept, even a label printed twice close together. Text outside the shared area can only have been read by one of the two tiles.
+
+Such a pair is compared only if the two boxes are **near**. Near means any one of these holds:
 
 - IoU (intersection / union) ≥ 0.5
 - overlap ratio (intersection / smaller box area) ≥ 0.8
@@ -52,23 +54,26 @@ For near pairs, the following rules apply in order:
 1. Boxes almost identical (IoU ≥ 0.9): duplicate.
 2. Same text: duplicate.
 3. One box contains the other, or overlap ≥ 0.8: drop the fragment, or keep the better reading.
-4. One text is a substring of the other: keep the longer one.
+4. One text is a substring of the other and the boxes overlap: keep the longer one. Boxes that don't overlap are two texts, such as `C50` printed just above `C500`.
 5. They share a number and one is a short phrase (`"TE 6"` vs `"SEE NOTE 6"`): keep the longer one.
 
 The better reading is the one with higher confidence, then longer text, then the larger box. Text is processed longest first, and a second pass removes leftover fragments. Characters like `*` are preserved, so `WT155*79` never becomes `WT15579`.
+
+Each decision in `dedup_log.txt` names the chunk that survived the merge. If a kept chunk is replaced later, the earlier decisions are updated to point at its replacement, so the close-ups always show the final result.
 
 ## Retry and backoff (`steel_text/azure_ocr.py`)
 
 Azure Document Intelligence is asynchronous: you POST the image, receive a 202 with an `Operation-Location` URL, and poll that URL. Both the POST and the polling GETs retry on 429, on 500/502/503/504 and on network errors, with up to 5 attempts:
 
-- **On 429:** wait for `Retry-After` if the server sends it.
+- **On 429 or 503 with `Retry-After`:** wait that long, whether the header gives seconds or an HTTP date, but at most 60 s. A longer wait, such as a quota window, isn't worth holding a request for.
 - **Otherwise:** exponential backoff of 1, 2, 4, 8 s, capped at 30 s.
-- **Other errors on the POST** (for example 401): fail immediately, because retrying won't help.
+- **Other 4xx errors** (for example 401, or 404 for an unknown operation): fail immediately, on the POST and while polling, because retrying won't help.
+- **Polling gives up** when every attempt of a poll request fails with a network error, or when the 5-minute poll timeout passes. The timeout is checked after each request as well, since a request's retries can take a while.
 
 ## LLM label filter (`steel_text/llm_filter.py`)
 
 - Uses the OpenAI Responses API with a **strict JSON schema**. The model returns only `{str_id, normalized_label, material_kind}`.
-- Boxes and raw text are joined back from the OCR results by ID. The model cannot invent a location, and unknown IDs are dropped.
+- Boxes and raw text are joined back from the OCR results by ID. The model cannot invent a location: IDs that weren't in the batch, and repeats of an ID already labelled, are dropped.
 - Text is sent in batches. A failed batch (HTTP error, timeout, unparseable reply) is logged and skipped, so one bad request doesn't lose the page. The page fails only if every batch fails.
 
 ## Settings (`steel_text/settings.py`)
@@ -82,7 +87,8 @@ Settings are passed in rather than read where they are used: `make_clients` take
 - Passwords are hashed with PBKDF2-SHA256 (passlib) and stored in SQLite.
 - Login returns an HS256 access token (60 min) and a refresh token (7 days).
 - Each token carries a `type` claim, so a refresh token can't be used as an access token.
-- Login gives the same error for an unknown user and a wrong password.
+- Login gives the same error, and takes about the same time, for an unknown user and a wrong password: for an unknown user, a dummy password check runs.
+- Spaces around a username are removed before validation, so a username of only spaces is rejected.
 - `/me` is protected by a FastAPI dependency that requires a valid access token.
 - Without `JWT_SECRET_KEY`, a random signing key is used and a warning is logged, so tokens stop working on restart.
 
@@ -103,11 +109,11 @@ Both the demo and the web UI pick their clients and run the stages through `stee
   - **Tiles:** the grid, and how many lines each tile read.
   - **Raw OCR:** every line from every tile, with the ones dedup will drop marked.
   - **Dedup:** each decision with its reason and a before/after close-up.
-  - **Labels:** the labels found, which batches succeeded or were skipped, and a check against the ground truth. **Download Excel** saves them as `labels.xlsx`.
+  - **Labels:** the labels found, which batches succeeded or were skipped, and a check against the ground truth, which counts repeats: a label printed twice must be found twice. **Download Excel** saves them as `labels.xlsx`.
 - **Viewing the drawing:** scroll to zoom, drag to pan, and click a row to jump to it.
 - **Auth API tab:** register, log in, call `/me` with the access token, the refresh token, or no token, and refresh. Each request and response is shown, with the decoded token claims.
 
-The server is `steel_text/web/server.py`. `POST /api/run` returns every intermediate result as JSON, with the response models in `steel_text/web/schemas.py`, and `steel_text/web/index.html` draws it with no external libraries. The auth API is mounted under `/auth-api`. Live mode needs the same `.env` as `steel-demo --live`. It is the only mode that accepts an uploaded page image.
+The server is `steel_text/web/server.py`. `POST /api/run` returns every intermediate result as JSON, with the response models in `steel_text/web/schemas.py`, and `steel_text/web/index.html` draws it with no external libraries. The auth API is mounted under `/auth-api`. Live mode needs the same `.env` as `steel-demo --live`. It is the only mode that accepts an uploaded page image. Images over 300 million pixels are refused with a 413 before they are decoded (an A0 sheet scanned at 400 dpi is about 250 million), and the demo applies the same limit.
 
 Every run is timed per tile and per LLM batch. In live mode, each tile also shows its HTTP requests, rate-limited or failed responses, and time spent waiting on polling and backoff. The same numbers are printed in the server's terminal.
 

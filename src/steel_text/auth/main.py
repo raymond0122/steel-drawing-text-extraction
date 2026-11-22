@@ -11,11 +11,18 @@ from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StringConstraints
 
 from ..settings import Settings, load_settings
 from . import db
-from .security import TokenError, create_token, decode_token, hash_password, verify_password
+from .security import (
+    TokenError,
+    burn_password_check,
+    create_token,
+    decode_token,
+    hash_password,
+    verify_password,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +46,8 @@ SettingsDep = Annotated[Settings, Depends(get_settings)]
 
 
 class Credentials(BaseModel):
-    username: str = Field(min_length=1, max_length=64)
+    # Spaces around the username are removed before the length check, so "   " is rejected.
+    username: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=64)]
     password: str = Field(min_length=8, max_length=128)
 
 
@@ -79,17 +87,22 @@ def current_user(
 
 @app.post("/auth/register", status_code=status.HTTP_201_CREATED)
 def register(body: Credentials, settings: SettingsDep) -> User:
-    username = body.username.strip()
-    if not db.create_user(settings.auth_db_path, username, hash_password(body.password)):
+    if not db.create_user(settings.auth_db_path, body.username, hash_password(body.password)):
         raise HTTPException(status.HTTP_409_CONFLICT, "Username already exists")
-    return User(username=username)
+    return User(username=body.username)
 
 
 @app.post("/auth/login")
 def login(body: Credentials, settings: SettingsDep) -> TokenPair:
-    user = db.get_user(settings.auth_db_path, body.username.strip())
-    # Same error for unknown user and wrong password: do not reveal which usernames exist.
-    if user is None or not verify_password(body.password, user["hashed_password"]):
+    user = db.get_user(settings.auth_db_path, body.username)
+    if user is None:
+        burn_password_check()
+        password_ok = False
+    else:
+        password_ok = verify_password(body.password, user["hashed_password"])
+    # Same error, and the same time, for an unknown user and a wrong password:
+    # neither may reveal which usernames exist.
+    if user is None or not password_ok:
         raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid username or password")
     return TokenPair(
         access_token=create_token(user["username"], "access", settings.jwt_secret_key),

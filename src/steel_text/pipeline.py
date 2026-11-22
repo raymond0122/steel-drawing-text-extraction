@@ -7,6 +7,7 @@ Loading the page and presenting the results stay with each caller.
 from __future__ import annotations
 
 import time
+from collections import Counter
 from collections.abc import Callable, Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
@@ -116,11 +117,15 @@ class TruthCheck:
 
 
 def check_truth(truth: Iterable[GroundTruthText], entries: Iterable[LabelEntry]) -> TruthCheck:
-    """Compare the labels found with the synthetic drawing's expected labels, as sets."""
-    expected = {t.expected_label for t in truth if t.expected_label}
-    found = {e.normalized_label for e in entries}
+    """Compare the labels found with the synthetic drawing's expected labels, counting repeats.
+
+    A label printed twice must be found twice; one found twice but printed once
+    is listed as unexpected once, which is how a missed duplicate shows up.
+    """
+    expected = Counter(t.expected_label for t in truth if t.expected_label)
+    found = Counter(e.normalized_label for e in entries)
     return TruthCheck(
-        expected=sorted(expected),
-        missing=sorted(expected - found),
-        unexpected=sorted(found - expected),
+        expected=sorted(expected.elements()),
+        missing=sorted((expected - found).elements()),
+        unexpected=sorted((found - expected).elements()),
     )

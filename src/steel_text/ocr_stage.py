@@ -72,6 +72,6 @@ def run_tiled_ocr(
         logger.info("tile %d/%d %s: %d lines", i + 1, len(tiles), tile.box, added)
 
     log: list[DedupDecision] = []
-    merged = merge_tile_results(raw, dedup, log)
+    merged = merge_tile_results(raw, dedup, log, tiles)
     logger.info("dedup: %d raw -> %d merged (removed %d)", len(raw), len(merged), len(raw) - len(merged))
     return TiledOcrResult(width, height, tile_size, overlap, tiles, raw, merged, log)

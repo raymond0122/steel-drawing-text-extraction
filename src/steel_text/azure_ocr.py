@@ -5,8 +5,9 @@ The API is asynchronous:
   2. GET that URL     -> poll until status is "succeeded" or "failed"
 
 Both steps retry on 429 (rate limited), transient 5xx errors and network
-exceptions. On 429 the Retry-After header is honoured; otherwise the wait
-doubles each time (1, 2, 4, 8 ... seconds, capped at 30).
+exceptions. A Retry-After header on 429 or 503 is honoured, up to 60 s;
+otherwise the wait doubles each time (1, 2, 4, 8 ... seconds, capped at 30).
+Polling stops with an error on any other 4xx, which won't fix itself.
 """
 
 from __future__ import annotations
@@ -15,6 +16,8 @@ import io
 import logging
 import time
 from collections.abc import Callable
+from datetime import datetime, timezone
+from email.utils import parsedate_to_datetime
 from typing import Any
 
 import requests
@@ -30,10 +33,27 @@ logger = logging.getLogger(__name__)
 
 TRANSIENT_STATUS = (500, 502, 503, 504)
 MAX_BACKOFF_S = 30.0
+MAX_RETRY_AFTER_S = 60.0  # a longer Retry-After (a quota window) isn't worth holding a request for
 
 
 class AzureOcrError(RuntimeError):
     pass
+
+
+def retry_after_seconds(value: str | None) -> float | None:
+    """Seconds to wait from a Retry-After header, which is either a number of seconds or an HTTP date."""
+    if not value or not value.strip():
+        return None
+    value = value.strip()
+    if value.isdigit():
+        return float(value)
+    try:
+        when = parsedate_to_datetime(value)
+    except (TypeError, ValueError, IndexError):
+        return None
+    if when.tzinfo is None:
+        when = when.replace(tzinfo=timezone.utc)
+    return max(0.0, (when - datetime.now(timezone.utc)).total_seconds())
 
 
 class AzureReadClient:
@@ -97,10 +117,10 @@ class AzureReadClient:
     # -- internals --------------------------------------------------------------
 
     def _wait_time(self, resp: HttpResponse | None, attempt: int) -> float:
-        if resp is not None and resp.status_code == 429:
-            retry_after = resp.headers.get("Retry-After")
-            if retry_after and retry_after.isdigit():
-                return float(retry_after)
+        if resp is not None and resp.status_code in (429, 503):
+            retry_after = retry_after_seconds(resp.headers.get("Retry-After"))
+            if retry_after is not None:
+                return min(MAX_RETRY_AFTER_S, retry_after)
         return min(MAX_BACKOFF_S, 2.0**attempt)
 
     def _send_with_retry(self, method: str, url: str, **kwargs: Any) -> HttpResponse | None:
@@ -149,16 +169,15 @@ class AzureReadClient:
     def _poll(self, poll_url: str) -> dict[str, Any]:
         start = self.clock()
         while True:
-            if self.clock() - start > self.poll_timeout_s:
-                raise AzureOcrError(f"polling timed out after {self.poll_timeout_s:.0f}s")
-
             resp = self._send_with_retry(
                 "GET",
                 poll_url,
                 headers={"Ocp-Apim-Subscription-Key": self.key},
                 timeout=self.get_timeout_s,
             )
-            if resp is not None and resp.status_code == 200:
+            if resp is None:
+                raise AzureOcrError(f"GET poll failed after {self.max_attempts} attempts (network errors)")
+            if resp.status_code == 200:
                 try:
                     body = resp.json()
                 except ValueError:
@@ -170,7 +189,13 @@ class AzureReadClient:
                     return body
                 if status in ("failed", "canceled"):
                     raise AzureOcrError(f"analysis {status}: {str(body)[:300]}")
-            elif resp is not None:
-                logger.warning("GET poll returned HTTP %d, will keep polling", resp.status_code)
+            elif resp.status_code == 429 or resp.status_code in TRANSIENT_STATUS:
+                logger.warning("GET poll still returned HTTP %d after retries, will keep polling", resp.status_code)
+            else:
+                # 4xx (bad key, unknown operation...) won't fix itself: fail now, not at the poll timeout.
+                raise AzureOcrError(f"GET poll failed: HTTP {resp.status_code} {resp.text[:300]}")
 
+            # Checked after each request too, since its retries can take a while.
+            if self.clock() - start + self.poll_interval_s > self.poll_timeout_s:
+                raise AzureOcrError(f"polling timed out after {self.poll_timeout_s:.0f}s")
             self.sleep(self.poll_interval_s)

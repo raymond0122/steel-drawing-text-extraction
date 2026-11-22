@@ -61,6 +61,25 @@ def test_wrong_password_and_unknown_user_get_the_same_error(client):
     assert wrong_pw.json() == no_user.json()
 
 
+def test_unknown_user_still_costs_a_password_check(client, monkeypatch):
+    from steel_text.auth import main
+
+    calls = []
+    monkeypatch.setattr(main, "burn_password_check", lambda: calls.append(1))
+    client.post("/auth/register", json=CREDS)
+    client.post("/auth/login", json={**CREDS, "password": "wrong-password"})  # known user: a real check
+    assert calls == []
+    client.post("/auth/login", json={"username": "nobody", "password": "whatever-123"})
+    assert calls == [1]
+
+
+def test_username_is_trimmed_and_blank_is_rejected(client):
+    assert client.post("/auth/register", json={**CREDS, "username": "   "}).status_code == 422
+    r = client.post("/auth/register", json={**CREDS, "username": "  minseung  "})
+    assert r.status_code == 201 and r.json() == {"username": "minseung"}
+    assert client.post("/auth/login", json=CREDS).status_code == 200
+
+
 def test_protected_route_requires_a_token(client):
     assert client.get("/me").status_code == 401
     assert client.get("/me", headers=bearer("not-a-jwt")).status_code == 401

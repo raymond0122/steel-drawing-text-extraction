@@ -794,7 +794,7 @@
       </div>`).join('');
     return `
       <h2>Step 3 · Merge and dedup</h2>
-      <p class="lead">Two boxes are compared only when they are near: IoU ≥ ${cfg.iou}, overlap ≥ ${cfg.overlap_min} of the smaller box, or centres ≤ ${cfg.center_dist_px} px apart. Boxes with IoU ≥ ${cfg.very_high_iou} count as the same box.</p>
+      <p class="lead">Only lines from two different tiles, inside the area both tiles cover, are compared; lines from one tile are always kept. Such boxes count as near when IoU ≥ ${cfg.iou}, overlap ≥ ${cfg.overlap_min} of the smaller box, or centres ≤ ${cfg.center_dist_px} px apart. Boxes with IoU ≥ ${cfg.very_high_iou} count as the same box.</p>
       <p class="note">${d.raw.length} → ${d.merged.length} lines. The longest text is processed first; a second pass removes leftover fragments. Click a card to zoom to it.</p>
       ${decisions || '<p class="banner info">Nothing to merge on this page.</p>'}`;
   }

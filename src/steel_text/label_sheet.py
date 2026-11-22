@@ -25,8 +25,9 @@ def write_label_sheet(labels: Iterable[str], target: str | Path | BinaryIO) -> N
     ws.title = "Labels"
     ws.append(["Profile"])
     ws["A1"].font = Font(bold=True)
-    for label in sorted(labels):
-        ws.append([label])
+    for row, label in enumerate(sorted(labels), start=2):
+        cell = ws.cell(row=row, column=1, value=label)
+        cell.data_type = "s"  # always text: a label starting with "=" must not become a formula
     ws.column_dimensions["A"].width = 22
     ws.freeze_panes = "A2"  # keep the header visible while scrolling
     wb.save(target)

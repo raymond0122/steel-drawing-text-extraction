@@ -3,8 +3,8 @@
 Design points:
   * Structured outputs (strict JSON schema): the reply always parses, with no extra fields.
   * The model only returns an ID and a label. Boxes and raw text are joined back
-    from the OCR results by ID, so the model cannot invent a location, and IDs
-    that were not in the input are dropped.
+    from the OCR results by ID, so the model cannot invent a location. IDs that
+    were not in that batch, and repeats of an ID already labelled, are dropped.
   * Text is sent in batches. A failed batch is logged and skipped, so one bad
     request does not lose the whole page.
 """
@@ -179,6 +179,7 @@ def filter_labels(
     ids = list(by_id)
     entries: list[LabelEntry] = []
     failed: list[tuple[int, str]] = []
+    labelled: set[str] = set()
     n_batches = 0
 
     for b_idx, start in enumerate(range(0, len(ids), batch_size)):
@@ -196,12 +197,16 @@ def filter_labels(
             logger.warning("batch %d skipped: %s", b_idx, e)
             continue
 
+        in_batch = set(batch_ids)
+        dropped = 0
         for item in parsed.get("entries", []) if isinstance(parsed, dict) else []:
             sid = str(item.get("str_id", "")).strip()
-            chunk = by_id.get(sid)
             label = normalize_label(str(item.get("normalized_label", "")))
-            if chunk is None or not label:
-                continue  # unknown ID (hallucinated) or empty label
+            if sid not in in_batch or sid in labelled or not label:
+                dropped += 1  # an ID this batch never sent (invented, or from another batch), a repeat, or no label
+                continue
+            labelled.add(sid)
+            chunk = by_id[sid]
             kind = str(item.get("material_kind", "")).strip()
             entries.append(
                 LabelEntry(
@@ -212,6 +217,8 @@ def filter_labels(
                     raw_text=chunk.text,
                 )
             )
+        if dropped:
+            logger.warning("batch %d: dropped %d entries (unknown or repeated ID, or empty label)", b_idx, dropped)
 
     ok = not (n_batches > 0 and len(failed) == n_batches)
     logger.info("LLM filter: %d batches, %d failed, %d labels", n_batches, len(failed), len(entries))

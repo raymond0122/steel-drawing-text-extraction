@@ -49,6 +49,12 @@ def intersection_area(a: BBox, b: BBox) -> int:
     return max(0, w) * max(0, h)
 
 
+def intersection_box(a: BBox, b: BBox) -> BBox | None:
+    """The area two boxes share, or None when they don't overlap."""
+    x0, y0, x1, y1 = max(a[0], b[0]), max(a[1], b[1]), min(a[2], b[2]), min(a[3], b[3])
+    return (x0, y0, x1, y1) if x1 > x0 and y1 > y0 else None
+
+
 def iou(a: BBox, b: BBox) -> float:
     inter = intersection_area(a, b)
     if inter == 0:

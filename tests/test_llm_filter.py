@@ -65,6 +65,24 @@ def test_failed_batch_is_skipped_and_the_rest_still_processed():
     assert [e.normalized_label for e in res.entries] == ["C50", "WT155*79"]
 
 
+def test_ids_from_another_batch_and_repeated_ids_are_dropped():
+    ex = ScriptedExtractor(
+        [
+            {"entries": []},
+            {
+                "entries": [
+                    {"str_id": "0", "normalized_label": "C50", "material_kind": "C"},  # sent in batch 0, not this one
+                    {"str_id": "2", "normalized_label": "W310X39", "material_kind": "H"},
+                    {"str_id": "2", "normalized_label": "W310X39", "material_kind": "H"},  # repeat
+                ]
+            },
+            {"entries": []},
+        ]
+    )
+    res = filter_labels(CHUNKS, ex, batch_size=2, sleep=lambda s: None)
+    assert [(e.str_id, e.normalized_label) for e in res.entries] == [("2", "W310X39")]
+
+
 def test_all_batches_failing_marks_the_page_failed():
     ex = ScriptedExtractor([LlmCallError("HTTP 500")] * 3)
     res = filter_labels(CHUNKS, ex, batch_size=2, sleep=lambda s: None)

@@ -32,6 +32,7 @@ from ..http import HttpResponse, HttpSession
 from ..label_sheet import XLSX_MIME, write_label_sheet
 from ..llm_filter import LabelExtractor
 from ..ocr_types import OcrChunk, OcrLine, TileOcrClient
+from ..page_image import PageTooLargeError, open_page
 from ..pipeline import MissingCredentialsError, check_truth, make_clients, run_pipeline
 from ..sample_drawing import GroundTruthText, make_sample_drawing
 from ..settings import ENV_FILE, Settings, is_filled, load_settings
@@ -51,8 +52,6 @@ from .schemas import (
     Tiling,
     Timings,
 )
-
-Image.MAX_IMAGE_PIXELS = None  # large drawings exceed PIL's default safety limit
 
 # Same format as the demo. Prints per-tile progress and timings in the uvicorn terminal.
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
@@ -222,7 +221,9 @@ def _run(
                 400, "Uploading an image needs live mode: the offline simulator only knows the synthetic drawing."
             )
         try:
-            page = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+            page = open_page(io.BytesIO(image_bytes))
+        except PageTooLargeError as e:
+            raise HTTPException(413, f"Image too large: {e}") from e
         except OSError as e:
             raise HTTPException(400, f"Could not read the image: {e}") from e
         truth = None
