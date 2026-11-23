@@ -55,6 +55,16 @@ def intersection_box(a: BBox, b: BBox) -> BBox | None:
     return (x0, y0, x1, y1) if x1 > x0 and y1 > y0 else None
 
 
+def region_around(a: BBox, b: BBox, pad: int, width: int, height: int) -> BBox:
+    """The box around both a and b, grown by `pad` on every side and kept inside a width x height page."""
+    return (
+        max(0, min(a[0], b[0]) - pad),
+        max(0, min(a[1], b[1]) - pad),
+        min(width, max(a[2], b[2]) + pad),
+        min(height, max(a[3], b[3]) + pad),
+    )
+
+
 def iou(a: BBox, b: BBox) -> float:
     inter = intersection_area(a, b)
     if inter == 0:
@@ -77,8 +87,3 @@ def overlap_ratio_min(a: BBox, b: BBox) -> float:
 
 def contains(outer: BBox, inner: BBox) -> bool:
     return outer[0] <= inner[0] and outer[1] <= inner[1] and inner[2] <= outer[2] and inner[3] <= outer[3]
-
-
-def inside(b: BBox, frame: BBox) -> bool:
-    """True when box b lies completely within frame."""
-    return contains(frame, b)

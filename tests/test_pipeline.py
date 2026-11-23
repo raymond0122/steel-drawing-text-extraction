@@ -8,11 +8,10 @@ from steel_text.pipeline import (
     LIVE_LLM_REQUEST_SLEEP_S,
     LIVE_OCR_REQUEST_SLEEP_S,
     MissingCredentialsError,
-    check_truth,
     make_clients,
     run_pipeline,
 )
-from steel_text.sample_drawing import GroundTruthText, make_sample_drawing
+from steel_text.sample_drawing import GroundTruthText, check_truth, make_sample_drawing
 from steel_text.settings import Settings
 
 BOX = (0, 0, 1, 1)

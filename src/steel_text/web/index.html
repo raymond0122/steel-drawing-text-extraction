@@ -730,21 +730,17 @@
     if (state.step === 'dedup') p.querySelectorAll('svg.mini').forEach(renderMini);
   }
 
-  // Live runs only: where the OCR time went (the offline simulator makes no HTTP calls).
+  // Live runs only: the offline simulator takes no real time.
   function ocrTimingNote(d) {
-    const tt = d.timings_ms.tiles || [], sum = k => tt.reduce((a, t) => a + t[k], 0);
-    const requests = sum('requests');
-    if (!requests) return '';
-    const errors = sum('errors'), slowest = Math.max(...tt.map(t => t.ms));
-    return `<p class="banner info">OCR took ${dur(d.timings_ms.ocr)} for ${tt.length} tiles, read one after another (slowest ${dur(slowest)}).
-      ${dur(sum('waiting_ms'))} of it was spent waiting: polling every 2 s for Azure's result`
-      + (errors ? `, plus backoff after ${errors} rate-limited or failed request${errors === 1 ? '' : 's'}` : '')
-      + `. ${requests} HTTP requests in total.</p>`;
+    const tt = d.timings_ms.tiles || [];
+    if (d.mode !== 'live' || !tt.length) return '';
+    return `<p class="banner info">OCR took ${dur(d.timings_ms.ocr)} for ${tt.length} tiles, read one after another (slowest ${dur(Math.max(...tt))}).
+      Most of it is waiting for Azure, which is polled every 2 s. Retries and rate limiting are logged in the server's terminal.</p>`;
   }
 
   function panelTiles(d) {
     const perTile = d.tiling.tiles.map((_, i) => d.raw.filter(c => c.tile === i).length);
-    const tileMs = (d.timings_ms.tiles || []).map(t => t.ms);
+    const tileMs = d.timings_ms.tiles || [];
     return `
       <h2>Step 1 · Tiling</h2>
       <p class="lead">${esc(tilingRule(d))}</p>
@@ -795,7 +791,7 @@
     return `
       <h2>Step 3 · Merge and dedup</h2>
       <p class="lead">Only lines from two different tiles, inside the area both tiles cover, are compared; lines from one tile are always kept. Such boxes count as near when IoU ≥ ${cfg.iou}, overlap ≥ ${cfg.overlap_min} of the smaller box, or centres ≤ ${cfg.center_dist_px} px apart. Boxes with IoU ≥ ${cfg.very_high_iou} count as the same box.</p>
-      <p class="note">${d.raw.length} → ${d.merged.length} lines. The longest text is processed first; a second pass removes leftover fragments. Click a card to zoom to it.</p>
+      <p class="note">${d.raw.length} → ${d.merged.length} lines. The longest text is processed first, so a full string is kept before its fragments come up. Click a card to zoom to it.</p>
       ${decisions || '<p class="banner info">Nothing to merge on this page.</p>'}`;
   }
 

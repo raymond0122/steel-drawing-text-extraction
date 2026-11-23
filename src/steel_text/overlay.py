@@ -9,7 +9,7 @@ from PIL import Image, ImageDraw
 
 from .dedup import DedupDecision
 from .fonts import load_font
-from .geometry import BBox, intersection_area
+from .geometry import BBox, intersection_area, region_around
 from .ocr_types import OcrChunk
 from .tiling import Tile
 
@@ -100,13 +100,7 @@ def draw_dedup_closeups(
 
     y = 90
     for n, d in enumerate(decisions, 1):
-        bx = [
-            min(d.kept.bbox[0], d.dropped.bbox[0]),
-            min(d.kept.bbox[1], d.dropped.bbox[1]),
-            max(d.kept.bbox[2], d.dropped.bbox[2]),
-            max(d.kept.bbox[3], d.dropped.bbox[3]),
-        ]
-        region = (max(0, bx[0] - pad), max(0, bx[1] - pad), min(page.width, bx[2] + pad), min(page.height, bx[3] + pad))
+        region = region_around(d.kept.bbox, d.dropped.bbox, pad, page.width, page.height)
         before_chunks = [c for c in raw if intersection_area(c.bbox, region) > 0]
         after_chunks = [c for c in merged if intersection_area(c.bbox, region) > 0]
 

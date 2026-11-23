@@ -13,12 +13,11 @@ import base64
 import io
 import logging
 import time
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Iterable, Sequence
 from functools import lru_cache
 from pathlib import Path
 from typing import Annotated, Any
 
-import requests
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
@@ -27,14 +26,13 @@ from PIL import Image
 from ..auth.main import app as auth_app
 from ..azure_ocr import AzureOcrError
 from ..dedup import DedupConfig
-from ..geometry import BBox
-from ..http import HttpResponse, HttpSession
+from ..geometry import region_around
 from ..label_sheet import XLSX_MIME, write_label_sheet
 from ..llm_filter import LabelExtractor
 from ..ocr_types import OcrChunk, OcrLine, TileOcrClient
 from ..page_image import PageTooLargeError, open_page
-from ..pipeline import MissingCredentialsError, check_truth, make_clients, run_pipeline
-from ..sample_drawing import GroundTruthText, make_sample_drawing
+from ..pipeline import MissingCredentialsError, make_clients, run_pipeline
+from ..sample_drawing import GroundTruthText, check_truth, make_sample_drawing
 from ..settings import ENV_FILE, Settings, is_filled, load_settings
 from ..tiling import Tile
 from .schemas import (
@@ -48,19 +46,18 @@ from .schemas import (
     MergedChunk,
     PageInfo,
     RunResponse,
-    TileTiming,
     Tiling,
     Timings,
 )
 
-# Same format as the demo. Prints per-tile progress and timings in the uvicorn terminal.
+# Same format as the demo. Prints per-tile progress, retries and timings in the uvicorn terminal.
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 PREVIEW_MAX_SIDE = 4000  # the browser gets a downscaled page; close-ups are cropped at full resolution
 CLOSEUP_PAD = 120
 
-app = FastAPI(title="mypart demo UI")
+app = FastAPI(title="Steel text extraction: demo UI")
 app.mount("/auth-api", auth_app)
 
 
@@ -98,112 +95,42 @@ def _xlsx_data_url(labels: Iterable[str]) -> str:
     return f"data:{XLSX_MIME};base64," + base64.b64encode(buf.getvalue()).decode("ascii")
 
 
-def _region(a: BBox, b: BBox, page: Image.Image) -> BBox:
-    """Both boxes plus padding, clamped to the page."""
-    return (
-        max(0, min(a[0], b[0]) - CLOSEUP_PAD),
-        max(0, min(a[1], b[1]) - CLOSEUP_PAD),
-        min(page.width, max(a[2], b[2]) + CLOSEUP_PAD),
-        min(page.height, max(a[3], b[3]) + CLOSEUP_PAD),
-    )
-
-
 def _chunk(c: OcrChunk) -> Chunk:
     return Chunk(text=c.text, bbox=c.bbox, tile=c.tile_index)
 
 
-class _OcrTimer:
-    """Wraps a tile OCR client and records where each tile's time went.
+class _TimedOcr:
+    """Wraps the tile OCR client and records how long each tile took, in ms."""
 
-    The Azure client also gets this object as its HTTP session and its sleep
-    function, so requests, rate-limited or failed responses, and polling waits
-    are counted per tile. The offline simulator only gets the per-tile total.
-    """
-
-    def __init__(self, *, http: HttpSession | None = None, sleep: Callable[[float], None] = time.sleep) -> None:
-        self.client: TileOcrClient | None = None
-        self.tiles: list[TileTiming] = []
-        self._current: TileTiming | None = None
-        self._http: HttpSession = http or requests.Session()
-        self._sleep = sleep
+    def __init__(self, client: TileOcrClient) -> None:
+        self.client = client
+        self.ms: list[int] = []
 
     def read_tile(self, tile_img: Image.Image, tile: Tile) -> list[OcrLine]:
-        if self.client is None:
-            raise RuntimeError("_OcrTimer.client is not set")
-        self._current = cur = TileTiming()
         start = time.perf_counter()
         try:
             return self.client.read_tile(tile_img, tile)
         finally:
-            cur.ms = round((time.perf_counter() - start) * 1000)
-            self.tiles.append(cur)
-            self._current = None
-            logger.info(
-                "tile %d: %.1f s (%d requests, %d rate-limited or failed, %.1f s waiting)",
-                len(self.tiles) - 1,
-                cur.ms / 1000,
-                cur.requests,
-                cur.errors,
-                cur.waiting_ms / 1000,
-            )
-
-    def sleep(self, seconds: float) -> None:
-        """Sleep function for AzureReadClient: polling intervals and retry backoff."""
-        if self._current is not None:
-            self._current.waiting_ms += round(seconds * 1000)
-        self._sleep(seconds)
-
-    def request(self, method: str, url: str, **kwargs: Any) -> HttpResponse:
-        """Session interface for AzureReadClient."""
-        cur = self._current
-        if cur is not None:
-            cur.requests += 1
-        try:
-            resp = self._http.request(method, url, **kwargs)
-        except requests.RequestException:
-            if cur is not None:
-                cur.errors += 1
-            raise
-        if cur is not None and (resp.status_code == 429 or resp.status_code >= 500):
-            cur.errors += 1
-        return resp
+            self.ms.append(_ms_since(start))
 
 
-class _LlmTimer:
-    """Wraps the label extractor and records how long each batch took, failed ones included."""
+class _TimedLabeler:
+    """Wraps the LLM label extractor and records how long each batch took, in ms, failed ones included."""
 
     def __init__(self, extractor: LabelExtractor) -> None:
         self.extractor = extractor
-        self.batches_ms: list[int] = []
+        self.ms: list[int] = []
 
     def extract(self, items: Sequence[dict[str, str]]) -> dict[str, Any]:
         start = time.perf_counter()
         try:
             return self.extractor.extract(items)
         finally:
-            self.batches_ms.append(round((time.perf_counter() - start) * 1000))
-            logger.info("LLM batch %d: %.1f s", len(self.batches_ms) - 1, self.batches_ms[-1] / 1000)
+            self.ms.append(_ms_since(start))
 
 
-def _clients(
-    live: bool,
-    settings: Settings,
-    simulate_llm_failure: bool,
-    truth: list[GroundTruthText] | None,
-    timer: _OcrTimer,
-) -> tuple[TileOcrClient, LabelExtractor]:
-    try:
-        # The timer stands in for the Azure client's HTTP session and sleep, to count requests and waits per tile.
-        return make_clients(
-            live,
-            truth,
-            settings=settings,
-            simulate_llm_failure=simulate_llm_failure,
-            azure_kwargs={"session": timer, "sleep": timer.sleep},
-        )
-    except MissingCredentialsError as e:
-        hint = "Fill in the keys in .env." if ENV_FILE.exists() else "Copy .env.example to .env and fill in the keys."
-        raise HTTPException(400, f"Live mode needs credentials ({e}). {hint}") from e
+def _ms_since(start: float) -> int:
+    return round((time.perf_counter() - start) * 1000)
 
 
 def _run(
@@ -230,11 +157,15 @@ def _run(
     else:
         page, truth = _sample()
 
-    ocr_timer = _OcrTimer()
-    ocr_timer.client, extractor = _clients(live, settings, simulate_llm_failure, truth, ocr_timer)
-    llm_timer = _LlmTimer(extractor)
     try:
-        outcome = run_pipeline(page, ocr_timer, llm_timer, live=live, max_tiles=max_tiles, batch_size=batch_size)
+        ocr_client, labeler = make_clients(live, truth, settings=settings, simulate_llm_failure=simulate_llm_failure)
+    except MissingCredentialsError as e:
+        hint = "Fill in the keys in .env." if ENV_FILE.exists() else "Copy .env.example to .env and fill in the keys."
+        raise HTTPException(400, f"Live mode needs credentials ({e}). {hint}") from e
+
+    timed_ocr, timed_labeler = _TimedOcr(ocr_client), _TimedLabeler(labeler)
+    try:
+        outcome = run_pipeline(page, timed_ocr, timed_labeler, live=live, max_tiles=max_tiles, batch_size=batch_size)
     except AzureOcrError as e:  # a tile still failing after its retries (live mode only)
         raise HTTPException(502, f"OCR failed: {e}") from e
     ocr, result = outcome.ocr, outcome.labels
@@ -249,7 +180,7 @@ def _run(
 
     decisions = []
     for d in ocr.dedup_log:
-        region = _region(d.dropped.bbox, d.kept.bbox, page)
+        region = region_around(d.dropped.bbox, d.kept.bbox, CLOSEUP_PAD, page.width, page.height)
         decisions.append(
             DedupDecisionOut(
                 dropped=_chunk(d.dropped),
@@ -283,8 +214,8 @@ def _run(
         timings_ms=Timings(
             ocr=round(outcome.ocr_seconds * 1000),
             llm=round(outcome.llm_seconds * 1000),
-            tiles=ocr_timer.tiles,
-            llm_batches=llm_timer.batches_ms,
+            tiles=timed_ocr.ms,
+            llm_batches=timed_labeler.ms,
         ),
     )
 

@@ -24,8 +24,8 @@ from .llm_filter import FilterResult
 from .ocr_stage import TiledOcrResult
 from .overlay import draw_boxes, draw_dedup_closeups, draw_tile_grid, save_preview
 from .page_image import PageTooLargeError, open_page
-from .pipeline import MissingCredentialsError, check_truth, make_clients, run_pipeline
-from .sample_drawing import GroundTruthText, load_truth, save_sample
+from .pipeline import MissingCredentialsError, make_clients, run_pipeline
+from .sample_drawing import GroundTruthText, check_truth, load_truth, save_sample
 from .settings import load_settings
 
 RAW_OCR_COLOR = (220, 38, 38)  # red: every OCR line, before dedup

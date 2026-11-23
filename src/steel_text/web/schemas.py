@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 from ..dedup import DedupConfig
 from ..geometry import BBox
-from ..pipeline import TruthCheck
+from ..sample_drawing import TruthCheck
 
 
 class PageInfo(BaseModel):
@@ -66,19 +66,12 @@ class LabelOut(BaseModel):
     raw_text: str
 
 
-class TileTiming(BaseModel):
-    """Where one tile's time went. Requests, errors and waits are only counted for the Azure client."""
-
-    ms: int = 0
-    requests: int = 0
-    errors: int = 0  # rate-limited (429), 5xx or network errors
-    waiting_ms: int = 0  # polling intervals and retry backoff
-
-
 class Timings(BaseModel):
+    """Milliseconds. Retries and rate limiting show up in the server's log, not here."""
+
     ocr: int
     llm: int
-    tiles: list[TileTiming]  # one entry per tile, in tile order
+    tiles: list[int]  # one entry per tile, in tile order
     llm_batches: list[int]  # one entry per batch, in batch order
 
 

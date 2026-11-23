@@ -1,4 +1,4 @@
-"""Generate a synthetic steel framing drawing for demos.
+"""Generate a synthetic steel framing drawing for demos, and check labels against its ground truth.
 
 Everything here is made up. Some texts are placed on purpose where the
 default 9000x6000 tile grid will cut or duplicate them:
@@ -17,6 +17,8 @@ default 9000x6000 tile grid will cut or duplicate them:
 from __future__ import annotations
 
 import json
+from collections import Counter
+from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
@@ -24,6 +26,7 @@ from PIL import Image, ImageDraw
 
 from .fonts import ImageFont, load_font
 from .geometry import BBox
+from .llm_filter import LabelEntry
 
 WIDTH, HEIGHT = 9000, 6000
 
@@ -137,3 +140,30 @@ def load_truth(path: Path) -> list[GroundTruthText]:
     """Read a ground-truth file written by save_sample()."""
     data = json.loads(path.read_text(encoding="utf-8"))
     return [GroundTruthText(d["text"], d["ocr_text"], tuple(d["bbox"]), d["expected_label"]) for d in data]
+
+
+@dataclass
+class TruthCheck:
+    expected: list[str]
+    missing: list[str]
+    unexpected: list[str]
+
+    @property
+    def found(self) -> int:
+        """How many of the expected labels were found."""
+        return len(self.expected) - len(self.missing)
+
+
+def check_truth(truth: Iterable[GroundTruthText], entries: Iterable[LabelEntry]) -> TruthCheck:
+    """Compare the labels found with the expected labels, counting repeats.
+
+    A label printed twice must be found twice; one found twice but printed once
+    is listed as unexpected once, which is how a missed duplicate shows up.
+    """
+    expected = Counter(t.expected_label for t in truth if t.expected_label)
+    found = Counter(e.normalized_label for e in entries)
+    return TruthCheck(
+        expected=sorted(expected.elements()),
+        missing=sorted((expected - found).elements()),
+        unexpected=sorted((found - expected).elements()),
+    )

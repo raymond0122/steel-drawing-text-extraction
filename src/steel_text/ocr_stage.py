@@ -9,8 +9,7 @@ from dataclasses import dataclass, field
 
 from PIL import Image
 
-from . import geometry as g
-from .dedup import DedupConfig, DedupDecision, merge_tile_results
+from .dedup import DedupDecision, merge_tile_results
 from .ocr_types import OcrChunk, TileOcrClient
 from .tiling import Tile, choose_tiling_params, make_tiles
 
@@ -38,11 +37,15 @@ def run_tiled_ocr(
     overlap: int = 300,
     max_tiles: int = 20,
     min_chars: int = 2,
-    frame: g.BBox | None = None,
     request_sleep_s: float = 0.2,
-    dedup: DedupConfig = DedupConfig(),
     sleep: Callable[[float], None] = time.sleep,
 ) -> TiledOcrResult:
+    """OCR the page tile by tile and merge the results.
+
+    With `adaptive`, the tile size comes from the page size (see choose_tiling_params);
+    otherwise tile_size and overlap are used as given. Lines shorter than
+    `min_chars` are dropped: single letters are grid marks, not labels.
+    """
     width, height = image.size
     if adaptive:
         tile_size, overlap = choose_tiling_params(
@@ -63,15 +66,13 @@ def run_tiled_ocr(
         for line in lines:
             if len(line.text) < min_chars:
                 continue
-            x0, y0, x1, y1 = line.bbox
+            x0, y0, x1, y1 = line.bbox  # tile coordinates -> page coordinates
             page_box = (x0 + tile.x0, y0 + tile.y0, x1 + tile.x0, y1 + tile.y0)
-            if frame is not None and not g.inside(page_box, frame):
-                continue
             raw.append(OcrChunk(text=line.text, bbox=page_box, conf=line.conf, tile_index=i))
             added += 1
         logger.info("tile %d/%d %s: %d lines", i + 1, len(tiles), tile.box, added)
 
     log: list[DedupDecision] = []
-    merged = merge_tile_results(raw, dedup, log, tiles)
+    merged = merge_tile_results(raw, tiles, log=log)
     logger.info("dedup: %d raw -> %d merged (removed %d)", len(raw), len(merged), len(raw) - len(merged))
     return TiledOcrResult(width, height, tile_size, overlap, tiles, raw, merged, log)

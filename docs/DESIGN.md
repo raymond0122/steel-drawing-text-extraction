@@ -54,10 +54,10 @@ For near pairs, the following rules apply in order:
 1. Boxes almost identical (IoU ≥ 0.9): duplicate.
 2. Same text: duplicate.
 3. One box contains the other, or overlap ≥ 0.8: drop the fragment, or keep the better reading.
-4. One text is a substring of the other and the boxes overlap: keep the longer one. Boxes that don't overlap are two texts, such as `C50` printed just above `C500`.
-5. They share a number and one is a short phrase (`"TE 6"` vs `"SEE NOTE 6"`): keep the longer one.
 
-The better reading is the one with higher confidence, then longer text, then the larger box. Text is processed longest first, and a second pass removes leftover fragments. Characters like `*` are preserved, so `WT155*79` never becomes `WT15579`.
+Anything else is two different texts that happen to be close, such as `C50` printed just above `C500`, and both are kept. Earlier versions had two more rules (substrings, and short pieces sharing a number) and a second pass for leftover fragments. Counted on the synthetic drawing and on a full-size test sheet read by Azure (232 decisions; the sheet isn't in this repository), none of them ever fired, so they were removed; both pages give exactly the same result without them.
+
+The better reading is the one with higher confidence, then longer text, then the larger box. Text is processed longest first, so the full string is already kept when its fragments come up. Characters like `*` are preserved, so `WT155*79` never becomes `WT15579`.
 
 Each decision in `dedup_log.txt` names the chunk that survived the merge. If a kept chunk is replaced later, the earlier decisions are updated to point at its replacement, so the close-ups always show the final result.
 
@@ -65,7 +65,7 @@ Each decision in `dedup_log.txt` names the chunk that survived the merge. If a k
 
 Azure Document Intelligence is asynchronous: you POST the image, receive a 202 with an `Operation-Location` URL, and poll that URL. Both the POST and the polling GETs retry on 429, on 500/502/503/504 and on network errors, with up to 5 attempts:
 
-- **On 429 or 503 with `Retry-After`:** wait that long, whether the header gives seconds or an HTTP date, but at most 60 s. A longer wait, such as a quota window, isn't worth holding a request for.
+- **When the server sends `Retry-After`** (in seconds): wait that long, but at most 60 s. A longer wait, such as a quota window, isn't worth holding a request for.
 - **Otherwise:** exponential backoff of 1, 2, 4, 8 s, capped at 30 s.
 - **Other 4xx errors** (for example 401, or 404 for an unknown operation): fail immediately, on the POST and while polling, because retrying won't help.
 - **Polling gives up** when every attempt of a poll request fails with a network error, or when the 5-minute poll timeout passes. The timeout is checked after each request as well, since a request's retries can take a while.
@@ -115,7 +115,7 @@ Both the demo and the web UI pick their clients and run the stages through `stee
 
 The server is `steel_text/web/server.py`. `POST /api/run` returns every intermediate result as JSON, with the response models in `steel_text/web/schemas.py`, and `steel_text/web/index.html` draws it with no external libraries. The auth API is mounted under `/auth-api`. Live mode needs the same `.env` as `steel-demo --live`. It is the only mode that accepts an uploaded page image. Images over 300 million pixels are refused with a 413 before they are decoded (an A0 sheet scanned at 400 dpi is about 250 million), and the demo applies the same limit.
 
-Every run is timed per tile and per LLM batch. In live mode, each tile also shows its HTTP requests, rate-limited or failed responses, and time spent waiting on polling and backoff. The same numbers are printed in the server's terminal.
+Every run is timed per tile and per LLM batch, and the page shows both. Retries, rate limiting and per-tile progress are logged in the server's terminal.
 
 In live mode, the page shows which keys it found in `.env`, by name only, never the values. The server reads `.env` again before every live run, so keys added while it is running work without a restart.
 

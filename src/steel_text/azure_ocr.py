@@ -5,9 +5,9 @@ The API is asynchronous:
   2. GET that URL     -> poll until status is "succeeded" or "failed"
 
 Both steps retry on 429 (rate limited), transient 5xx errors and network
-exceptions. A Retry-After header on 429 or 503 is honoured, up to 60 s;
-otherwise the wait doubles each time (1, 2, 4, 8 ... seconds, capped at 30).
-Polling stops with an error on any other 4xx, which won't fix itself.
+exceptions. A Retry-After header is honoured, up to 60 s; otherwise the wait
+doubles each time (1, 2, 4, 8 ... seconds, capped at 30). Any other 4xx fails
+at once, while submitting or polling, because retrying won't fix it.
 """
 
 from __future__ import annotations
@@ -16,8 +16,6 @@ import io
 import logging
 import time
 from collections.abc import Callable
-from datetime import datetime, timezone
-from email.utils import parsedate_to_datetime
 from typing import Any
 
 import requests
@@ -38,22 +36,6 @@ MAX_RETRY_AFTER_S = 60.0  # a longer Retry-After (a quota window) isn't worth ho
 
 class AzureOcrError(RuntimeError):
     pass
-
-
-def retry_after_seconds(value: str | None) -> float | None:
-    """Seconds to wait from a Retry-After header, which is either a number of seconds or an HTTP date."""
-    if not value or not value.strip():
-        return None
-    value = value.strip()
-    if value.isdigit():
-        return float(value)
-    try:
-        when = parsedate_to_datetime(value)
-    except (TypeError, ValueError, IndexError):
-        return None
-    if when.tzinfo is None:
-        when = when.replace(tzinfo=timezone.utc)
-    return max(0.0, (when - datetime.now(timezone.utc)).total_seconds())
 
 
 class AzureReadClient:
@@ -89,8 +71,8 @@ class AzureReadClient:
         self.clock = clock
 
     @classmethod
-    def from_settings(cls, settings: Settings, **kwargs: Any) -> AzureReadClient:
-        return cls(settings.azure_docint_endpoint.strip(), settings.azure_docint_key.strip(), **kwargs)
+    def from_settings(cls, settings: Settings) -> AzureReadClient:
+        return cls(settings.azure_docint_endpoint.strip(), settings.azure_docint_key.strip())
 
     # -- public ---------------------------------------------------------------
 
@@ -117,10 +99,10 @@ class AzureReadClient:
     # -- internals --------------------------------------------------------------
 
     def _wait_time(self, resp: HttpResponse | None, attempt: int) -> float:
-        if resp is not None and resp.status_code in (429, 503):
-            retry_after = retry_after_seconds(resp.headers.get("Retry-After"))
-            if retry_after is not None:
-                return min(MAX_RETRY_AFTER_S, retry_after)
+        """The server's Retry-After (in seconds, up to 60) if it sent one, otherwise exponential backoff."""
+        retry_after = resp.headers.get("Retry-After", "").strip() if resp is not None else ""
+        if retry_after.isdigit():
+            return min(MAX_RETRY_AFTER_S, float(retry_after))
         return min(MAX_BACKOFF_S, 2.0**attempt)
 
     def _send_with_retry(self, method: str, url: str, **kwargs: Any) -> HttpResponse | None:

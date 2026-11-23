@@ -26,7 +26,9 @@ from .security import (
 
 logger = logging.getLogger(__name__)
 
-app = FastAPI(title="mypart auth API", description="Register, login, refresh, and a protected endpoint.")
+app = FastAPI(
+    title="Steel text extraction: auth API", description="Register, login, refresh, and a protected endpoint."
+)
 bearer = HTTPBearer(auto_error=False)
 
 

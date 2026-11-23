@@ -44,49 +44,6 @@ def test_simulated_llm_failure_is_reported_per_batch(client):
     assert [f["batch"] for f in d["llm"]["failed"]] == [1]
 
 
-class FakeResponse:
-    def __init__(self, status, headers=None, body=None):
-        self.status_code = status
-        self.headers = headers or {}
-        self._body = body
-        self.text = str(body)
-
-    def json(self):
-        return self._body
-
-
-class ScriptedHttp:
-    def __init__(self, responses):
-        self.responses = list(responses)
-
-    def request(self, method, url, **kwargs):
-        return self.responses.pop(0)
-
-
-def test_ocr_timer_records_requests_errors_and_waits_per_tile():
-    from PIL import Image
-
-    from steel_text.azure_ocr import AzureReadClient
-    from steel_text.tiling import Tile
-
-    timer = server._OcrTimer(
-        sleep=lambda s: None,
-        http=ScriptedHttp(
-            [
-                FakeResponse(429, {"Retry-After": "3"}),  # POST rate-limited
-                FakeResponse(202, {"Operation-Location": "https://example.test/op/1"}),
-                FakeResponse(200, body={"status": "running"}),  # first poll
-                FakeResponse(200, body={"status": "succeeded", "analyzeResult": {"pages": []}}),
-            ]
-        ),
-    )
-    timer.client = AzureReadClient("https://example.test", "key", session=timer, sleep=timer.sleep)
-    timer.read_tile(Image.new("RGB", (10, 10), "white"), Tile(0, 0, 10, 10))
-
-    [t] = timer.tiles
-    assert (t.requests, t.errors, t.waiting_ms) == (4, 1, 5000)  # Retry-After 3 s + one 2 s poll
-
-
 def test_image_upload_needs_live_mode(client):
     assert client.post("/api/run", content=b"not an image").status_code == 400
 

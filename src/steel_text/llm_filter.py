@@ -102,12 +102,11 @@ class OpenAIResponsesClient:
         self.session: HttpSession = session or requests.Session()
 
     @classmethod
-    def from_settings(cls, settings: Settings, **kwargs: Any) -> OpenAIResponsesClient:
+    def from_settings(cls, settings: Settings) -> OpenAIResponsesClient:
         return cls(
             settings.openai_api_key.strip(),
             model=settings.openai_model.strip() or "gpt-4o",
             base_url=settings.openai_base_url.strip() or "https://api.openai.com/v1",
-            **kwargs,
         )
 
     def extract(self, items: Sequence[dict[str, str]]) -> dict[str, Any]:
@@ -175,6 +174,11 @@ def filter_labels(
     request_sleep_s: float = 0.1,
     sleep: Callable[[float], None] = time.sleep,
 ) -> FilterResult:
+    """Send the OCR lines to the extractor in batches and return the steel labels it found.
+
+    Each line gets an ID ("0", "1", ...) that the model must copy back; boxes and
+    raw text are joined back by that ID. The result is not ok only if every batch failed.
+    """
     by_id = {str(i): c for i, c in enumerate(chunks)}
     ids = list(by_id)
     entries: list[LabelEntry] = []
@@ -220,6 +224,6 @@ def filter_labels(
         if dropped:
             logger.warning("batch %d: dropped %d entries (unknown or repeated ID, or empty label)", b_idx, dropped)
 
-    ok = not (n_batches > 0 and len(failed) == n_batches)
+    ok = n_batches == 0 or len(failed) < n_batches
     logger.info("LLM filter: %d batches, %d failed, %d labels", n_batches, len(failed), len(entries))
     return FilterResult(ok=ok, entries=entries, batches=n_batches, failed_batches=failed)

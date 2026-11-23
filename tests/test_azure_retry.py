@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from steel_text.azure_ocr import AzureOcrError, AzureReadClient, retry_after_seconds
+from steel_text.azure_ocr import AzureOcrError, AzureReadClient
 
 SUCCEEDED = {
     "status": "succeeded",
@@ -71,20 +71,13 @@ def test_long_retry_after_is_capped():
     assert sleeps == [60.0]
 
 
-def test_retry_after_as_an_http_date_on_503():
+def test_retry_after_is_honoured_on_503_too():
     sleeps: list[float] = []
-    past = "Wed, 21 Oct 2015 07:28:00 GMT"  # already passed: retry at once
     session = FakeSession(
-        post=[FakeResponse(503, {"Retry-After": past}), ACCEPTED], get=[FakeResponse(200, body=SUCCEEDED)]
+        post=[FakeResponse(503, {"Retry-After": "5"}), ACCEPTED], get=[FakeResponse(200, body=SUCCEEDED)]
     )
     make_client(session, sleeps).analyze(b"png")
-    assert sleeps == [0.0]
-
-
-def test_retry_after_parsing():
-    assert retry_after_seconds("7") == 7.0
-    assert retry_after_seconds("Wed, 21 Oct 2015 07:28:00 GMT") == 0.0
-    assert retry_after_seconds("soon") is None and retry_after_seconds(None) is None
+    assert sleeps == [5.0]
 
 
 def test_transient_errors_back_off_exponentially_and_give_up():
