@@ -1,10 +1,11 @@
 # Tiling experiment
 
-Three questions, measured on one drawing with Azure Document Intelligence `prebuilt-read` (API version 2024-11-30):
+Four questions, measured on one drawing with Azure Document Intelligence `prebuilt-read` (API version 2024-11-30):
 
 1. **Is tiling needed at all,** or does the whole page, shrunk to fit, read just as well? (run 2026-11-15)
 2. **How large should the tiles be?** (run 2026-11-23)
 3. **How much do the dedup thresholds matter?** (the OCR saved by experiment 2, merged again; no new requests)
+4. **Should the tiles be spread evenly?** (run 2026-11-24; not adopted)
 
 The drawing is [`steel_framing_plan_S-201_400dpi.png`](steel_framing_plan_S-201_400dpi.png): a made-up 36 × 24 in steel framing plan rendered at 400 dpi, 14,400 × 9,600 px. It belongs to no real project.
 
@@ -108,6 +109,31 @@ What this shows:
 - **The IoU threshold hardly matters.** Two tiles reading the same text return almost the same box (median IoU 0.91), so any value from 0.3 to 0.9 changes at most two lines, on one size.
 - **A lower overlap threshold drops text.** From 0.7 down, the extra merges are mostly two different cuts of one long note line, and dropping one loses its end: keeping `…ALL WELDS BY CERTIFIED` drops `LDS BY CERTIFIED WELDERS.`, and with it `WELDERS.`. A few merge different texts, such as `10` into `/ 1`. At 0.8 the dropped reading lies (almost) inside the kept one, so nothing is lost, with room for boxes that jitter by a few pixels.
 - **A higher overlap threshold leaves duplicates and fragments behind,** 1 to 23 per size. It also makes one label on the 2,000 and 6,000 px sizes score as exact, but only because the correct reading (`W16x26 (22) c=3/4"`) is then kept next to a misreading of the same label (`W16x26 ( 22) C=3/ 11`), and the scorer picks the correct one. At 0.8 dedup keeps one of the two, the longer text or the larger box, and here that was the misreading: Azure's lines carry no confidence, so dedup can't tell which reading is right.
+## Experiment 4: tile layout (not adopted)
+
+The app moves the last tile on each side back to the page edge, so one seam overlaps far more than the others: 300, 300, 300 and 2,200 px across this sheet, 300 and 600 px down. Spreading the same 15 tiles evenly gives 775 and 450 px, more than the widest beam label (342 px). A third option keeps the app's layout with a 450 px overlap.
+
+Which texts no tile holds whole ([`layout_geometry.py`](layout_geometry.py), no requests), with the drawing moved 400 ways on the page, since that moves the seams:
+
+| Layout | Tiles | Beam labels cut | Text lines cut: the sheet as it is | flush with the right and bottom edges (mean) | anywhere on a larger page (mean) |
+|---|---|---|---|---|---|
+| The app's | 15 | in 20 of 400 placements, at most 2 | 0 | 10.2 | 11.6 |
+| Evenly spread | 15 | never | 14 | 18.4 | 2.1 |
+| 450 px overlap | 15, but 5.7% more over random page sizes | never | 0 | 12.0 | 12.8 |
+
+Measured with Azure ([`run_layout.py`](run_layout.py), 45 requests, each condition once):
+
+| Layout | Beam labels read exactly (of 82): the sheet as it is | moved 1,400 px right |
+|---|---|---|
+| The app's | 81 | 79 |
+| Evenly spread | 81 | 82 |
+
+- **Evenly spread tiles keep every beam label whole, for no extra request.** On the moved page the app's layout cuts two labels. For one, the tile on the right lost the left of the W and read `V24x55 (36) c=11/4"`, the tile on the left lost the closing inch mark, and dedup kept the longer reading, the wrong one.
+- **But on the sheet as it is, they cut 14 long note lines at the right edge,** which the app's 2,200 px last overlap happens to cover. The app's layout read 12 of the 14 as one line; evenly spread tiles read none of them whole, such as `…EXCLUDES CONNECTION MATER` and `ROM PLAN GEOMETRY; EXCLUDES CONNECTION MATERIAL AND MISC. STEEL.`
+- **The 450 px overlap protects the labels too,** but needs 5.7% more tiles and cuts as many text lines as the app's layout.
+
+The app keeps its layout for now: the label gain showed only on a moved page, the note-line loss on the real sheet, and adopting it would mean measuring experiment 2 again.
+
 ## Limits
 
 - **One drawing,** cleanly rendered and synthetic. Scanned drawings have noise and skew and may break down earlier, and other resolutions or denser text may move the point where accuracy drops. The results are a measured default for drawings like this one, not a rule for every drawing.
@@ -125,6 +151,8 @@ From the repository root, with the package installed (`pip install -e ".[dev]"`)
 python experiments/tiling/analyze.py              # score experiment 1 from the saved results (no network)
 python experiments/tiling/analyze_tile_sizes.py   # score experiment 2 from the saved results (no network)
 python experiments/tiling/dedup_thresholds.py     # experiment 3, from the same saved results (no network)
+python experiments/tiling/layout_geometry.py      # experiment 4, geometry only (no network)
+python experiments/tiling/run_layout.py           # experiment 4 with Azure: calls Azure, needs .env; saved conditions are skipped
 
 python experiments/tiling/run_ocr.py              # experiment 1: calls Azure, needs .env
 python experiments/tiling/run_tile_sizes.py       # experiment 2: calls Azure, needs .env
@@ -137,6 +165,7 @@ The `run_` scripts skip any condition whose result is already in `results/`, so 
 |---|---|
 | `run_ocr.py`, `run_tile_sizes.py`, `run_grayscale.py` | send the drawing to Azure and save the raw OCR in `results/` |
 | `analyze.py`, `analyze_tile_sizes.py`, `dedup_thresholds.py` | build the answer key, score every condition, print the tables |
+| `layout_geometry.py`, `run_layout.py`, `results/layout_*.json` | experiment 4: the geometry, and the three Azure conditions with their scores |
 | `results/*.json` | the raw OCR of each condition, in page coordinates |
 | `ground_truth.json` | the 82 verified beam labels |
 | `summary.json`, `tile_sizes_summary.json`, `dedup_thresholds_summary.json` | the numbers in the tables above |
