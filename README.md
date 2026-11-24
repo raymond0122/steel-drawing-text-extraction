@@ -31,27 +31,46 @@ Duplicates and fragments created at tile edges, before and after merging:
 
 ## Quick start
 
+Install, with Python 3.10 or newer:
+
 ```bash
 git clone https://github.com/raymond0122/steel-drawing-text-extraction.git
 cd steel-drawing-text-extraction
-python -m venv .venv                           # Python 3.10 or newer
+python -m venv .venv
 source .venv/Scripts/activate                  # Git Bash on Windows; PowerShell: .venv\Scripts\Activate.ps1; macOS/Linux: source .venv/bin/activate
 pip install -e ".[dev]"                        # the app, plus pytest, ruff and mypy for development
+```
 
+### See it in the browser (start here)
+
+```bash
+uvicorn steel_text.web.server:app              # then open http://127.0.0.1:8000
+```
+
+The page runs the whole flow on the synthetic drawing as it opens, offline, with no API keys, and shows each step on the drawing: **1 Tiles**, **2 Raw OCR**, **3 Dedup** and **4 Labels**. Hover a box to see which tile read it and why dedup dropped it; scroll to zoom and drag to pan. Tick **Make OCR tile 1 fail** or **Make LLM batch 1 fail** and run again to see how a gap is shown. A second tab tries out the auth API call by call.
+
+![web UI](docs/web_ui.png)
+
+### Or on the command line
+
+```bash
 steel-demo                                     # offline: synthetic drawing, simulated OCR and LLM, no API keys
+```
+
+It prints a summary and writes an image per step, `labels.json`, `labels.xlsx` (a label list, not a bill of materials) and `dedup_log.txt` to `out/`. It exits with 1 when part of the page was not read or not checked. `python -m steel_text.demo` is the same command.
+
+### Live mode
+
+Live mode calls the real Azure and OpenAI services. Copy `.env.example` to `.env` in the repository root and fill in the keys. Then choose **Live** in the web UI, after **Log in** at the top right, and optionally upload a page image. Or run `steel-demo --live` for the synthetic drawing, or `steel-demo --live --image page.png` for your own page image.
+
+### Development
+
+```bash
 python -m pytest                               # 112 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
-uvicorn steel_text.web.server:app --reload     # web UI, then open http://127.0.0.1:8000
+uvicorn steel_text.web.server:app --reload     # the web UI, restarted on every code change
 ```
-
-The demo (`steel-demo`, or `python -m steel_text.demo`) writes an image per step, `labels.json`, `labels.xlsx` (a label list, not a bill of materials) and `dedup_log.txt` to `out/`.
-
-**Live mode** calls the real Azure and OpenAI services. Copy `.env.example` to `.env` in the repository root, fill in the keys, then run `steel-demo --live`, or `steel-demo --live --image page.png` for your own page image.
-
-The web UI runs the same flow in the browser and shows each step on the drawing: tiles, raw OCR, dedup decisions and labels. Its live runs need a login (**Log in** at the top right); offline runs need none. A second tab tries out the auth API call by call.
-
-![web UI](docs/web_ui.png)
 
 ## Key design decisions
 
