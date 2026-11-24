@@ -39,7 +39,7 @@ source .venv/Scripts/activate                  # Git Bash on Windows; PowerShell
 pip install -e ".[dev]"                        # the app, plus pytest, ruff and mypy for development
 
 steel-demo                                     # offline: synthetic drawing, simulated OCR and LLM, no API keys
-python -m pytest                               # 109 tests
+python -m pytest                               # 112 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # web UI, then open http://127.0.0.1:8000
@@ -70,7 +70,7 @@ Thresholds, retry rules and the web UI are described in [docs/DESIGN.md](docs/DE
 - **A tile that wasn't read can't be retried on its own.** Its area is marked, but reading it means running the whole page again.
 - **No jitter in the backoff.**
 - **LLM labels aren't validated** against a catalogue of standard steel sections.
-- **The tile size and the dedup thresholds were measured on one synthetic sheet only.** The sponsor's drawing–spreadsheet pairs are confidential, so every evaluation here uses synthetic drawings.
+- **The tile size, the dedup thresholds and the LLM batch size were measured on one synthetic sheet only,** the batch size with one model (gpt-4o). The sponsor's drawing–spreadsheet pairs are confidential, so every evaluation here uses synthetic drawings.
 - **Dedup can't tell a misreading from the correct reading** of the same label. Azure's text lines carry no confidence, so it keeps the longer one, which is sometimes the misreading.
 - **No review step.** The web UI shows the results but cannot correct or approve them.
 - **Tokens can't be revoked** (they are stateless), and passlib's default PBKDF2 iteration count is below current OWASP guidance.
@@ -100,6 +100,7 @@ src/steel_text/          one package, installed with pip install -e .
   web/                   local web UI: a FastAPI server, its response models, and the page (index.html, app.js, style.css)
 tests/                   unit tests, an offline end-to-end test, web API tests, and a check that the experiment still runs
 experiments/tiling/      the tiling experiment: tiles against a shrunk page, and tile sizes, measured with Azure
+experiments/llm_batch/   the LLM batch size experiment: OCR lines per request, measured with OpenAI
 docs/                    design notes and README images
 .github/                 CI: ruff, mypy and pytest on every push to main and every pull request
 pyproject.toml           dependencies, the steel-demo command, and the pytest, ruff and mypy settings

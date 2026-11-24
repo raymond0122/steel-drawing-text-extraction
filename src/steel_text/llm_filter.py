@@ -31,7 +31,9 @@ from .settings import DEFAULT_OPENAI_BASE_URL, DEFAULT_OPENAI_MODEL, Settings
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_BATCH_SIZE = 10  # OCR lines per request
+# OCR lines per request. On the test sheet 25 found every beam label in 5 runs of 5, while 10
+# missed up to 10 and 50 or more missed more (experiments/llm_batch).
+DEFAULT_BATCH_SIZE = 25
 MATERIAL_KINDS: tuple[str, ...] = ("HSS", "H", "L", "C", "Other")
 
 SCHEMA: dict[str, Any] = {

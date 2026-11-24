@@ -1,0 +1,746 @@
+{
+ "batch_size": 50,
+ "run": 3,
+ "model": "gpt-4o",
+ "lines": 464,
+ "batches": 10,
+ "requests": 10,
+ "seconds": 24.0,
+ "batch_ms": [
+  1615,
+  4249,
+  4352,
+  3945,
+  1512,
+  2906,
+  1036,
+  1399,
+  1052,
+  1058
+ ],
+ "failed_batches": [],
+ "input_tokens": 13860,
+ "output_tokens": 2253,
+ "entries": [
+  {
+   "id": "2",
+   "label": "L4X4X1/4",
+   "kind": "L",
+   "raw": "PROVIDE L4x4x1/4 EDGE ANGLES AT ALL FLOOR OPENINGS. COORDINATE OPENINGS WITH ARCH. AND MEP"
+  },
+  {
+   "id": "30",
+   "label": "L4X4X1/4",
+   "kind": "L",
+   "raw": "L4x4x1/4 EDGE ANGLE CONT. (TYP.)"
+  },
+  {
+   "id": "33",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44 GIRDER (BF-1), SEE PLAN"
+  },
+  {
+   "id": "37",
+   "label": "W12X79",
+   "kind": "Other",
+   "raw": "W12x79 COLUMN, SEE SCHEDULE"
+  },
+  {
+   "id": "64",
+   "label": "W12X53",
+   "kind": "Other",
+   "raw": "W12x53 COL. (PERIM.)"
+  },
+  {
+   "id": "68",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55 (36) c=11/4\""
+  },
+  {
+   "id": "69",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55 (36) c=11/4\""
+  },
+  {
+   "id": "70",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55 (36) c=11/4\""
+  },
+  {
+   "id": "71",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55 (36) c=11/4\""
+  },
+  {
+   "id": "72",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55 (36) c=11/4\""
+  },
+  {
+   "id": "73",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55 (36) c=11/4\""
+  },
+  {
+   "id": "74",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55 (36) c=11/4\""
+  },
+  {
+   "id": "75",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55 (36) c=11/4\""
+  },
+  {
+   "id": "80",
+   "label": "W16X31",
+   "kind": "Other",
+   "raw": "W16x31 (14) c=1/2\""
+  },
+  {
+   "id": "81",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "82",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "83",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "84",
+   "label": "W18X35",
+   "kind": "Other",
+   "raw": "W18x35 (24) c=3/4\""
+  },
+  {
+   "id": "85",
+   "label": "W12X65",
+   "kind": "Other",
+   "raw": "W12x65 COL. (INT.)"
+  },
+  {
+   "id": "86",
+   "label": "W18X35",
+   "kind": "Other",
+   "raw": "W18x35 (24) c=3/4\""
+  },
+  {
+   "id": "87",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "88",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "89",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "90",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "91",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "92",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "93",
+   "label": "W18X35",
+   "kind": "Other",
+   "raw": "W18x35 (24) c=3/4\""
+  },
+  {
+   "id": "94",
+   "label": "W18X35",
+   "kind": "Other",
+   "raw": "W18x35 (24) c=3/4\""
+  },
+  {
+   "id": "95",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (20) c=3/4\""
+  },
+  {
+   "id": "96",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) C=3/4\""
+  },
+  {
+   "id": "97",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "98",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "99",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "100",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "101",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "102",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "103",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21×44 (26) c=3/4\""
+  },
+  {
+   "id": "104",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (20) c=3/4\""
+  },
+  {
+   "id": "105",
+   "label": "W16X31",
+   "kind": "Other",
+   "raw": "W16x31 (14) c=1/2\""
+  },
+  {
+   "id": "106",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "107",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "108",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "109",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (16) c=1/2\""
+  },
+  {
+   "id": "110",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "111",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "112",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "113",
+   "label": "W18X40",
+   "kind": "Other",
+   "raw": "W18x40 (24) c=3/4\""
+  },
+  {
+   "id": "114",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "115",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44 (26) c=3/4\""
+  },
+  {
+   "id": "116",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "117",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "118",
+   "label": "W18X40",
+   "kind": "Other",
+   "raw": "W18x40 (24) c=3/4\""
+  },
+  {
+   "id": "121",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 (22) c=3/4\""
+  },
+  {
+   "id": "124",
+   "label": "HSS7X7X1/2",
+   "kind": "HSS",
+   "raw": "HSS7x7x1/2 (BF-2)"
+  },
+  {
+   "id": "125",
+   "label": "HSS6X6X3/8",
+   "kind": "HSS",
+   "raw": "HSS6x6x3/8 (BF-1)"
+  },
+  {
+   "id": "134",
+   "label": "W21X50",
+   "kind": "Other",
+   "raw": "W21x50 (30) c=1\""
+  },
+  {
+   "id": "135",
+   "label": "W21X50",
+   "kind": "Other",
+   "raw": "W21x50 (30) c=1\""
+  },
+  {
+   "id": "136",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44 (28) c=1\""
+  },
+  {
+   "id": "137",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44 (28) c=1\""
+  },
+  {
+   "id": "138",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21×44 (28) c=1\""
+  },
+  {
+   "id": "139",
+   "label": "W12X79",
+   "kind": "Other",
+   "raw": "W12×79 COL. (BF)"
+  },
+  {
+   "id": "140",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44 (28) c=1\""
+  },
+  {
+   "id": "141",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44 (28) c=1\""
+  },
+  {
+   "id": "142",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44 (28) c=1\""
+  },
+  {
+   "id": "143",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21×44 (28) c=1\""
+  },
+  {
+   "id": "144",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21×44 (28) c=1\""
+  },
+  {
+   "id": "146",
+   "label": "HSS6X6X3/8",
+   "kind": "HSS",
+   "raw": "HSS6x6x3/8 BRACE"
+  },
+  {
+   "id": "150",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44 SPANDREL"
+  },
+  {
+   "id": "152",
+   "label": "L3X3X1/4",
+   "kind": "L",
+   "raw": "L3x3x1/4 KICKER"
+  },
+  {
+   "id": "159",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55 GIRDER"
+  },
+  {
+   "id": "171",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26 BEAM"
+  },
+  {
+   "id": "172",
+   "label": "W16X31",
+   "kind": "Other",
+   "raw": "W16x31 (14)"
+  },
+  {
+   "id": "174",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21×44 (28)"
+  },
+  {
+   "id": "175",
+   "label": "W16X31",
+   "kind": "Other",
+   "raw": "W16x31 (14)"
+  },
+  {
+   "id": "177",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44 (28)"
+  },
+  {
+   "id": "184",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "185",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "186",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "187",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "189",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "190",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "191",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "192",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "193",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "194",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "195",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "196",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "197",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "198",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "199",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12 (6)"
+  },
+  {
+   "id": "206",
+   "label": "HSS7X7X1/2",
+   "kind": "HSS",
+   "raw": "HSS7x7x1/2"
+  },
+  {
+   "id": "207",
+   "label": "HSS6X6X3/8",
+   "kind": "HSS",
+   "raw": "HSS6x6x3/8"
+  },
+  {
+   "id": "247",
+   "label": "W14X120",
+   "kind": "H",
+   "raw": "W14x120"
+  },
+  {
+   "id": "260",
+   "label": "W10X49",
+   "kind": "Other",
+   "raw": "W10×49"
+  },
+  {
+   "id": "261",
+   "label": "W16X26",
+   "kind": "Other",
+   "raw": "W16x26"
+  },
+  {
+   "id": "262",
+   "label": "W12X53",
+   "kind": "Other",
+   "raw": "W12x53"
+  },
+  {
+   "id": "263",
+   "label": "W18X40",
+   "kind": "Other",
+   "raw": "W18x40"
+  },
+  {
+   "id": "264",
+   "label": "W10X12",
+   "kind": "Other",
+   "raw": "W10x12"
+  },
+  {
+   "id": "265",
+   "label": "W12X96",
+   "kind": "Other",
+   "raw": "W12x96"
+  },
+  {
+   "id": "267",
+   "label": "W16X31",
+   "kind": "Other",
+   "raw": "W16x31"
+  },
+  {
+   "id": "268",
+   "label": "W12X79",
+   "kind": "Other",
+   "raw": "W12×79"
+  },
+  {
+   "id": "269",
+   "label": "W18X35",
+   "kind": "Other",
+   "raw": "W18x35"
+  },
+  {
+   "id": "270",
+   "label": "W12X65",
+   "kind": "Other",
+   "raw": "W12x65"
+  },
+  {
+   "id": "271",
+   "label": "W12X65",
+   "kind": "Other",
+   "raw": "W12x65"
+  },
+  {
+   "id": "272",
+   "label": "W12X79",
+   "kind": "Other",
+   "raw": "W12x79"
+  },
+  {
+   "id": "273",
+   "label": "W24X55",
+   "kind": "Other",
+   "raw": "W24x55"
+  },
+  {
+   "id": "274",
+   "label": "W21X50",
+   "kind": "Other",
+   "raw": "W21x50"
+  },
+  {
+   "id": "275",
+   "label": "W12X53",
+   "kind": "Other",
+   "raw": "W12x53"
+  },
+  {
+   "id": "276",
+   "label": "W12X65",
+   "kind": "Other",
+   "raw": "W12x65"
+  },
+  {
+   "id": "277",
+   "label": "W12X19",
+   "kind": "Other",
+   "raw": "W12x19"
+  },
+  {
+   "id": "278",
+   "label": "W12X96",
+   "kind": "Other",
+   "raw": "W12x96"
+  },
+  {
+   "id": "279",
+   "label": "W12X79",
+   "kind": "Other",
+   "raw": "W12x79"
+  },
+  {
+   "id": "281",
+   "label": "W21X44",
+   "kind": "Other",
+   "raw": "W21x44"
+  },
+  {
+   "id": "354",
+   "label": "E70XX",
+   "kind": "Other",
+   "raw": "E70XX"
+  },
+  {
+   "id": "388",
+   "label": "BF-2",
+   "kind": "Other",
+   "raw": "BF-2"
+  },
+  {
+   "id": "391",
+   "label": "BF-2",
+   "kind": "Other",
+   "raw": "BF-2"
+  },
+  {
+   "id": "394",
+   "label": "BF-2",
+   "kind": "Other",
+   "raw": "BF-2"
+  },
+  {
+   "id": "400",
+   "label": "BF-1",
+   "kind": "Other",
+   "raw": "BF-1"
+  },
+  {
+   "id": "402",
+   "label": "BF-1",
+   "kind": "Other",
+   "raw": "BF-1"
+  },
+  {
+   "id": "403",
+   "label": "BF-1",
+   "kind": "Other",
+   "raw": "BF-1"
+  }
+ ]
+}

@@ -31,6 +31,11 @@ from .tiling import DEFAULT_MAX_TILES
 LIVE_OCR_REQUEST_SLEEP_S = 0.2
 LIVE_LLM_REQUEST_SLEEP_S = 0.1
 
+# OCR lines per LLM request offline. The live default, DEFAULT_BATCH_SIZE, was measured with the
+# real model. The rule-based stand-in labels the same at any size, and the synthetic drawing has
+# 21 lines: in batches of 10 it still shows several, and one of them can be made to fail.
+OFFLINE_BATCH_SIZE = 10
+
 
 class MissingCredentialsError(RuntimeError):
     """Live mode was requested, but the Azure or OpenAI settings are not in the environment."""
@@ -81,17 +86,20 @@ def run_pipeline(
     *,
     live: bool,
     max_tiles: int = DEFAULT_MAX_TILES,
-    batch_size: int = DEFAULT_BATCH_SIZE,
+    batch_size: int | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> PipelineResult:
     """Tiled OCR and dedup, then the LLM label filter.
 
     Requests are paced only in live mode; the offline stand-ins have no rate limit.
-    An OCR tile or an LLM batch that still fails after its retries is skipped and
-    recorded in the result (`ocr.failed_tiles`, `labels.failed_batches`), and the
-    rest of the page goes on. Only a page where no tile could be read raises
-    TileReadError.
+    Without a `batch_size`, LLM requests take DEFAULT_BATCH_SIZE lines live and
+    OFFLINE_BATCH_SIZE offline. An OCR tile or an LLM batch that still fails after
+    its retries is skipped and recorded in the result (`ocr.failed_tiles`,
+    `labels.failed_batches`), and the rest of the page goes on. Only a page where
+    no tile could be read raises TileReadError.
     """
+    if batch_size is None:
+        batch_size = DEFAULT_BATCH_SIZE if live else OFFLINE_BATCH_SIZE
     t0 = time.perf_counter()
     ocr = run_tiled_ocr(
         page,

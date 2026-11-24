@@ -117,6 +117,14 @@ def test_the_page_script_and_styles_are_served_with_their_types(client, name, me
     assert r.headers["cache-control"] == "no-cache"
 
 
+def test_the_batch_size_shown_on_the_page_is_the_servers_default(client):
+    from steel_text.llm_filter import DEFAULT_BATCH_SIZE
+    from steel_text.pipeline import OFFLINE_BATCH_SIZE
+
+    script = client.get("/static/app.js").text
+    assert f"const BATCH_SIZE_LIVE = '{DEFAULT_BATCH_SIZE}', BATCH_SIZE_OFFLINE = '{OFFLINE_BATCH_SIZE}';" in script
+
+
 @pytest.mark.parametrize("name", ["index.html", "server.py", "..%2Fserver.py"])
 def test_no_other_file_is_served(client, name):
     assert client.get(f"/static/{name}").status_code == 404

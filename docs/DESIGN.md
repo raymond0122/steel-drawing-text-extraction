@@ -124,7 +124,8 @@ A tile that still fails after all this is skipped and marked as not read (see [W
 
 - Uses the OpenAI Responses API with a **strict JSON schema**. The model returns only `{str_id, normalized_label, material_kind}`.
 - Boxes and raw text are joined back from the OCR results by ID. The model cannot invent a location: IDs that weren't in the batch, and repeats of an ID already labelled, are dropped.
-- Text is sent in batches. A batch that fails (an HTTP error or timeout its retries didn't fix, or an unparseable reply) is skipped, so one bad request doesn't lose the page. The page fails only if every batch fails.
+- Text is sent in batches of 25 lines in live mode. On the test sheet, 25 found all 82 beam labels in five runs of five, while 10 missed up to 10 and 50 or more missed more ([experiment](../experiments/llm_batch/README.md)). Offline, the synthetic drawing's 21 lines go 10 at a time, so it still shows several batches.
+- A batch that fails (an HTTP error or timeout its retries didn't fix, or an unparseable reply) is skipped, so one bad request doesn't lose the page. The page fails only if every batch fails.
 - The lines of a skipped batch were never checked and may hold labels, so, like a tile that wasn't read, they are carried into every output. The web UI draws them dashed and says which batch failed. The demo writes `not_checked.json`. The Excel file is titled "Labels (incomplete)" and gets a "Not checked" sheet listing each line with its text and box, so a reviewer can check them by hand.
 
 ## Settings (`steel_text/settings.py`)

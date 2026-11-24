@@ -11,6 +11,7 @@
   const dur = ms => (ms === undefined ? '' : ms < 1000 ? `${fmt(ms)} ms` : `${(ms / 1000).toFixed(1)} s`);
   const esc = s => String(s).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[ch]);
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const BATCH_SIZE_LIVE = '25', BATCH_SIZE_OFFLINE = '10'; // the server's defaults; tests/test_web.py checks they match
 
   function el(tag, attrs = {}, parent) {
     const n = document.createElementNS(NS, tag);
@@ -50,6 +51,8 @@
     $('#fail-wrap').hidden = live;
     $('#ocr-fail-wrap').hidden = live;
     $('#mode-note').hidden = live; // in live mode, the key and login status line below says what matters
+    // Left empty, the server uses its default for the mode: DEFAULT_BATCH_SIZE live, OFFLINE_BATCH_SIZE offline.
+    $('#batch-size').placeholder = live ? BATCH_SIZE_LIVE : BATCH_SIZE_OFFLINE;
     refreshLiveStatus();
   }
   document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', syncMode));

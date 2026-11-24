@@ -30,7 +30,7 @@ from .ocr_stage import TiledOcrResult
 from .ocr_types import TileReadError
 from .overlay import Preview, draw_boxes, draw_dedup_closeups, draw_not_read, draw_tile_grid
 from .page_image import PageTooLargeError, open_page
-from .pipeline import MissingCredentialsError, make_clients, run_pipeline
+from .pipeline import OFFLINE_BATCH_SIZE, MissingCredentialsError, make_clients, run_pipeline
 from .sample_drawing import GroundTruthText, check_truth, load_truth, save_sample
 from .settings import load_settings
 from .tiling import DEFAULT_MAX_TILES, TileLimitError
@@ -45,7 +45,11 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--live", action="store_true", help="call real Azure OCR and OpenAI")
     ap.add_argument("--image", type=Path, help="page image to process (live mode only)")
     ap.add_argument("--out", type=Path, default=Path("out"))
-    ap.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE, help="OCR lines per LLM request")
+    ap.add_argument(
+        "--batch-size",
+        type=int,
+        help=f"OCR lines per LLM request (default: {DEFAULT_BATCH_SIZE} live, {OFFLINE_BATCH_SIZE} offline)",
+    )
     ap.add_argument("--max-tiles", type=int, default=DEFAULT_MAX_TILES)
     ap.add_argument("--simulate-ocr-failure", action="store_true", help="offline only: make OCR tile 1 fail")
     ap.add_argument("--simulate-llm-failure", action="store_true", help="offline only: make LLM batch 1 fail")

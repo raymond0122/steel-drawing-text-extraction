@@ -32,7 +32,7 @@ from ..auth.main import get_settings as auth_settings
 from ..dedup import DedupDecision
 from ..geometry import BBox, region_around
 from ..label_sheet import XLSX_MIME, write_label_sheet
-from ..llm_filter import DEFAULT_BATCH_SIZE, NotChecked
+from ..llm_filter import NotChecked
 from ..ocr_types import OcrChunk, TileReadError
 from ..page_image import PageTooLargeError, open_page
 from ..pipeline import MissingCredentialsError, PipelineResult, make_clients, run_pipeline
@@ -140,7 +140,7 @@ def _run(
     settings: Settings,
     simulate_ocr_failure: bool,
     simulate_llm_failure: bool,
-    batch_size: int,
+    batch_size: int | None,
     max_tiles: int,
 ) -> RunResponse:
     """Load the page, pick the clients, run the pipeline, and answer with every step's result.
@@ -284,7 +284,7 @@ async def run(
     live: bool = False,
     simulate_ocr_failure: bool = False,
     simulate_llm_failure: bool = False,
-    batch_size: int = Query(DEFAULT_BATCH_SIZE, ge=1, le=200),
+    batch_size: int | None = Query(None, ge=1, le=200),  # None: the pipeline's default for the mode
     max_tiles: int = Query(DEFAULT_MAX_TILES, ge=1, le=100),
 ) -> RunResponse:
     """Body: optional raw image bytes (live mode only). Without one, the synthetic drawing is used."""

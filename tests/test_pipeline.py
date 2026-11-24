@@ -2,11 +2,12 @@
 
 import pytest
 
-from steel_text.llm_filter import LabelEntry
+from steel_text.llm_filter import DEFAULT_BATCH_SIZE, LabelEntry
 from steel_text.mock_clients import RuleBasedLabeler, SimulatedOcr
 from steel_text.pipeline import (
     LIVE_LLM_REQUEST_SLEEP_S,
     LIVE_OCR_REQUEST_SLEEP_S,
+    OFFLINE_BATCH_SIZE,
     MissingCredentialsError,
     make_clients,
     run_pipeline,
@@ -68,6 +69,16 @@ def test_live_mode_pauses_between_requests(drawing):
     n_tiles, n_batches = len(outcome.ocr.tiles), outcome.labels.batches
     assert n_tiles > 1 and n_batches > 1
     assert sleeps == [LIVE_OCR_REQUEST_SLEEP_S] * (n_tiles - 1) + [LIVE_LLM_REQUEST_SLEEP_S] * (n_batches - 1)
+
+
+def test_batch_size_defaults_to_the_measured_one_live_and_a_smaller_one_offline(drawing):
+    page, truth = drawing
+    offline = run_pipeline(page, *make_clients(False, truth), live=False)
+    live = run_pipeline(page, *make_clients(False, truth), live=True, sleep=lambda s: None)  # stand-ins, live sizes
+    assert max(map(len, offline.labels.batch_ids)) == OFFLINE_BATCH_SIZE < len(offline.ocr.merged)
+    assert offline.labels.batches > 1  # so the demo can show one batch skipped and the rest read
+    assert max(map(len, live.labels.batch_ids)) == min(DEFAULT_BATCH_SIZE, len(live.ocr.merged))
+    assert DEFAULT_BATCH_SIZE == 25  # measured in experiments/llm_batch
 
 
 def test_truth_check_reports_missing_and_unexpected_labels():
