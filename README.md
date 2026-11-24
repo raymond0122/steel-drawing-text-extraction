@@ -39,7 +39,7 @@ source .venv/Scripts/activate                  # Git Bash on Windows; PowerShell
 pip install -e ".[dev]"                        # the app, plus pytest, ruff and mypy for development
 
 steel-demo                                     # offline: synthetic drawing, simulated OCR and LLM, no API keys
-python -m pytest                               # 84 tests
+python -m pytest                               # 90 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # web UI, then open http://127.0.0.1:8000
@@ -59,7 +59,7 @@ The web UI runs the same flow in the browser and shows each step on the drawing:
 - **Overlapping tiles, sized by measurement.** Large drawings can exceed 10,000 px, the largest image Azure accepts, and shrinking them loses small text. Pages are cut into 3,500 px tiles at full resolution that overlap by 300 px, so text cut at one tile's edge is complete in its neighbour. On a test sheet, tiles up to 4,500 px read as well as smaller ones, and larger tiles read worse ([the numbers](docs/DESIGN.md#why-3500-px)).
 - **Duplicates and cut-off pieces from tile edges are merged.** Text in an overlap band is read by two tiles, and text crossing an edge can come back cut off: one tile reads `"SEE"` while its neighbour reads `"SEE NOTE 6"`. Dedup keeps one full reading of each text and logs why it dropped the others. Only text that two different tiles read, inside the area both cover, is compared, so a label printed twice stays twice.
 - **The LLM cannot invent locations.** Under a strict JSON schema it returns only an ID and a label. Boxes are joined back from the OCR results by ID, and IDs that weren't in the batch, or repeat, are dropped.
-- **Transient errors are retried; what still fails is skipped, and shown.** Azure calls retry on 429, 5xx and network errors, honouring `Retry-After` up to 60 s. An OCR tile or LLM batch that still fails is skipped, and the rest of the page goes on. A tile that wasn't read is hatched red in the web UI and the demo images and listed on a "Not read" sheet in the Excel file, so missing text can't pass for an empty area. Only a page where no tile can be read fails.
+- **Transient errors are retried; what still fails is skipped, and shown.** Azure and OpenAI calls retry on 429, 5xx and network errors, honouring `Retry-After` up to 60 s. OpenAI's 429 for a used-up quota is not retried, since waiting won't refill it. An OCR tile or LLM batch that still fails is skipped, and the rest of the page goes on. A tile that wasn't read is hatched red in the web UI and the demo images and listed on a "Not read" sheet in the Excel file. The lines of a skipped LLM batch are marked in the web UI and listed on a "Not checked" sheet. So missing text can't pass for an empty area, and the demo exits with code 1 when anything was skipped. Only a page where no tile can be read fails.
 - **Live runs need a login, and tokens can't be swapped.** Live mode spends API credit, so the web UI runs it only for a logged-in user, while the offline demo stays open. Access and refresh JWTs carry a `type` claim, so a refresh token can't stand in for an access token. Login gives the same error, in about the same time, for an unknown user and a wrong password.
 
 Thresholds, retry rules and the web UI are described in [docs/DESIGN.md](docs/DESIGN.md).
@@ -88,7 +88,7 @@ src/steel_text/          one package, installed with pip install -e .
   llm_filter.py          pick out the steel labels with the OpenAI API
   geometry.py            box helpers: IoU and overlap ratio
   ocr_types.py           the OCR data types the stages share
-  http.py                the slice of an HTTP client the Azure and OpenAI clients use, so tests and the web UI can stand in
+  http.py                the slice of an HTTP client the Azure and OpenAI clients use, and the retry and backoff they share
   settings.py            every setting the app reads, from the environment and .env
   page_image.py          open a page image, refusing one too large to decode
   label_sheet.py         write the labels to an Excel list

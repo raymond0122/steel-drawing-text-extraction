@@ -515,7 +515,8 @@
   // ---------- stats
   function xlsxName(d) {
     const base = d.source === 'upload' && state.fileName ? state.fileName.replace(/\.[^.]+$/, '') : 'synthetic_drawing';
-    return `${base}_labels${d.tiling.not_read.length ? '_incomplete' : ''}.xlsx`;
+    const incomplete = d.tiling.not_read.length || d.llm.batches.some(b => b.error);
+    return `${base}_labels${incomplete ? '_incomplete' : ''}.xlsx`;
   }
   const xlsxLink = (d, cls, text) => `<a class="${cls}" href="${d.labels_xlsx}" download="${esc(xlsxName(d))}">${text}</a>`;
 

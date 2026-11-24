@@ -68,10 +68,19 @@ def test_a_tile_that_fails_is_returned_as_not_read(client):
     assert excel.sheetnames == ["Labels (incomplete)", "Not read"]
 
 
-def test_simulated_llm_failure_is_reported_per_batch(client):
+def test_simulated_llm_failure_is_reported_per_batch_and_in_the_excel_file(client):
+    import base64
+    import io
+
+    from openpyxl import load_workbook
+
     d = client.post("/api/run", params={"simulate_llm_failure": True}).json()
     assert d["llm"]["ok"]
     assert [b for b, batch in enumerate(d["llm"]["batches"]) if batch["error"]] == [1]
+    excel = load_workbook(io.BytesIO(base64.b64decode(d["labels_xlsx"].split(",", 1)[1])))
+    assert excel.sheetnames == ["Labels (incomplete)", "Not checked"]
+    not_checked = [row[0] for row in excel["Not checked"].iter_rows(min_row=2, values_only=True)]
+    assert not_checked == d["llm"]["batches"][1]["ids"]
 
 
 def test_image_upload_needs_live_mode(client):

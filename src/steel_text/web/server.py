@@ -31,7 +31,7 @@ from ..auth.main import get_settings as auth_settings
 from ..dedup import DedupConfig
 from ..geometry import BBox, region_around
 from ..label_sheet import XLSX_MIME, write_label_sheet
-from ..llm_filter import DEFAULT_BATCH_SIZE, LabelExtractor
+from ..llm_filter import DEFAULT_BATCH_SIZE, LabelExtractor, NotChecked
 from ..ocr_types import OcrChunk, OcrLine, TileOcrClient, TileReadError
 from ..page_image import PageTooLargeError, open_page
 from ..pipeline import MissingCredentialsError, make_clients, run_pipeline
@@ -113,10 +113,12 @@ def _preview(page: Image.Image) -> str:
     return _png_data_url(page)
 
 
-def _xlsx_data_url(labels: Iterable[str], not_read: Sequence[tuple[int, BBox, str]]) -> str:
+def _xlsx_data_url(
+    labels: Iterable[str], not_read: Sequence[tuple[int, BBox, str]], not_checked: Sequence[NotChecked]
+) -> str:
     """The label sheet as a data URL, so the page can offer it as a download without a second request."""
     buf = io.BytesIO()
-    write_label_sheet(labels, buf, not_read=not_read)
+    write_label_sheet(labels, buf, not_read=not_read, not_checked=not_checked)
     return f"data:{XLSX_MIME};base64," + base64.b64encode(buf.getvalue()).decode("ascii")
 
 
@@ -251,7 +253,7 @@ def _run(
             for e in result.entries
         ],
         truth_check=check_truth(truth, result.entries) if truth is not None else None,
-        labels_xlsx=_xlsx_data_url((e.normalized_label for e in result.entries), ocr.not_read),
+        labels_xlsx=_xlsx_data_url((e.normalized_label for e in result.entries), ocr.not_read, result.not_checked),
         timings_ms=Timings(
             ocr=round(outcome.ocr_seconds * 1000),
             llm=round(outcome.llm_seconds * 1000),

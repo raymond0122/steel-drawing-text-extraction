@@ -7,6 +7,10 @@
     steel-demo --live --image page.png   # real services on your own image
 
 `python -m steel_text.demo` is the same command. Images and JSON are written to ./out.
+
+Exit code: 0 when the whole page was read and checked; 1 when the outputs were
+written but are incomplete, because an OCR tile was not read or an LLM batch was
+not checked; 2 when there is nothing to write.
 """
 
 from __future__ import annotations
@@ -64,6 +68,14 @@ def load_page(image: Path | None, out: Path) -> tuple[Image.Image, list[GroundTr
     return open_page(img_path), load_truth(truth_path)
 
 
+def write_gaps(path: Path, gaps: list[dict[str, object]]) -> None:
+    """Write the parts of the page that are missing from the results, or remove the file when there are none."""
+    if gaps:
+        path.write_text(json.dumps(gaps, indent=2), encoding="utf-8")
+    else:
+        path.unlink(missing_ok=True)  # don't leave a previous run's gaps next to a complete result
+
+
 def mark_not_read(img: Image.Image, ocr: TiledOcrResult) -> Image.Image:
     """Hatch the tiles OCR could not read; the image unchanged when every tile was read."""
     boxes = [box for _, box, _ in ocr.not_read]
@@ -80,23 +92,23 @@ def write_ocr_outputs(page: Image.Image, ocr: TiledOcrResult, out: Path) -> None
     if ocr.dedup_log:
         draw_dedup_closeups(page, ocr.raw, ocr.merged, ocr.dedup_log).save(out / "03b_dedup_closeups.png")
     (out / "dedup_log.txt").write_text("".join(f"{d}\n" for d in ocr.dedup_log), encoding="utf-8")
-
-    not_read = out / "not_read.json"
-    if ocr.not_read:
-        gaps = [{"tile": i, "box": list(box), "error": error} for i, box, error in ocr.not_read]
-        not_read.write_text(json.dumps(gaps, indent=2), encoding="utf-8")
-    else:
-        not_read.unlink(missing_ok=True)  # don't leave a previous run's gaps next to a complete result
+    write_gaps(out / "not_read.json", [{"tile": i, "box": list(box), "error": error} for i, box, error in ocr.not_read])
 
 
 def write_label_outputs(page: Image.Image, ocr: TiledOcrResult, result: FilterResult, out: Path) -> None:
-    """Labels drawn on the page, as JSON, and as an Excel list."""
+    """Labels drawn on the page, as JSON, and as an Excel list, plus the lines the LLM never checked."""
     label_boxes = ((e.bbox, f"{e.normalized_label} ({e.material_kind})") for e in result.entries)
     labels_img = draw_boxes(page, label_boxes, LABEL_COLOR, font_size=54)
     save_preview(mark_not_read(labels_img, ocr), out / "04_labels.png")
     labels = [asdict(e) for e in result.entries]
     (out / "labels.json").write_text(json.dumps(labels, indent=2), encoding="utf-8")
-    write_label_sheet((e.normalized_label for e in result.entries), out / "labels.xlsx", not_read=ocr.not_read)
+    write_label_sheet(
+        (e.normalized_label for e in result.entries),
+        out / "labels.xlsx",
+        not_read=ocr.not_read,
+        not_checked=result.not_checked,
+    )
+    write_gaps(out / "not_checked.json", [n._asdict() for n in result.not_checked])
 
 
 def print_summary(ocr: TiledOcrResult, result: FilterResult, truth: list[GroundTruthText] | None) -> None:
@@ -110,6 +122,11 @@ def print_summary(ocr: TiledOcrResult, result: FilterResult, truth: list[GroundT
     print(f"\nLLM batches: {result.batches}, failed: {len(result.failed_batches)}")
     for b, err in result.failed_batches:
         print(f"  - batch {b} skipped: {err}")
+    if result.not_checked:
+        print(
+            f"  ! {len(result.not_checked)} lines were never checked and may hold labels: "
+            "listed in not_checked.json and on the 'Not checked' sheet of labels.xlsx."
+        )
     print(f"Steel labels found: {len(result.entries)}")
     for e in result.entries:
         corrected = e.normalized_label != e.raw_text.replace(" ", "").upper()
@@ -173,7 +190,10 @@ def main() -> int:
 
     print_summary(outcome.ocr, outcome.labels, truth)
     print(f"\nImages and JSON written to {out.resolve()}")
-    return 0 if outcome.labels.ok else 1
+    if outcome.ocr.failed_tiles or outcome.labels.failed_batches:
+        print("INCOMPLETE: part of the page was not read or not checked (see above).")
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

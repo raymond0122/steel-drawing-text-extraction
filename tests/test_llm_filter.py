@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 import requests
 
-from steel_text.llm_filter import LlmCallError, OpenAIResponsesClient, filter_labels
+from steel_text.llm_filter import LlmCallError, NotChecked, OpenAIResponsesClient, filter_labels
 from steel_text.mock_clients import RuleBasedLabeler, match_section
 from steel_text.ocr_types import OcrChunk
 
@@ -63,6 +63,11 @@ def test_failed_batch_is_skipped_and_the_rest_still_processed():
     assert res.ok and res.batches == 3
     assert res.failed_batches == [(1, "HTTP 500")]
     assert [e.normalized_label for e in res.entries] == ["C50", "WT155*79"]
+    # the lines of the skipped batch are kept, so the outputs can show they may hold labels
+    assert res.not_checked == [
+        NotChecked("2", "W31OX39", (0, 100, 200, 150), "HTTP 500"),
+        NotChecked("3", "1200", (300, 100, 400, 150), "HTTP 500"),
+    ]
 
 
 def test_ids_from_another_batch_and_repeated_ids_are_dropped():
@@ -90,22 +95,25 @@ def test_all_batches_failing_marks_the_page_failed():
 
 
 class FakeSession:
-    def __init__(self, outcome):
-        self.outcome = outcome
-        self.payload: dict[str, Any] = {}
+    """Plays back the scripted outcomes in order: a response to return, or an exception to raise."""
+
+    def __init__(self, *outcomes):
+        self.outcomes = list(outcomes)
+        self.payloads: list[dict[str, Any]] = []
 
     def request(self, method, url, **kwargs):
         assert method == "POST"
-        self.payload = kwargs["json"]
-        if isinstance(self.outcome, Exception):
-            raise self.outcome
-        return self.outcome
+        self.payloads.append(kwargs["json"])
+        outcome = self.outcomes.pop(0)
+        if isinstance(outcome, Exception):
+            raise outcome
+        return outcome
 
 
 class FakeResponse:
-    def __init__(self, status, body):
+    def __init__(self, status, body, headers=None):
         self.status_code = status
-        self.headers = {"x-request-id": "req_1"}
+        self.headers = {"x-request-id": "req_1", **(headers or {})}
         self._body = body
         self.text = str(body)
 
@@ -117,27 +125,49 @@ def responses_body(obj):
     return {"output": [{"type": "message", "content": [{"type": "output_text", "text": json.dumps(obj)}]}]}
 
 
+def make_openai_client(session, sleeps):
+    return OpenAIResponsesClient("sk-test", session=session, sleep=sleeps.append)
+
+
+ITEMS = [{"id": "0", "raw_text": "CS0"}]
+REPLY = FakeResponse(200, responses_body({"entries": []}))
+
+
 def test_openai_client_sends_strict_schema_and_parses_reply():
-    fake = FakeSession(FakeResponse(200, responses_body({"entries": []})))
-    client = OpenAIResponsesClient("sk-test", session=fake)
-    assert client.extract([{"id": "0", "raw_text": "CS0"}]) == {"entries": []}
-    fmt = fake.payload["text"]["format"]
+    fake = FakeSession(REPLY)
+    assert make_openai_client(fake, []).extract(ITEMS) == {"entries": []}
+    fmt = fake.payloads[0]["text"]["format"]
     assert fmt["type"] == "json_schema" and fmt["strict"] is True
-    assert '"raw_text": "CS0"' in fake.payload["input"]
+    assert '"raw_text": "CS0"' in fake.payloads[0]["input"]
+
+
+def test_openai_client_retries_a_rate_limit_and_honours_retry_after():
+    sleeps: list[float] = []
+    rate_limited = FakeResponse(429, {"error": {"code": "rate_limit_exceeded"}}, {"Retry-After": "3"})
+    fake = FakeSession(rate_limited, FakeResponse(503, {"error": "overloaded"}), REPLY)
+    assert make_openai_client(fake, sleeps).extract(ITEMS) == {"entries": []}
+    assert sleeps == [3.0, 2.0]  # Retry-After, then the backoff after the second attempt
+    assert len(fake.payloads) == 3
 
 
 @pytest.mark.parametrize(
-    "outcome, message",
+    "outcome, attempts, message",
     [
-        (requests.Timeout("read timed out"), "network error"),
-        (FakeResponse(429, {"error": "rate limited"}), "HTTP 429"),
-        (FakeResponse(200, {"output": []}), "unparseable"),
+        (requests.Timeout("read timed out"), 5, "network error on all 5 attempts"),
+        (FakeResponse(429, {"error": {"code": "rate_limit_exceeded"}}), 5, "HTTP 429"),
+        (FakeResponse(503, {"error": "overloaded"}), 5, "HTTP 503"),
+        (FakeResponse(429, {"error": {"code": "insufficient_quota"}}), 1, "HTTP 429"),  # waiting won't refill it
+        (FakeResponse(401, {"error": {"code": "invalid_api_key"}}), 1, "HTTP 401"),
+        (FakeResponse(200, {"output": []}), 1, "unparseable"),
     ],
 )
-def test_openai_client_turns_every_failure_into_llm_call_error(outcome, message):
-    client = OpenAIResponsesClient("sk-test", session=FakeSession(outcome))
+def test_openai_client_turns_every_failure_into_llm_call_error(outcome, attempts, message):
+    sleeps: list[float] = []
+    fake = FakeSession(*[outcome] * attempts)  # one more request than scripted fails the test
     with pytest.raises(LlmCallError, match=message):
-        client.extract([{"id": "0", "raw_text": "CS0"}])
+        make_openai_client(fake, sleeps).extract(ITEMS)
+    assert len(fake.payloads) == attempts
+    assert sleeps == [1.0, 2.0, 4.0, 8.0][: attempts - 1]
 
 
 def test_mock_labeler_fixes_common_ocr_confusions():

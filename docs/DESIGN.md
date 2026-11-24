@@ -23,8 +23,9 @@ The demo writes these files to `out/`:
 | `labels.xlsx` | the same labels as an Excel list: one `Profile` column, one row per label found |
 | `dedup_log.txt` | why each chunk was dropped |
 | `not_read.json` | only when a tile could not be read: each such tile, its area and the error |
+| `not_checked.json` | only when an LLM batch failed: each line it held, which may be a label, with its box and the error |
 
-When a tile could not be read, its area is hatched red on `01` to `04`.
+When a tile could not be read, its area is hatched red on `01` to `04`. When either of the last two files is written, the demo exits with code 1: the outputs are there, but incomplete.
 
 ## Tiling (`steel_text/tiling.py`)
 
@@ -105,22 +106,24 @@ Both were checked on the full-size test sheet, by merging the saved OCR of all e
 
 Each decision in `dedup_log.txt` names the chunk that was dropped and the one kept in its place.
 
-## Retry and backoff (`steel_text/azure_ocr.py`)
+## Retry and backoff (`steel_text/http.py`)
 
-Azure Document Intelligence is asynchronous: you POST the image, receive a 202 with an `Operation-Location` URL, and poll that URL. Both the POST and the polling GETs retry on 429, on 500/502/503/504 and on network errors, with up to 5 attempts:
+Azure and OpenAI requests go through the same retry rule. Azure Document Intelligence is asynchronous: you POST the image, receive a 202 with an `Operation-Location` URL, and poll that URL. The OpenAI call is a single POST. Every request, Azure's polling GETs included, retries on 429, on 500/502/503/504 and on network errors, with up to 5 attempts:
 
 - **When the server sends `Retry-After`** (in seconds): wait that long, but at most 60 s. A longer wait, such as a quota window, isn't worth holding a request for.
 - **Otherwise:** exponential backoff of 1, 2, 4, 8 s, capped at 30 s.
 - **Other 4xx errors** (for example 401, or 404 for an unknown operation): fail immediately, on the POST and while polling, because retrying won't help.
+- **OpenAI's 429 for a used-up quota** (error code `insufficient_quota`): fails immediately too. Unlike a rate limit, it lasts until the billing changes, so retrying would only add 15 s of waiting to every batch.
 - **Polling gives up** when every attempt of a poll request fails with a network error, or when the 5-minute poll timeout passes. The timeout is checked after each request as well, since a request's retries can take a while.
 
-A tile that still fails after all this is skipped and marked as not read (see [When a tile can't be read](#when-a-tile-cant-be-read)).
+A tile that still fails after all this is skipped and marked as not read (see [When a tile can't be read](#when-a-tile-cant-be-read)). An LLM batch that still fails is skipped and its lines are marked as not checked (see [LLM label filter](#llm-label-filter-steel_textllm_filterpy)).
 
 ## LLM label filter (`steel_text/llm_filter.py`)
 
 - Uses the OpenAI Responses API with a **strict JSON schema**. The model returns only `{str_id, normalized_label, material_kind}`.
 - Boxes and raw text are joined back from the OCR results by ID. The model cannot invent a location: IDs that weren't in the batch, and repeats of an ID already labelled, are dropped.
-- Text is sent in batches. A failed batch (HTTP error, timeout, unparseable reply) is logged and skipped, so one bad request doesn't lose the page. The page fails only if every batch fails.
+- Text is sent in batches. A batch that fails (an HTTP error or timeout its retries didn't fix, or an unparseable reply) is skipped, so one bad request doesn't lose the page. The page fails only if every batch fails.
+- The lines of a skipped batch were never checked and may hold labels, so, like a tile that wasn't read, they are carried into every output. The web UI draws them dashed and says which batch failed. The demo writes `not_checked.json`. The Excel file is titled "Labels (incomplete)" and gets a "Not checked" sheet listing each line with its text and box, so a reviewer can check them by hand.
 
 ## Settings (`steel_text/settings.py`)
 
@@ -170,4 +173,4 @@ In live mode, the page shows which keys it found in `.env`, by name only, never 
 
 ## Excel label list (`steel_text/label_sheet.py`)
 
-The Excel file has only the `Profile` column, plus a "Not read" sheet when a tile could not be read. It is a label list, not a bill of materials: lengths and quantities would need member geometry and label-to-member linking, which are not in this repository, and a label count is not a member count either, since one label can point at several members.
+The Excel file has only the `Profile` column, plus a "Not read" sheet when a tile could not be read and a "Not checked" sheet when an LLM batch failed. It is a label list, not a bill of materials: lengths and quantities would need member geometry and label-to-member linking, which are not in this repository, and a label count is not a member count either, since one label can point at several members.

@@ -5,9 +5,8 @@ The API is asynchronous:
   2. GET that URL     -> poll until status is "succeeded" or "failed"
 
 Both steps retry on 429 (rate limited), transient 5xx errors and network
-exceptions. A Retry-After header is honoured, up to 60 s; otherwise the wait
-doubles each time (1, 2, 4, 8 ... seconds, capped at 30). Any other 4xx fails
-at once, while submitting or polling, because retrying won't fix it.
+exceptions, with the rules in steel_text/http.py. Any other 4xx fails at once,
+while submitting or polling, because retrying won't fix it.
 """
 
 from __future__ import annotations
@@ -22,16 +21,12 @@ import requests
 from PIL import Image
 
 from .geometry import poly_to_bbox
-from .http import HttpResponse, HttpSession
+from .http import DEFAULT_MAX_ATTEMPTS, HttpResponse, HttpSession, is_retry_status, send_with_retry
 from .ocr_types import OcrLine, TileReadError
 from .settings import Settings
 from .tiling import Tile
 
 logger = logging.getLogger(__name__)
-
-TRANSIENT_STATUS = (500, 502, 503, 504)
-MAX_BACKOFF_S = 30.0
-MAX_RETRY_AFTER_S = 60.0  # a longer Retry-After (a quota window) isn't worth holding a request for
 
 
 class AzureOcrError(TileReadError):
@@ -46,7 +41,7 @@ class AzureReadClient:
         *,
         model_id: str = "prebuilt-read",
         api_version: str = "2024-11-30",
-        max_attempts: int = 5,
+        max_attempts: int = DEFAULT_MAX_ATTEMPTS,
         post_timeout_s: float = 60.0,
         get_timeout_s: float = 30.0,
         poll_interval_s: float = 2.0,
@@ -97,37 +92,8 @@ class AzureReadClient:
 
     # -- internals --------------------------------------------------------------
 
-    def _wait_time(self, resp: HttpResponse | None, attempt: int) -> float:
-        """The server's Retry-After (in seconds, up to 60) if it sent one, otherwise exponential backoff."""
-        retry_after = resp.headers.get("Retry-After", "").strip() if resp is not None else ""
-        if retry_after.isdigit():
-            return min(MAX_RETRY_AFTER_S, float(retry_after))
-        return min(MAX_BACKOFF_S, 2.0**attempt)
-
     def _send_with_retry(self, method: str, url: str, **kwargs: Any) -> HttpResponse | None:
-        """Send one request, retrying 429 / 5xx / network errors.
-
-        Returns the last response (which may still be an error status), or
-        None if every attempt raised a network exception.
-        """
-        resp: HttpResponse | None = None
-        for attempt in range(self.max_attempts):
-            try:
-                resp = self.session.request(method, url, **kwargs)
-            except requests.RequestException as e:
-                resp = None
-                reason = f"network error: {e}"
-            else:
-                if resp.status_code != 429 and resp.status_code not in TRANSIENT_STATUS:
-                    return resp
-                reason = f"HTTP {resp.status_code}"
-
-            if attempt == self.max_attempts - 1:
-                break
-            wait = self._wait_time(resp, attempt)
-            logger.warning("%s %s, retry %d/%d in %.1fs", method, reason, attempt + 1, self.max_attempts - 1, wait)
-            self.sleep(wait)
-        return resp
+        return send_with_retry(self.session, method, url, max_attempts=self.max_attempts, sleep=self.sleep, **kwargs)
 
     def _submit(self, image_bytes: bytes) -> str:
         resp = self._send_with_retry(
@@ -170,7 +136,7 @@ class AzureReadClient:
                     return body
                 if status in ("failed", "canceled"):
                     raise AzureOcrError(f"analysis {status}: {str(body)[:300]}")
-            elif resp.status_code == 429 or resp.status_code in TRANSIENT_STATUS:
+            elif is_retry_status(resp):
                 logger.warning("GET poll still returned HTTP %d after retries, will keep polling", resp.status_code)
             else:
                 # 4xx (bad key, unknown operation...) won't fix itself: fail now, not at the poll timeout.

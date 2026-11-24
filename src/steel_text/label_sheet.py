@@ -25,16 +25,18 @@ def write_label_sheet(
     target: str | Path | BinaryIO,
     *,
     not_read: Sequence[tuple[int, BBox, str]] = (),
+    not_checked: Sequence[tuple[str, str, BBox, str]] = (),
 ) -> None:
     """One row per label found, so a label printed twice appears twice. Sorted so repeats sit together.
 
-    `not_read` lists the tiles OCR could not read (tile index, box, error). Then the
-    label sheet is titled "Labels (incomplete)" and a "Not read" sheet gives each
-    missing area, so the file can't pass for a complete list.
+    `not_read` lists the tiles OCR could not read (tile index, box, error), and
+    `not_checked` the OCR lines the LLM never checked because their batch failed
+    (line ID, text, box, error). Either makes the label sheet "Labels (incomplete)"
+    and adds a sheet listing the gap, so the file can't pass for a complete list.
     """
     wb = Workbook()
     ws = wb.worksheets[0]  # a new workbook has exactly one sheet
-    ws.title = "Labels (incomplete)" if not_read else "Labels"
+    ws.title = "Labels (incomplete)" if not_read or not_checked else "Labels"
     ws.append(["Profile"])
     ws["A1"].font = Font(bold=True)
     for row, label in enumerate(sorted(labels), start=2):
@@ -44,13 +46,29 @@ def write_label_sheet(
     ws.freeze_panes = "A2"  # keep the header visible while scrolling
 
     if not_read:
-        gaps = wb.create_sheet("Not read")
-        gaps.append(["Tile", "x0", "y0", "x1", "y1", "Error"])
-        for cell in gaps[1]:
-            cell.font = Font(bold=True)
-        for row, (tile, box, error) in enumerate(not_read, start=2):
-            for col, value in enumerate((tile, *box), start=1):
-                gaps.cell(row=row, column=col, value=value)
-            gaps.cell(row=row, column=6, value=error).data_type = "s"
-        gaps.column_dimensions["F"].width = 80
+        tiles = [(tile, *box, error) for tile, box, error in not_read]
+        _add_gap_sheet(wb, "Not read", ("Tile", "x0", "y0", "x1", "y1", "Error"), tiles, {"F": 80})
+    if not_checked:
+        lines = [(line, text, *box, error) for line, text, box, error in not_checked]
+        _add_gap_sheet(wb, "Not checked", ("Line", "Text", "x0", "y0", "x1", "y1", "Error"), lines, {"B": 40, "G": 80})
     wb.save(target)
+
+
+def _add_gap_sheet(
+    wb: Workbook,
+    title: str,
+    header: Sequence[str],
+    rows: Iterable[Sequence[str | int]],
+    widths: dict[str, int],
+) -> None:
+    ws = wb.create_sheet(title)
+    ws.append(list(header))
+    for cell in ws[1]:
+        cell.font = Font(bold=True)
+    for r, values in enumerate(rows, start=2):
+        for c, value in enumerate(values, start=1):
+            cell = ws.cell(row=r, column=c, value=value)
+            if isinstance(value, str):
+                cell.data_type = "s"  # OCR text or an error starting with "=" must not become a formula
+    for column, width in widths.items():
+        ws.column_dimensions[column].width = width

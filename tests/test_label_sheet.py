@@ -40,3 +40,21 @@ def test_areas_not_read_mark_the_file_incomplete():
         ("Tile", "x0", "y0", "x1", "y1", "Error"),
         (1, 3200, 0, 6700, 3500, "HTTP 500"),
     ]
+
+
+def test_lines_the_llm_never_checked_mark_the_file_incomplete():
+    buf = io.BytesIO()
+    not_checked = [
+        ("4", "W31OX39", (0, 100, 200, 150), "HTTP 500"),
+        ("5", "=SUM(A1)", (0, 200, 90, 250), "HTTP 500"),
+    ]
+    write_label_sheet(["C50"], buf, not_checked=not_checked)
+    wb = load_workbook(buf)
+    assert wb.sheetnames == ["Labels (incomplete)", "Not checked"]
+    sheet = wb["Not checked"]
+    assert list(sheet.iter_rows(values_only=True)) == [
+        ("Line", "Text", "x0", "y0", "x1", "y1", "Error"),
+        ("4", "W31OX39", 0, 100, 200, 150, "HTTP 500"),
+        ("5", "=SUM(A1)", 0, 200, 90, 250, "HTTP 500"),
+    ]
+    assert sheet["B3"].data_type == "s"  # OCR text starting with "=" stays text, not a formula
