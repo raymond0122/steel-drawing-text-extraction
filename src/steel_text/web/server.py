@@ -28,7 +28,6 @@ from PIL import Image
 from ..auth.main import app as auth_app
 from ..auth.main import bearer, current_user
 from ..auth.main import get_settings as auth_settings
-from ..dedup import DedupConfig
 from ..geometry import BBox, region_around
 from ..label_sheet import XLSX_MIME, write_label_sheet
 from ..llm_filter import DEFAULT_BATCH_SIZE, LabelExtractor, NotChecked
@@ -243,7 +242,7 @@ def _run(
         ),
         raw=[_chunk(c) for c in ocr.raw],
         merged=[MergedChunk(id=str(i), **_chunk(c).model_dump()) for i, c in enumerate(ocr.merged)],
-        dedup=DedupInfo(config=DedupConfig(), decisions=decisions),
+        dedup=DedupInfo(config=ocr.dedup_config, decisions=decisions),
         llm=LlmInfo(
             ok=result.ok,
             batches=[LlmBatch(ids=ids, error=errors.get(b)) for b, ids in enumerate(result.batch_ids)],

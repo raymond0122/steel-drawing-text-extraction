@@ -21,6 +21,7 @@ from .ocr_types import OcrChunk
 TILE_COLORS = [(230, 57, 70), (29, 120, 116), (69, 123, 157), (244, 162, 97), (131, 56, 236), (42, 157, 143)]
 NOT_READ_COLOR = (198, 40, 40)  # red, as in the web UI
 PREVIEW_MAX_SIDE = 3000  # full-size 9,000 px PNGs are slow to write and to open
+MAX_CLOSEUPS = 40  # dedup decisions drawn in the close-up panel
 
 
 @dataclass(frozen=True)
@@ -125,11 +126,17 @@ def draw_dedup_closeups(
     decisions: Sequence[DedupDecision],
     *,
     pad: int = 120,
+    max_rows: int = MAX_CLOSEUPS,
 ) -> Image.Image:
-    """One row per dedup decision: raw OCR boxes (coloured by tile) on the left, the merged result on the right."""
+    """One row per dedup decision: raw OCR boxes (coloured by tile) on the left, the merged result on the right.
+
+    At most `max_rows` rows: a 14,400 px page has over 200 decisions, which made a panel
+    83,000 px tall. A line at the bottom counts the rest, which are all in dedup_log.txt.
+    """
+    shown, rest = decisions[:max_rows], len(decisions) - max_rows
     panel_w, cell_w, cell_h, cap_h, gap = 1900, 860, 230, 92, 36
     title_font, font = load_font(34), load_font(25)
-    height = 90 + len(decisions) * (cell_h + cap_h + gap)
+    height = 90 + len(shown) * (cell_h + cap_h + gap) + (60 if rest > 0 else 0)
     panel = Image.new("RGB", (panel_w, height), "white")
     draw = ImageDraw.Draw(panel)
     draw.text(
@@ -137,7 +144,7 @@ def draw_dedup_closeups(
     )
 
     y = 90
-    for n, d in enumerate(decisions, 1):
+    for n, d in enumerate(shown, 1):
         region = region_around(d.kept.bbox, d.dropped.bbox, pad, page.width, page.height)
         before_chunks = [c for c in raw if intersection_area(c.bbox, region) > 0]
         after_chunks = [c for c in merged if intersection_area(c.bbox, region) > 0]
@@ -167,4 +174,7 @@ def draw_dedup_closeups(
             font=font,
         )
         y += cell_h + cap_h + gap
+    if rest > 0:
+        note = f"... and {rest} more, not drawn. Every decision is in dedup_log.txt."
+        draw.text((30, y), note, fill="black", font=font)
     return panel

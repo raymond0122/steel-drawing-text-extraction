@@ -4,6 +4,7 @@ import pytest
 from PIL import Image
 
 from steel_text.azure_ocr import AzureOcrError
+from steel_text.dedup import DedupConfig
 from steel_text.mock_clients import SimulatedOcr
 from steel_text.ocr_stage import run_tiled_ocr
 from steel_text.ocr_types import TileReadError
@@ -28,6 +29,16 @@ def test_a_failed_tile_is_recorded_and_the_other_tiles_are_still_read():
 def test_a_page_where_no_tile_can_be_read_fails():
     with pytest.raises(TileReadError, match="no tile could be read"):
         run_tiled_ocr(PAGE, SimulatedOcr(TRUTH, fail_calls={0, 1}), tiling=TWO_TILES)
+
+
+def test_the_dedup_thresholds_used_are_applied_and_recorded():
+    in_band = [GroundTruthText("TYP.", "TYP.", (830, 300, 960, 350), None)]  # read whole by both tiles
+    default = run_tiled_ocr(PAGE, SimulatedOcr(in_band), tiling=TWO_TILES)
+    assert [c.text for c in default.merged] == ["TYP."] and default.dedup_config == DedupConfig()
+
+    never = DedupConfig(iou=1.01, overlap_min=1.01)  # no pair can reach these
+    kept_twice = run_tiled_ocr(PAGE, SimulatedOcr(in_band), tiling=TWO_TILES, dedup=never)
+    assert [c.text for c in kept_twice.merged] == ["TYP.", "TYP."] and kept_twice.dedup_config == never
 
 
 def test_an_azure_error_counts_as_a_failed_tile():

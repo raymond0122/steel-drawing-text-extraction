@@ -595,11 +595,16 @@
   const tagAbove = (g, b, text, color, k) => tag(g, b[0] - 4 * k, b[1] - 4 * k - (18 * k) - 2 * k, text, color, k);
   const tagBelow = (g, b, text, color, k) => tag(g, b[0] - 4 * k, b[3] + 6 * k, text, color, k);
 
+  // The view width the layer was last drawn for. Box padding and tag sizes depend only on
+  // the zoom, so a pan moves the view without drawing the layer again.
+  let drawnForWidth = null;
+
   function renderLayer() {
     const d = state.data;
     const g = $('#layer');
     if (!d || !g || !svg.clientWidth) return;
     g.replaceChildren();
+    drawnForWidth = state.vb.w;
     const k = scale();
     const zoomedIn = k < 4;
     const tiles = d.tiling.tiles;
@@ -677,7 +682,7 @@
   function applyVB() {
     const v = state.vb;
     svg.setAttribute('viewBox', `${v.x} ${v.y} ${v.w} ${v.h}`);
-    renderLayer();
+    if (v.w !== drawnForWidth) renderLayer(); // a zoom; a pan keeps the width
   }
   function setVB(v) { state.vb = clampVB(v); applyVB(); }
 
@@ -710,6 +715,7 @@
     w = Math.max(w, h * W / H);
     h = w * H / W;
     state.focus = b;
+    renderLayer(); // the outline moves even when the zoom stays the same
     animateTo({ x: (b[0] + b[2]) / 2 - w / 2, y: (b[1] + b[3]) / 2 - h / 2, w });
   }
 
@@ -758,7 +764,7 @@
   stage.addEventListener('dblclick', fit);
   $('#zoom-in').addEventListener('click', () => state.data && zoomBy(0.7));
   $('#zoom-out').addEventListener('click', () => state.data && zoomBy(1 / 0.7));
-  $('#zoom-fit').addEventListener('click', () => { state.focus = null; fit(); });
+  $('#zoom-fit').addEventListener('click', () => { state.focus = null; renderLayer(); fit(); });
   new ResizeObserver(() => renderLayer()).observe(svg);
 
   // ---------- side panel

@@ -135,6 +135,28 @@ def test_client_error_while_polling_fails_at_once():
     assert session.calls == ["POST", "GET"] and sleeps == []  # no 5-minute wait for the poll timeout
 
 
+class NotJsonResponse(FakeResponse):
+    def json(self):
+        raise ValueError("Expecting value: line 1 column 1")
+
+
+@pytest.mark.parametrize(
+    "reply",
+    [
+        NotJsonResponse(200, body="<html>gateway</html>"),
+        FakeResponse(200, body=["not", "an", "object"]),
+        FakeResponse(200, body={"no": "status"}),
+        FakeResponse(200, body={"status": "skipped"}),
+    ],
+)
+def test_unreadable_poll_reply_fails_at_once(reply):
+    sleeps: list[float] = []
+    session = FakeSession(post=[ACCEPTED], get=[reply])
+    with pytest.raises(AzureOcrError, match="unexpected poll reply"):
+        make_client(session, sleeps).analyze(b"png")
+    assert session.calls == ["POST", "GET"] and sleeps == []  # no 5-minute wait for the poll timeout
+
+
 def test_network_errors_on_every_poll_attempt_fail_the_tile():
     sleeps: list[float] = []
     session = FakeSession(post=[ACCEPTED], get=[requests.ConnectionError("reset")] * 5)

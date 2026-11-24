@@ -125,17 +125,21 @@ class AzureReadClient:
             if resp is None:
                 raise AzureOcrError(f"GET poll failed after {self.max_attempts} attempts (network errors)")
             if resp.status_code == 200:
+                # A reply that isn't a JSON object with a known status won't turn into a result
+                # by polling again: fail now, not at the poll timeout.
                 try:
                     body = resp.json()
                 except ValueError:
-                    body = {}
+                    body = None
                 if not isinstance(body, dict):
-                    body = {}
+                    raise AzureOcrError(f"unexpected poll reply: {resp.text[:300]}")
                 status = str(body.get("status", "")).lower()
                 if status == "succeeded":
                     return body
                 if status in ("failed", "canceled"):
                     raise AzureOcrError(f"analysis {status}: {str(body)[:300]}")
+                if status not in ("notstarted", "running"):
+                    raise AzureOcrError(f"unexpected poll reply: {resp.text[:300]}")
             elif is_retry_status(resp):
                 logger.warning("GET poll still returned HTTP %d after retries, will keep polling", resp.status_code)
             else:

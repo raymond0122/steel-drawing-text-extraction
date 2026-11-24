@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 
 from PIL import Image
 
-from .dedup import DedupDecision, merge_tile_results
+from .dedup import DedupConfig, DedupDecision, merge_tile_results
 from .geometry import BBox
 from .ocr_types import OcrChunk, TileOcrClient, TileReadError
 from .tiling import DEFAULT_MAX_TILES, Tile, TilingChoice, choose_tiling, make_tiles
@@ -27,6 +27,7 @@ class TiledOcrResult:
     merged: list[OcrChunk]
     dedup_log: list[DedupDecision] = field(default_factory=list)
     failed_tiles: list[tuple[int, str]] = field(default_factory=list)  # (tile index, error)
+    dedup_config: DedupConfig = field(default_factory=DedupConfig)  # the thresholds `merged` was made with
 
     @property
     def not_read(self) -> list[tuple[int, BBox, str]]:
@@ -40,6 +41,7 @@ def run_tiled_ocr(
     *,
     max_tiles: int = DEFAULT_MAX_TILES,
     tiling: TilingChoice | None = None,
+    dedup: DedupConfig = DedupConfig(),
     min_chars: int = 2,
     request_sleep_s: float = 0.0,
     sleep: Callable[[float], None] = time.sleep,
@@ -86,6 +88,6 @@ def run_tiled_ocr(
         raise TileReadError(f"no tile could be read; the first error: {failed[0][1]}")
 
     log: list[DedupDecision] = []
-    merged = merge_tile_results(raw, tiles, log=log)
+    merged = merge_tile_results(raw, tiles, cfg=dedup, log=log)
     logger.info("dedup: %d raw -> %d merged (removed %d)", len(raw), len(merged), len(raw) - len(merged))
-    return TiledOcrResult(width, height, tiling, tiles, raw, merged, log, failed)
+    return TiledOcrResult(width, height, tiling, tiles, raw, merged, log, failed, dedup)

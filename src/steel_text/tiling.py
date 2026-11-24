@@ -38,29 +38,25 @@ class TilingChoice(NamedTuple):
 
 
 def make_tiles(width: int, height: int, *, tile_size: int, overlap: int) -> list[Tile]:
-    """Cover the whole image with tile_size squares that overlap by `overlap` px.
+    """Cover the whole image with tile_size squares that overlap by at least `overlap` px.
 
-    Tiles at the right/bottom edge are shifted back inside the image instead of
-    being cut short, so every tile keeps the full tile size when possible.
+    Row by row, left to right. The last tile on each side is moved back to end at
+    the image edge instead of being cut short, so every tile keeps the full tile
+    size when the image allows; it then overlaps its neighbour by more than `overlap`.
     """
     if tile_size <= 0 or not 0 <= overlap < tile_size:
         raise ValueError("need tile_size > 0 and 0 <= overlap < tile_size")
     stride = tile_size - overlap
+    xs = _tile_starts(width, tile_size, stride)
+    ys = _tile_starts(height, tile_size, stride)
+    return [Tile(x, y, min(x + tile_size, width), min(y + tile_size, height)) for y in ys for x in xs]
 
-    tiles: list[Tile] = []
-    seen = set()
-    for y0 in range(0, max(1, height), stride):
-        for x0 in range(0, max(1, width), stride):
-            x1, y1 = x0 + tile_size, y0 + tile_size
-            if x1 > width:
-                x1, x0 = width, max(0, width - tile_size)
-            if y1 > height:
-                y1, y0 = height, max(0, height - tile_size)
-            key = (x0, y0, x1, y1)
-            if key not in seen:  # small images can produce the same tile twice
-                seen.add(key)
-                tiles.append(Tile(*key))
-    return tiles
+
+def _tile_starts(side: int, tile_size: int, stride: int) -> list[int]:
+    """Where the tiles along one side start: every `stride` px, plus one that ends at the edge."""
+    if side <= tile_size:
+        return [0]  # one tile covers the side; it is cut to the side's length
+    return [*range(0, side - tile_size, stride), side - tile_size]
 
 
 def choose_tiling(width: int, height: int, *, max_tiles: int = DEFAULT_MAX_TILES) -> TilingChoice:

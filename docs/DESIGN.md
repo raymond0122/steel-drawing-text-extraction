@@ -18,7 +18,7 @@ The demo writes these files to `out/`:
 | `01_tile_grid.png` | how the page was tiled (overlap bands are darker) |
 | `02_raw_ocr.png` | every OCR line from every tile, before merging |
 | `03_merged_ocr.png` | after dedup |
-| `03b_dedup_closeups.png` | each dedup decision, before and after |
+| `03b_dedup_closeups.png` | the first 40 dedup decisions, before and after (every one is in `dedup_log.txt`) |
 | `04_labels.png`, `labels.json` | steel labels found by the LLM step, with kind and box |
 | `labels.xlsx` | the same labels as an Excel list: one `Profile` column, one row per label found |
 | `dedup_log.txt` | why each chunk was dropped |
