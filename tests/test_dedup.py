@@ -21,7 +21,9 @@ def texts(chunks):
 def test_exact_duplicate_from_two_tiles_is_merged():
     a = OcrChunk("HSS152X152X9.5", (5650, 1500, 6270, 1580), tile_index=1)
     b = OcrChunk("HSS152X152X9.5", (5651, 1499, 6269, 1581), tile_index=2)
-    assert texts(merge_tile_results([a, b], TILES)) == ["HSS152X152X9.5"]
+    log: list[DedupDecision] = []
+    assert texts(merge_tile_results([a, b], TILES, log=log)) == ["HSS152X152X9.5"]
+    assert log[0].reason.startswith("same text, same place")
 
 
 def test_left_fragment_is_dropped():
@@ -58,8 +60,16 @@ def test_different_text_close_together_is_kept():
 
 def test_label_printed_twice_in_one_tile_stays_twice():
     a = OcrChunk("W310X39", (100, 100, 410, 160), tile_index=0)
-    b = OcrChunk("W310X39", (100, 175, 410, 235), tile_index=0)  # centres 75 px apart
+    b = OcrChunk("W310X39", (100, 175, 410, 235), tile_index=0)  # just below the first
     assert texts(merge_tile_results([a, b], TILES)) == ["W310X39", "W310X39"]
+
+
+def test_equal_values_in_neighbouring_table_rows_are_not_merged():
+    # Two "10"s in rows 75 px apart, inside the shared area, and each tile read only one of them:
+    # they share no area, so they are two printed texts, not one read twice.
+    upper = OcrChunk("10", (3250, 1000, 3290, 1030), tile_index=0)
+    lower = OcrChunk("10", (3250, 1075, 3290, 1105), tile_index=1)
+    assert texts(merge_tile_results([upper, lower], TILES)) == ["10", "10"]
 
 
 def test_short_label_next_to_a_longer_one_is_kept():

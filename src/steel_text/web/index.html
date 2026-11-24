@@ -77,6 +77,13 @@
     border: 0; background: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; color: var(--muted); font-weight: 500;
   }
   .tabs button[aria-selected="true"] { background: var(--surface); color: var(--text); box-shadow: var(--shadow); }
+  .top-right { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+  .account { position: relative; display: flex; align-items: center; gap: 8px; font-size: 14px; }
+  .account .who { font-weight: 600; color: var(--ok); }
+  .login-pop { position: absolute; right: 0; top: calc(100% + 8px); width: 290px; padding: 14px; z-index: 30; display: grid; gap: 10px; }
+  .login-pop .err { color: var(--bad); font-size: 13px; }
+  .login-pop .row { display: flex; justify-content: flex-end; gap: 8px; }
+  .login-pop .note { font-size: 12.5px; color: var(--muted); }
 
   main { max-width: 1480px; margin: 0 auto; padding: 20px 24px 40px; }
   .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); }
@@ -110,9 +117,9 @@
   .btn.small { padding: 4px 10px; font-size: 12.5px; }
   .section-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 18px 0 8px; }
   .section-head h3 { margin: 0; }
-  .mode-note { margin: 8px 2px 0; font-size: 12.5px; color: var(--muted); }
-  .live-status { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 8px 2px 0; font-size: 12.5px; }
-  .live-status .pill { font-family: var(--mono); font-weight: 500; }
+  .mode-note { margin: 10px 2px 0; font-size: 14px; color: var(--muted); }
+  .live-status { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 12px 2px 0; font-size: 16px; }
+  .live-status .pill { font-family: var(--mono); font-weight: 500; font-size: 15px; padding: 4px 11px; }
   .error {
     margin-top: 12px; padding: 10px 14px; border-radius: 8px; background: var(--bad-soft); color: var(--bad); border: 1px solid var(--bad);
   }
@@ -255,10 +262,28 @@
     <h1>Steel drawing text extraction</h1>
     <p>Tiled OCR, cross-tile dedup, LLM label filter, and JWT auth</p>
   </div>
-  <nav class="tabs" role="tablist" aria-label="Views">
-    <button role="tab" aria-selected="true" data-view="pipeline">Pipeline</button>
-    <button role="tab" aria-selected="false" data-view="auth">Auth API</button>
-  </nav>
+  <div class="top-right">
+    <nav class="tabs" role="tablist" aria-label="Views">
+      <button role="tab" aria-selected="true" data-view="pipeline">Pipeline</button>
+      <button role="tab" aria-selected="false" data-view="auth">Auth API</button>
+    </nav>
+    <!-- The login live runs need: the same auth API, without the request log of the Auth API tab. -->
+    <div class="account">
+      <button class="btn primary" id="login-open" type="button" aria-expanded="false" aria-controls="login-pop">Log in</button>
+      <span class="who" id="who" hidden></span>
+      <button class="btn" id="logout" type="button" hidden>Log out</button>
+      <form class="login-pop card" id="login-pop" hidden>
+        <label class="field"><span class="label">Username</span><input type="text" id="lg-user" value="demo" autocomplete="username"></label>
+        <label class="field"><span class="label">Password (at least 8 characters)</span><input type="password" id="lg-pass" value="correct-horse" autocomplete="current-password"></label>
+        <p class="err" id="lg-err" hidden></p>
+        <div class="row">
+          <button class="btn" type="button" id="lg-register">Register</button>
+          <button class="btn primary" type="submit">Log in</button>
+        </div>
+        <p class="note">Live runs spend API credit, so they need a login. Offline runs don't.</p>
+      </form>
+    </div>
+  </div>
 </header>
 
 <main>
@@ -280,7 +305,7 @@
       <span class="spacer"></span>
       <button type="submit" class="btn primary" id="run-btn">Run pipeline</button>
     </form>
-    <p class="mode-note" id="mode-note"></p>
+    <p class="mode-note" id="mode-note">Offline: synthetic drawing, simulated OCR and a rule-based stand-in for the LLM. No API keys needed.</p>
     <div class="live-status" id="live-status" aria-live="polite" hidden></div>
     <div class="error" id="error" role="alert" hidden></div>
 
@@ -320,7 +345,7 @@
     <div class="auth-grid">
       <div class="card">
         <h2>Account</h2>
-        <p class="muted" style="margin-top:6px">Calls the auth API from <code>steel_text/auth/</code>, mounted at <code>/auth-api</code>. Users are stored in <code>auth.db</code>.</p>
+        <p class="muted" style="margin-top:6px">Calls the auth API from <code>steel_text/auth/</code>, mounted at <code>/auth-api</code>. Users are stored in <code>auth.db</code>. Try each call and see the request, the response and the token claims. Logging in here or with <b>Log in</b> at the top right unlocks live runs.</p>
         <label class="field"><span class="label">Username</span><input type="text" id="au-user" value="demo" autocomplete="off"></label>
         <label class="field"><span class="label">Password (at least 8 characters)</span><input type="password" id="au-pass" value="correct-horse" autocomplete="off"></label>
         <div class="actions">
@@ -371,9 +396,12 @@
     $('#view-pipeline').hidden = view !== 'pipeline';
     $('#view-auth').hidden = view !== 'auth';
     history.replaceState(null, '', view === 'auth' ? '#auth' : `#${state.step}`);
-    if (view === 'pipeline') renderLayer();
+    if (view === 'pipeline') { renderLayer(); refreshLiveStatus(); } // a login on the Auth tab unlocks live runs
   }
   document.querySelectorAll('.tabs button').forEach(btn => btn.addEventListener('click', () => showView(btn.dataset.view)));
+
+  // Tokens from the Auth API tab. Declared up here because live runs on the Pipeline tab use the access token.
+  const auth = { access: null, refresh: null };
 
   // ================================================================== PIPELINE
   const state = { data: null, step: 'tiles', vb: null, focus: null, droppedBy: new Map() };
@@ -390,9 +418,7 @@
     $('#image-label').textContent = live ? 'Page image (optional, PNG/JPG)' : 'Page image (Live mode only)';
     $('#fail-wrap').hidden = live;
     $('#ocr-fail-wrap').hidden = live;
-    $('#mode-note').textContent = live
-      ? 'Live: real Azure Document Intelligence and OpenAI calls, with keys from .env. Each run costs money. Without an image, the synthetic drawing is used.'
-      : 'Offline: synthetic drawing, simulated OCR and a rule-based stand-in for the LLM. No API keys needed.';
+    $('#mode-note').hidden = live; // in live mode, the key and login status line below says what matters
     refreshLiveStatus();
   }
   document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', syncMode));
@@ -413,10 +439,19 @@
           + `<span class="muted">model ${esc(s.openai_model)}.</span>`
           + (missing ? '<span class="muted">Fill in the missing ones and save; the next run picks them up without a restart.</span>' : '');
       }
+      box.insertAdjacentHTML('beforeend', loginStatus());
       box.hidden = false;
     } catch {
       box.hidden = true;
     }
+  }
+
+  // Live runs need an access token from the Auth API tab.
+  function loginStatus() {
+    const user = auth.access && (decodeJwt(auth.access) || {}).sub;
+    return user
+      ? `<span class="pill ok">✓ logged in as ${esc(user)}</span>`
+      : '<span class="pill bad">✗ not logged in</span><span class="muted">Live runs need a login: use <b>Log in</b> at the top right.</span>';
   }
   syncMode();
 
@@ -438,8 +473,10 @@
     $('#empty').hidden = true;
     $('#error').hidden = true;
     try {
-      const r = await fetch('/api/run?' + params, { method: 'POST', body: file || undefined });
+      const headers = live && auth.access ? { Authorization: `Bearer ${auth.access}` } : {};
+      const r = await fetch('/api/run?' + params, { method: 'POST', body: file || undefined, headers });
       const body = await r.json().catch(() => null);
+      if (r.status === 401 && live) signedOut(); // expired or refused: show "Log in" again
       if (!r.ok) throw new Error(body && body.detail ? (typeof body.detail === 'string' ? body.detail : JSON.stringify(body.detail)) : `HTTP ${r.status}`);
       state.fileName = file ? file.name : null; // names the Excel download
       load(body);
@@ -816,7 +853,7 @@
       </div>`).join('');
     return `
       <h2>Step 3 · Merge and dedup</h2>
-      <p class="lead">Only lines from two different tiles, inside the area both tiles cover, are compared; lines from one tile are always kept. Such a pair is merged when both say the same thing and are near (IoU ≥ ${cfg.iou} or centres ≤ ${cfg.center_dist_px} px apart), or when the boxes overlap by ≥ ${cfg.overlap_min} of the smaller box.</p>
+      <p class="lead">Only lines from two different tiles, inside the area both tiles cover, are compared; lines from one tile are always kept. Such a pair is merged when both say the same thing in the same place (IoU ≥ ${cfg.iou}), or when one box covers ≥ ${cfg.overlap_min} of the smaller one, so the dropped reading lies (almost) inside the kept one.</p>
       <p class="note">${d.raw.length} → ${d.merged.length} lines. The longest text is processed first, so a full string is kept before its fragments come up. Click a card to zoom to it.</p>
       ${decisions || '<p class="banner info">Nothing to merge on this page.</p>'}`;
   }
@@ -887,8 +924,7 @@
   });
 
   // ================================================================== AUTH
-  const auth = { access: null, refresh: null };
-  const creds = () => ({ username: $('#au-user').value, password: $('#au-pass').value });
+  const creds =() => ({ username: $('#au-user').value, password: $('#au-pass').value });
 
   function decodeJwt(token) {
     try {
@@ -944,7 +980,7 @@
     login: async () => {
       const r = await call('POST', '/auth/login', { body: creds() },
         'Returns an access token (60 min) and a refresh token (7 days). An unknown user and a wrong password get the same 401.');
-      if (r.status === 200) { auth.access = r.json.access_token; auth.refresh = r.json.refresh_token; renderTokens(); }
+      if (r.status === 200) signedIn(r.json);
     },
     'me-access': () => call('GET', '/me', { token: auth.access },
       auth.access ? 'Protected route: a valid access token is required.' : 'No access token yet. Log in first; this call is expected to fail.'),
@@ -954,10 +990,54 @@
     refresh: async () => {
       const r = await call('POST', '/auth/refresh', { body: { refresh_token: auth.refresh || '' } },
         auth.refresh ? 'Swaps the refresh token for a new access token.' : 'No refresh token yet. Log in first; this call is expected to fail.');
-      if (r.status === 200) { auth.access = r.json.access_token; renderTokens(); }
+      if (r.status === 200) signedIn(r.json);
     },
   };
   document.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => ACTIONS[b.dataset.act]()));
+
+  // ---------- account (top right): the login that live runs need
+  function signedIn(json) { // after a login, or a refresh (which returns only a new access token)
+    auth.access = json.access_token;
+    if (json.refresh_token) auth.refresh = json.refresh_token;
+    renderTokens(); renderAccount(); refreshLiveStatus();
+  }
+  function signedOut() {
+    auth.access = auth.refresh = null;
+    renderTokens(); renderAccount(); refreshLiveStatus();
+  }
+  function renderAccount() {
+    const user = auth.access && (decodeJwt(auth.access) || {}).sub;
+    $('#login-open').hidden = Boolean(user);
+    $('#who').hidden = $('#logout').hidden = !user;
+    $('#who').textContent = user ? `✓ ${user}` : '';
+    if (user) $('#login-pop').hidden = true;
+  }
+  const errorText = r => (typeof (r.json || {}).detail === 'string' ? r.json.detail
+    : r.status === 422 ? 'Enter a username and a password of at least 8 characters.' : `HTTP ${r.status}`);
+
+  async function topBarLogin(register) {
+    const body = { username: $('#lg-user').value, password: $('#lg-pass').value };
+    const err = $('#lg-err');
+    err.hidden = true;
+    if (register) { // a taken username (409) is fine: just log in
+      const r = await call('POST', '/auth/register', { body }, 'Register, from the top bar.');
+      if (r.status !== 201 && r.status !== 409) { err.textContent = errorText(r); err.hidden = false; return; }
+    }
+    const r = await call('POST', '/auth/login', { body }, 'Log in, from the top bar.');
+    if (r.status === 200) signedIn(r.json);
+    else { err.textContent = errorText(r); err.hidden = false; }
+  }
+  $('#login-open').addEventListener('click', () => {
+    const pop = $('#login-pop');
+    pop.hidden = !pop.hidden;
+    $('#login-open').setAttribute('aria-expanded', String(!pop.hidden));
+    if (!pop.hidden) $('#lg-user').focus();
+  });
+  $('#login-pop').addEventListener('submit', e => { e.preventDefault(); topBarLogin(false); });
+  $('#lg-register').addEventListener('click', () => topBarLogin(true));
+  $('#logout').addEventListener('click', signedOut);
+  addEventListener('keydown', e => { if (e.key === 'Escape') $('#login-pop').hidden = true; });
+  renderAccount();
   $('#clear-log').addEventListener('click', () => { $('#auth-log').replaceChildren(); $('#log-empty').hidden = false; });
 })();
 </script>

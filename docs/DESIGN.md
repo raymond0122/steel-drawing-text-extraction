@@ -53,7 +53,7 @@ Times include the waits for rate limiting (HTTP 429), which grow with the number
 - **From 6,000 px on, accuracy dropped although the text was the same size.** Azure reads a large image less well than a small one.
 - **No beam label was cut by a tile edge at any size:** each fitted whole inside at least one tile. The differences come from the image size, not from cut text.
 
-3,500 px is inside the range that read well, with a margin below where it drops. An earlier rule used 3,000 px tiles for pages up to 8,000 px; on this sheet 3,000 px tiles read no better and took 24 requests instead of 15, so the rule was reduced to one size. Lowering `max_tiles` makes the tiles grow, which trades accuracy for fewer requests.
+3,500 px is inside the range that read well, with a margin below where it drops. Lowering `max_tiles` makes the tiles grow, which trades accuracy for fewer requests.
 
 This is one clean synthetic sheet at one resolution, with each size run once. Scanned drawings, other resolutions or denser text may move the point where accuracy drops, so 3,500 px is a measured default for drawings like this one, not a rule for every drawing.
 
@@ -82,8 +82,8 @@ Only chunks read by **two different tiles, inside the area both tiles cover,** a
 
 Such a pair is one text read twice if either of these holds:
 
-1. **Same text, nearby:** the texts match, ignoring case and extra spaces and reading `×` as `X`, and the boxes are near: IoU (intersection / union, where the union is both box areas added minus the intersection) ≥ 0.5, or the box centres ≤ 80 px apart. This is a text read whole by both tiles.
-2. **Overlapping box:** the overlap ratio (intersection / smaller box area) is ≥ 0.8. This is a cut-off piece inside the full reading, or the same text read differently by the two tiles.
+1. **Same text, same place:** the texts match, ignoring case and extra spaces and reading `×` as `X`, and the boxes share most of their area: IoU (intersection / union, where the union is both box areas added minus the intersection) ≥ 0.5. This is a text read whole by both tiles.
+2. **Overlapping box:** the overlap ratio (intersection / smaller box area) is ≥ 0.8, so the smaller reading lies (almost) inside the larger one. This is a cut-off piece inside the full reading, or the same text read differently by the two tiles.
 
 Anything else is two different texts that happen to be close, such as `C50` printed just above `C500`, and both are kept.
 
@@ -94,9 +94,14 @@ The overlap ratio is there for fragments, which IoU misses. A fragment's text di
 
 IoU equals smaller box / larger box here only because the small box lies entirely inside the large one. When two boxes only partly overlap, the union is larger than either box.
 
-Chunks are processed longest text first, then larger box first, and of two readings of one text the first is kept. So the full string is already kept when its fragments come up. Azure's text lines carry no confidence score, so there is none to compare.
+Chunks are processed longest text first, then larger box first, and of two readings of one text the first is kept. So the full string is already kept when its fragments come up. Azure's text lines carry no confidence score, so there is none to compare, and dedup can't tell a misreading from the correct reading of the same label: it keeps the longer one, which is sometimes the misreading.
 
-Earlier versions had more rules. Two of them (substrings, and short pieces sharing a number) and a second pass for leftover fragments never fired, counted on the synthetic drawing and on a full-size test sheet read by Azure (232 decisions; the sheet is in [experiments/tiling](../experiments/tiling/)), so they were removed; both pages give exactly the same result without them. A "same box" rule (IoU ≥ 0.9) and a check for whether the shorter text is a cut-off piece were removed too: they never changed which chunk was kept, only the wording of the log. An almost identical box is already an overlapping box, and with no confidence score the longer text was kept either way.
+### Why 0.5 and 0.8
+
+Both were checked on the full-size test sheet, by merging the saved OCR of all eight tile sizes again with one threshold changed at a time ([experiment 3](../experiments/tiling/README.md#experiment-3-dedup-thresholds)):
+
+- **IoU 0.5** is the usual threshold for "the same object" in object detection. Here it hardly matters: two tiles reading the same text return almost the same box (median IoU 0.91), and any value from 0.3 to 0.9 changes at most two lines.
+- **Overlap 0.8** means the dropped reading lies (almost) inside the kept one, so dropping it loses no text. Lower values also merge two different cuts of one long line, each holding words the other lacks, and now and then two different texts. Higher values leave duplicates and fragments behind.
 
 Each decision in `dedup_log.txt` names the chunk that was dropped and the one kept in its place.
 
@@ -125,6 +130,8 @@ Settings are passed in rather than read where they are used: `make_clients` take
 
 ## Auth (`steel_text/auth/`)
 
+Live runs in the web UI spend Azure and OpenAI credit, so they need a valid access token from this API (`require_login_for_live` in `steel_text/web/server.py`). The token is checked with the auth API's own settings, so it is signed and checked with the same key. Offline runs need no login, and neither does `steel-demo --live`, which runs on the user's own machine with their own keys.
+
 - Passwords are hashed with PBKDF2-SHA256 (passlib) and stored in SQLite.
 - Login returns an HS256 access token (60 min) and a refresh token (7 days).
 - Each token carries a `type` claim, so a refresh token can't be used as an access token.
@@ -152,24 +159,15 @@ Both the demo and the web UI pick their clients and run the stages through `stee
   - **Dedup:** each decision with its reason and a before/after close-up.
   - **Labels:** the labels found, which batches succeeded or were skipped, and a check against the ground truth, which counts repeats: a label printed twice must be found twice. **Download Excel** saves them as `labels.xlsx`.
 - **Viewing the drawing:** scroll to zoom, drag to pan, and click a row to jump to it.
-- **Auth API tab:** register, log in, call `/me` with the access token, the refresh token, or no token, and refresh. Each request and response is shown, with the decoded token claims.
+- **Log in** (top right): register or log in, which unlocks live runs; the page then shows who is logged in. A live run refused with a 401, for example after the 60-minute access token expires, logs the page out again.
+- **Auth API tab:** register, log in, call `/me` with the access token, the refresh token, or no token, and refresh. Each request and response is shown, with the decoded token claims. It uses the same login as the top bar.
 
-The server is `steel_text/web/server.py`. `POST /api/run` returns every intermediate result as JSON, with the response models in `steel_text/web/schemas.py`, and `steel_text/web/index.html` draws it with no external libraries. The auth API is mounted under `/auth-api`. Live mode needs the same `.env` as `steel-demo --live`. It is the only mode that accepts an uploaded page image. Images over 300 million pixels are refused with a 413 before they are decoded (an A0 sheet scanned at 400 dpi is about 250 million), and the demo applies the same limit.
+The server is `steel_text/web/server.py`. `POST /api/run` returns every intermediate result as JSON, with the response models in `steel_text/web/schemas.py`, and `steel_text/web/index.html` draws it with no external libraries. The auth API is mounted under `/auth-api`. Live mode needs the same `.env` as `steel-demo --live`, and a login. It is the only mode that accepts an uploaded page image. Images over 300 million pixels are refused with a 413 before they are decoded (an A0 sheet scanned at 400 dpi is about 250 million), and the demo applies the same limit.
 
 Every run is timed per tile and per LLM batch, and the page shows both. Retries, rate limiting and per-tile progress are logged in the server's terminal.
 
 In live mode, the page shows which keys it found in `.env`, by name only, never the values. The server reads `.env` again before every live run, so keys added while it is running work without a restart.
 
-## Changes in this version
-
-Rewritten from scratch, with these additions and fixes:
-
-- **Automated tests** for the tiling, dedup, OCR client, LLM filter, auth and web stages.
-- **LLM network errors and timeouts are skipped per batch,** like HTTP errors and unparseable replies, so one slow request doesn't fail the whole stage.
-- **`/me` is a protected route,** behind the access-token dependency.
-- **The auth API returns standard HTTP status codes,** and passwords must be at least 8 characters.
-- **No pointless final wait:** the retry loop doesn't wait after the last failed attempt.
-- **A web UI** that shows each step on the drawing.
-- **The demo's default batch size is 10,** so several batches are visible.
+## Excel label list (`steel_text/label_sheet.py`)
 
 The Excel file has only the `Profile` column, plus a "Not read" sheet when a tile could not be read. It is a label list, not a bill of materials: lengths and quantities would need member geometry and label-to-member linking, which are not in this repository, and a label count is not a member count either, since one label can point at several members.

@@ -1,14 +1,28 @@
 import pytest
 from fastapi.testclient import TestClient
 
+from steel_text.auth.main import app as auth_app
+from steel_text.auth.main import get_settings as auth_settings
+from steel_text.auth.security import create_token
 from steel_text.settings import Settings, load_settings
 from steel_text.web import server
 from steel_text.web.server import app
 
+# Live runs check tokens against the auth API's settings: a test key here, never the real .env.
+AUTH_SETTINGS = Settings(_env_file=None, jwt_secret_key="test-secret-at-least-32-bytes-long")
+
 
 @pytest.fixture(scope="module")
 def client():
-    return TestClient(app)
+    for a in (app, auth_app):
+        a.dependency_overrides[auth_settings] = lambda: AUTH_SETTINGS
+    yield TestClient(app)
+    for a in (app, auth_app):
+        a.dependency_overrides.pop(auth_settings, None)
+
+
+def bearer(kind="access"):
+    return {"Authorization": f"Bearer {create_token('tester', kind, AUTH_SETTINGS.jwt_secret_key)}"}
 
 
 def test_offline_run_returns_every_step(client):
@@ -86,11 +100,21 @@ def test_page_and_auth_api_are_served(client):
     assert client.get("/auth-api/me").status_code == 401
 
 
+def test_live_run_needs_a_login(client):
+    r = client.post("/api/run", params={"live": True})
+    assert r.status_code == 401 and "needs a login" in r.json()["detail"]
+
+
+def test_live_run_does_not_take_a_refresh_token(client):
+    r = client.post("/api/run", params={"live": True}, headers=bearer("refresh"))
+    assert r.status_code == 401 and "Wrong token type" in r.json()["detail"]
+
+
 def test_live_mode_without_credentials_is_a_400(client, monkeypatch):
     for name in ("AZURE_DOCINT_ENDPOINT", "AZURE_DOCINT_KEY", "OPENAI_API_KEY"):
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setitem(app.dependency_overrides, server.live_settings, lambda: Settings(_env_file=None))
-    r = client.post("/api/run", params={"live": True})
+    r = client.post("/api/run", params={"live": True}, headers=bearer())
     assert r.status_code == 400 and "Live mode needs credentials" in r.json()["detail"]
 
 

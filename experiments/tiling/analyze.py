@@ -166,8 +166,6 @@ def score_labels(gt: list[dict], lines: list[Line]) -> dict:
 def dedup_audit(tiled: dict) -> dict:
     raw = [OcrChunk(text=c["text"], bbox=tuple(c["bbox"]), tile_index=c["tile_index"]) for c in tiled["raw"]]
     log: list[DedupDecision] = []
-    # Since commit 0c96ca9, dedup only compares lines that two different tiles read. Before that it
-    # removed 7 same-tile lines here; now 0.
     merged = merge_tile_results(raw, [Tile(*b) for b in tiled["tiles"]], cfg=DedupConfig(), log=log)
     # A tile never reads the same text twice, so two lines from one tile are two
     # different pieces of text. Removing one of them is a wrong removal.

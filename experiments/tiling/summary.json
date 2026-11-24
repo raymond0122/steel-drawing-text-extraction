@@ -457,7 +457,7 @@
   "removed": 232,
   "by_rule": {
    "overlapping box": 53,
-   "same text nearby": 179
+   "same text, same place": 179
   },
   "wrong_removals": [],
   "wrong_places": 0

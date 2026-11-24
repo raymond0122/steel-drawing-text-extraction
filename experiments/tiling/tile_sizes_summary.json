@@ -137,8 +137,8 @@
   "seconds": 39.2,
   "rate_limited": 1,
   "raw": 861,
-  "kept": 452,
-  "removed": 409,
+  "kept": 453,
+  "removed": 408,
   "same_tile_removals": 0,
   "labels_not_whole_in_any_tile": 0,
   "labels": {

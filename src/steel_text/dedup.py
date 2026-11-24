@@ -39,10 +39,10 @@ class DedupDecision:
 
 @dataclass(frozen=True)
 class DedupConfig:
-    # Kept strict on purpose: looser values merge different labels that sit close together.
-    iou: float = 0.50  # with center_dist_px: how near two readings of the same text must be
-    overlap_min: float = 0.80  # share of the smaller box the other must cover: a cut-off piece, or another reading
-    center_dist_px: float = 80.0
+    # Both measured on a full-size test sheet (docs/DESIGN.md): any IoU from 0.3 to 0.9 gives the same
+    # result, while an overlap below 0.8 starts dropping pieces that hold text the kept reading lacks.
+    iou: float = 0.50  # two readings of the same text must share at least this IoU: the same place
+    overlap_min: float = 0.80  # share of the smaller box the other must cover: it's (almost) inside, so nothing is lost
 
 
 def merge_tile_results(
@@ -87,10 +87,10 @@ def _read_twice(a: OcrChunk, b: OcrChunk, tiles: Sequence[Tile]) -> bool:
 
 def _duplicate_reason(c: OcrChunk, k: OcrChunk, cfg: DedupConfig) -> str | None:
     """Why c is another reading of the kept chunk k, or None if they are two different texts."""
-    near = g.iou(c.bbox, k.bbox) >= cfg.iou or g.center_distance(c.bbox, k.bbox) <= cfg.center_dist_px
+    iou = g.iou(c.bbox, k.bbox)
     text = _norm_text(c.text)
-    if near and text and text == _norm_text(k.text):
-        return "same text nearby"
+    if iou >= cfg.iou and text and text == _norm_text(k.text):
+        return f"same text, same place (IoU={iou:.2f})"
 
     overlap = g.overlap_ratio_min(c.bbox, k.bbox)
     if overlap >= cfg.overlap_min:

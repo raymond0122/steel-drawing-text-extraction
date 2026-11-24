@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 from typing import Any
 
 BBox = tuple[int, int, int, int]
@@ -31,16 +30,6 @@ def poly_to_bbox(poly: Any) -> BBox | None:
 def area(b: BBox) -> int:
     x0, y0, x1, y1 = b
     return max(0, x1 - x0) * max(0, y1 - y0)
-
-
-def center(b: BBox) -> tuple[float, float]:
-    x0, y0, x1, y1 = b
-    return ((x0 + x1) / 2.0, (y0 + y1) / 2.0)
-
-
-def center_distance(a: BBox, b: BBox) -> float:
-    (ax, ay), (bx, by) = center(a), center(b)
-    return math.hypot(ax - bx, ay - by)
 
 
 def intersection_area(a: BBox, b: BBox) -> int:

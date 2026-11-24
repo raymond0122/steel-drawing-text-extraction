@@ -1,9 +1,10 @@
 # Tiling experiment
 
-Two questions, measured on one drawing with Azure Document Intelligence `prebuilt-read` (API version 2024-11-30):
+Three questions, measured on one drawing with Azure Document Intelligence `prebuilt-read` (API version 2024-11-30):
 
 1. **Is tiling needed at all,** or does the whole page, shrunk to fit, read just as well? (run 2026-11-15)
 2. **How large should the tiles be?** (run 2026-11-23)
+3. **How much do the dedup thresholds matter?** (the OCR saved by experiment 2, merged again; no new requests)
 
 The drawing is [`steel_framing_plan_S-201_400dpi.png`](steel_framing_plan_S-201_400dpi.png): a made-up 36 × 24 in steel framing plan rendered at 400 dpi, 14,400 × 9,600 px. It belongs to no real project.
 
@@ -61,8 +62,6 @@ What this shows:
 - **The small text is where tiling clearly wins.** The whole pages mostly lost `S-201` inside a circle, reading it as `5-201` or not at all. At 10,000 px they also dropped the last character of section names in the take-off table (`W10x12` as `W10x1`, `W21x50` as `W21x5`).
 - **Single characters are dropped on purpose.** The tiled path skips lines shorter than 2 characters, so grid numbers and letters and one-digit quantities are missing from it. The whole page at 10,000 px returned 91 such lines, some of them misread symbols.
 
-**Dedup found a bug in its own rules.** In the tiled run, dedup removed 239 of 696 lines, and 7 of those removals were between two lines from the same tile. A tile never reads one text twice, so those were different texts: `CHEVRON` in the brace schedule, `130.0` and `10` in neighbouring take-off rows, and `5/16`, `3/8`, `1/4` and `10` in weld symbols. The rule "the same text nearby is a duplicate" fired on table rows with equal values. Since commit `0c96ca9`, dedup only compares lines that two different tiles read inside the area both cover. On the same saved OCR output it now keeps 464 lines and removes 232, none from the same tile: exactly those 7 come back, nothing new is removed, and the beam-label scores don't change.
-
 ## Experiment 2: tile size
 
 Each tile is cut at full resolution, so the letters stay 31 px tall at every size and only the image sent per request changes. The overlap stays at 300 px, and every size is merged with the current dedup. The 3,500 px row is experiment 1's tiled run.
@@ -85,8 +84,30 @@ What this shows:
 - **No beam label was cut by a tile edge at any size:** each fitted whole inside at least one tile, so the differences come from the image size. The labels are up to 342 px long, a little more than the overlap, so a label crossing an edge in an unlucky place could still be cut.
 - **Dedup removed nothing from the same tile at any size.**
 
-The app uses 3,500 px tiles: inside the range that read well, with a margin below where accuracy drops. An earlier rule used 3,000 px tiles for pages up to 8,000 px; here they read no better and took 24 requests instead of 15. The full rule is in [docs/DESIGN.md](../../docs/DESIGN.md#tiling-steel_texttilingpy).
+The app uses 3,500 px tiles: inside the range that read well, with a margin below where accuracy drops. The full rule is in [docs/DESIGN.md](../../docs/DESIGN.md#tiling-steel_texttilingpy).
 
+## Experiment 3: dedup thresholds
+
+Dedup treats two readings from different tiles as one text when they say the same thing in the same place (IoU ≥ 0.5), or when one box covers at least 80% of the smaller one. The saved raw OCR of all eight tile sizes was merged again with one threshold changed at a time ([`dedup_thresholds.py`](dedup_thresholds.py)). Lines kept, as a change from those defaults:
+
+| Setting | 2,000 | 2,500 | 3,000 | 3,500 | 4,500 | 6,000 | 8,000 | 10,000 |
+|---|---|---|---|---|---|---|---|---|
+| IoU 0.3 | 0 | 0 | 0 | 0 | 0 | 0 | −1 | 0 |
+| IoU 0.7 | 0 | 0 | 0 | 0 | 0 | 0 | +2 | 0 |
+| IoU 0.9 | 0 | 0 | 0 | 0 | 0 | 0 | +2 | 0 |
+| Overlap 0.5 | −7 | −16 | −22 | 0 | −3 | −3 | −6 | −1 |
+| Overlap 0.6 | −6 | −15 | −6 | 0 | −3 | −3 | −6 | −1 |
+| Overlap 0.7 | −2 | −11 | −4 | 0 | −1 | −3 | −6 | 0 |
+| Overlap 0.9 | +6 | +9 | +2 | +1 | +1 | +6 | +9 | +6 |
+| Overlap 0.95 | +20 | +23 | +8 | +7 | +5 | +13 | +20 | +11 |
+
+The beam-label and smallest-line scores stay the same for every setting, except one label at overlap 0.9 and 0.95 (below).
+
+What this shows:
+
+- **The IoU threshold hardly matters.** Two tiles reading the same text return almost the same box (median IoU 0.91), so any value from 0.3 to 0.9 changes at most two lines, on one size.
+- **A lower overlap threshold drops text.** From 0.7 down, the extra merges are mostly two different cuts of one long note line, and dropping one loses its end: keeping `…ALL WELDS BY CERTIFIED` drops `LDS BY CERTIFIED WELDERS.`, and with it `WELDERS.`. A few merge different texts, such as `10` into `/ 1`. At 0.8 the dropped reading lies (almost) inside the kept one, so nothing is lost, with room for boxes that jitter by a few pixels.
+- **A higher overlap threshold leaves duplicates and fragments behind,** 1 to 23 per size. It also makes one label on the 2,000 and 6,000 px sizes score as exact, but only because the correct reading (`W16x26 (22) c=3/4"`) is then kept next to a misreading of the same label (`W16x26 ( 22) C=3/ 11`), and the scorer picks the correct one. At 0.8 dedup keeps one of the two, the longer text or the larger box, and here that was the misreading: Azure's lines carry no confidence, so dedup can't tell which reading is right.
 ## Limits
 
 - **One drawing,** cleanly rendered and synthetic. Scanned drawings have noise and skew and may break down earlier, and other resolutions or denser text may move the point where accuracy drops. The results are a measured default for drawings like this one, not a rule for every drawing.
@@ -102,6 +123,7 @@ From the repository root, with the package installed (`pip install -e ".[dev]"`)
 ```bash
 python experiments/tiling/analyze.py              # score experiment 1 from the saved results (no network)
 python experiments/tiling/analyze_tile_sizes.py   # score experiment 2 from the saved results (no network)
+python experiments/tiling/dedup_thresholds.py     # experiment 3, from the same saved results (no network)
 
 python experiments/tiling/run_ocr.py              # experiment 1: calls Azure, needs .env
 python experiments/tiling/run_tile_sizes.py       # experiment 2: calls Azure, needs .env
@@ -112,10 +134,10 @@ The `run_` scripts skip any condition whose result is already in `results/`, so 
 | File | What it holds |
 |---|---|
 | `run_ocr.py`, `run_tile_sizes.py` | send the drawing to Azure and save the raw OCR in `results/` |
-| `analyze.py`, `analyze_tile_sizes.py` | build the answer key, score every condition, print the tables |
+| `analyze.py`, `analyze_tile_sizes.py`, `dedup_thresholds.py` | build the answer key, score every condition, print the tables |
 | `results/*.json` | the raw OCR of each condition, in page coordinates |
 | `ground_truth.json` | the 82 verified beam labels |
-| `summary.json`, `tile_sizes_summary.json` | the numbers in the tables above |
+| `summary.json`, `tile_sizes_summary.json`, `dedup_thresholds_summary.json` | the numbers in the tables above |
 | `check/labels_*.png` | the label crops used for the eye check |
 
 `tests/test_experiment.py` re-scores the saved 3,500 px run on every test run, so a change to the package that breaks these scripts fails the test suite.

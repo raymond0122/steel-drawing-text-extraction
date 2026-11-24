@@ -4,7 +4,8 @@
 
 POST /api/run runs the same pipeline as the demo (steel_text/pipeline.py) and
 returns every intermediate result as JSON. The page in index.html draws them.
-The auth API is mounted under /auth-api so the same page can exercise it.
+The auth API is mounted under /auth-api: live runs spend API credit, so they
+need an access token from it. Offline runs need none.
 """
 
 from __future__ import annotations
@@ -21,9 +22,12 @@ from typing import Annotated, Any
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import FileResponse
+from fastapi.security import HTTPAuthorizationCredentials
 from PIL import Image
 
 from ..auth.main import app as auth_app
+from ..auth.main import bearer, current_user
+from ..auth.main import get_settings as auth_settings
 from ..dedup import DedupConfig
 from ..geometry import BBox, region_around
 from ..label_sheet import XLSX_MIME, write_label_sheet
@@ -67,6 +71,27 @@ def live_settings() -> Settings:
 
 
 SettingsDep = Annotated[Settings, Depends(live_settings)]
+
+
+def require_login_for_live(
+    settings: Annotated[Settings, Depends(auth_settings)],
+    creds: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer)],
+    live: bool = False,
+) -> None:
+    """Live runs spend API credit, so they need a logged-in user. Offline runs are open to anyone.
+
+    The token is checked with the auth API's own settings, so it is signed and
+    checked with the same key.
+    """
+    if not live:
+        return
+    if creds is None:
+        raise HTTPException(
+            401,
+            "Live mode spends API credit, so it needs a login: log in on the Auth API tab first.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    current_user(settings, creds)  # 401 for an expired or invalid token, or a refresh token
 
 
 @lru_cache(maxsize=1)
@@ -253,7 +278,7 @@ def live_status(settings: SettingsDep) -> LiveStatus:
     )
 
 
-@app.post("/api/run")
+@app.post("/api/run", dependencies=[Depends(require_login_for_live)])
 async def run(
     request: Request,
     settings: SettingsDep,
