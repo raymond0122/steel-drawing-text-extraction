@@ -10,7 +10,6 @@ from steel_text import demo
 
 def run_demo(monkeypatch, out, *flags):
     monkeypatch.setattr(sys, "argv", ["steel-demo", "--out", str(out), *flags])
-    monkeypatch.setattr(demo, "save_preview", lambda img, path: path)  # step images: most of the time, not checked here
     return demo.main()
 
 

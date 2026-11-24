@@ -28,7 +28,7 @@ from .label_sheet import write_label_sheet
 from .llm_filter import DEFAULT_BATCH_SIZE, FilterResult
 from .ocr_stage import TiledOcrResult
 from .ocr_types import TileReadError
-from .overlay import draw_boxes, draw_dedup_closeups, draw_not_read, draw_tile_grid, save_preview
+from .overlay import Preview, draw_boxes, draw_dedup_closeups, draw_not_read, draw_tile_grid
 from .page_image import PageTooLargeError, open_page
 from .pipeline import MissingCredentialsError, make_clients, run_pipeline
 from .sample_drawing import GroundTruthText, check_truth, load_truth, save_sample
@@ -76,30 +76,33 @@ def write_gaps(path: Path, gaps: list[dict[str, object]]) -> None:
         path.unlink(missing_ok=True)  # don't leave a previous run's gaps next to a complete result
 
 
-def mark_not_read(img: Image.Image, ocr: TiledOcrResult) -> Image.Image:
-    """Hatch the tiles OCR could not read; the image unchanged when every tile was read."""
-    boxes = [box for _, box, _ in ocr.not_read]
-    return draw_not_read(img, boxes) if boxes else img
+def save_step(img: Image.Image, preview: Preview, ocr: TiledOcrResult, path: Path) -> None:
+    """Save a step image drawn on the preview, with the tiles OCR could not read hatched."""
+    not_read = [preview.box(box) for _, box, _ in ocr.not_read]
+    (draw_not_read(img, not_read) if not_read else img).save(path)
 
 
-def write_ocr_outputs(page: Image.Image, ocr: TiledOcrResult, out: Path) -> None:
-    """Tile grid, OCR boxes before and after dedup, dedup close-ups, the dedup log, and the areas not read."""
-    save_preview(mark_not_read(draw_tile_grid(page, ocr.tiles), ocr), out / "01_tile_grid.png")
-    raw_boxes = ((c.bbox, f"{c.text}  [t{c.tile_index}]") for c in ocr.raw)
-    save_preview(mark_not_read(draw_boxes(page, raw_boxes, RAW_OCR_COLOR), ocr), out / "02_raw_ocr.png")
-    merged_boxes = ((c.bbox, c.text) for c in ocr.merged)
-    save_preview(mark_not_read(draw_boxes(page, merged_boxes, MERGED_OCR_COLOR), ocr), out / "03_merged_ocr.png")
+def write_ocr_outputs(page: Image.Image, preview: Preview, ocr: TiledOcrResult, out: Path) -> None:
+    """Tile grid, OCR boxes before and after dedup, dedup close-ups, the dedup log, and the areas not read.
+
+    The step images are drawn on the preview; the close-ups are cut from the full page.
+    """
+    tiles = [preview.box(t.box) for t in ocr.tiles]
+    save_step(draw_tile_grid(preview.image, tiles), preview, ocr, out / "01_tile_grid.png")
+    raw_boxes = ((preview.box(c.bbox), f"{c.text}  [t{c.tile_index}]") for c in ocr.raw)
+    save_step(draw_boxes(preview.image, raw_boxes, RAW_OCR_COLOR), preview, ocr, out / "02_raw_ocr.png")
+    merged_boxes = ((preview.box(c.bbox), c.text) for c in ocr.merged)
+    save_step(draw_boxes(preview.image, merged_boxes, MERGED_OCR_COLOR), preview, ocr, out / "03_merged_ocr.png")
     if ocr.dedup_log:
         draw_dedup_closeups(page, ocr.raw, ocr.merged, ocr.dedup_log).save(out / "03b_dedup_closeups.png")
     (out / "dedup_log.txt").write_text("".join(f"{d}\n" for d in ocr.dedup_log), encoding="utf-8")
     write_gaps(out / "not_read.json", [{"tile": i, "box": list(box), "error": error} for i, box, error in ocr.not_read])
 
 
-def write_label_outputs(page: Image.Image, ocr: TiledOcrResult, result: FilterResult, out: Path) -> None:
+def write_label_outputs(preview: Preview, ocr: TiledOcrResult, result: FilterResult, out: Path) -> None:
     """Labels drawn on the page, as JSON, and as an Excel list, plus the lines the LLM never checked."""
-    label_boxes = ((e.bbox, f"{e.normalized_label} ({e.material_kind})") for e in result.entries)
-    labels_img = draw_boxes(page, label_boxes, LABEL_COLOR, font_size=54)
-    save_preview(mark_not_read(labels_img, ocr), out / "04_labels.png")
+    label_boxes = ((preview.box(e.bbox), f"{e.normalized_label} ({e.material_kind})") for e in result.entries)
+    save_step(draw_boxes(preview.image, label_boxes, LABEL_COLOR, font_size=18), preview, ocr, out / "04_labels.png")
     labels = [asdict(e) for e in result.entries]
     (out / "labels.json").write_text(json.dumps(labels, indent=2), encoding="utf-8")
     write_label_sheet(
@@ -185,8 +188,9 @@ def main() -> int:
     except TileReadError as e:  # no tile could be read at all
         print(f"OCR failed: {e}")
         return 2
-    write_ocr_outputs(page, outcome.ocr, out)
-    write_label_outputs(page, outcome.ocr, outcome.labels, out)
+    preview = Preview.of(page)
+    write_ocr_outputs(page, preview, outcome.ocr, out)
+    write_label_outputs(preview, outcome.ocr, outcome.labels, out)
 
     print_summary(outcome.ocr, outcome.labels, truth)
     print(f"\nImages and JSON written to {out.resolve()}")

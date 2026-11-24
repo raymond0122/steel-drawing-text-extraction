@@ -12,14 +12,25 @@ from steel_text.settings import Settings
 from steel_text.web import server
 
 
-def png_bytes(width, height):
+def png_bytes(width, height, mode="L"):
     buf = io.BytesIO()
-    Image.new("L", (width, height)).save(buf, format="PNG")
+    Image.new(mode, (width, height), "white").save(buf, format="PNG")
     return buf.getvalue()
 
 
-def test_page_is_opened_as_rgb():
-    assert open_page(io.BytesIO(png_bytes(20, 10))).mode == "RGB"
+@pytest.mark.parametrize("mode", ["L", "RGB", "RGBA", "P"])
+def test_page_is_opened_as_rgb(mode):
+    page = open_page(io.BytesIO(png_bytes(20, 10, mode)))
+    assert page.mode == "RGB" and page.size == (20, 10)
+    assert page.getpixel((0, 0)) == (255, 255, 255)  # decoded, not just the header
+
+
+def test_page_file_is_closed_once_opened(tmp_path):
+    path = tmp_path / "page.png"
+    path.write_bytes(png_bytes(20, 10, "RGB"))
+    page = open_page(path)
+    path.unlink()  # Windows refuses to delete a file that is still open
+    assert page.getpixel((5, 5)) == (255, 255, 255)
 
 
 def test_page_over_the_pixel_limit_is_refused(monkeypatch):

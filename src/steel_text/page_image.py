@@ -29,6 +29,10 @@ def open_page(source: str | Path | BinaryIO) -> Image.Image:
         img = Image.open(source)  # reads only the header
     except Image.DecompressionBombError as e:
         raise PageTooLargeError(str(e)) from e
-    if img.width * img.height > MAX_PAGE_PIXELS:
-        raise PageTooLargeError(f"{img.width} x {img.height} px is over the limit of {MAX_PAGE_PIXELS:,} pixels")
-    return img.convert("RGB")
+    with img:  # closes a file PIL opened itself; the decoded pixels stay usable
+        if img.width * img.height > MAX_PAGE_PIXELS:
+            raise PageTooLargeError(f"{img.width} x {img.height} px is over the limit of {MAX_PAGE_PIXELS:,} pixels")
+        if img.mode == "RGB":
+            img.load()  # convert() would decode the page and then copy it: twice the memory at its peak
+            return img
+        return img.convert("RGB")

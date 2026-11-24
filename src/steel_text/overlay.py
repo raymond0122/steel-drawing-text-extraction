@@ -1,9 +1,15 @@
-"""Draw tiles and text boxes on the page for the demo images."""
+"""Draw tiles and text boxes for the demo images.
+
+The step images are drawn on a Preview: the page shrunk once to at most 3,000 px,
+with page boxes mapped onto it. Drawing on the full page and shrinking each image
+afterwards cost seconds and gigabytes on a 14,400 px page. Sizes and line widths
+below are in preview pixels. The dedup close-ups are cut from the full page.
+"""
 
 from __future__ import annotations
 
 from collections.abc import Iterable, Sequence
-from pathlib import Path
+from dataclasses import dataclass
 
 from PIL import Image, ImageDraw
 
@@ -11,67 +17,81 @@ from .dedup import DedupDecision
 from .fonts import load_font
 from .geometry import BBox, intersection_area, region_around
 from .ocr_types import OcrChunk
-from .tiling import Tile
 
 TILE_COLORS = [(230, 57, 70), (29, 120, 116), (69, 123, 157), (244, 162, 97), (131, 56, 236), (42, 157, 143)]
 NOT_READ_COLOR = (198, 40, 40)  # red, as in the web UI
+PREVIEW_MAX_SIDE = 3000  # full-size 9,000 px PNGs are slow to write and to open
 
 
-def draw_not_read(page: Image.Image, boxes: Iterable[BBox]) -> Image.Image:
+@dataclass(frozen=True)
+class Preview:
+    """The page shrunk for the step images, and the scale that maps page boxes onto it.
+
+    When the page is already small enough, `image` is the page itself, so the
+    draw functions below always draw on a copy.
+    """
+
+    image: Image.Image
+    scale: float
+
+    @classmethod
+    def of(cls, page: Image.Image, max_side: int = PREVIEW_MAX_SIDE) -> Preview:
+        scale = min(1.0, max_side / max(page.size))
+        if scale < 1.0:
+            page = page.resize((round(page.width * scale), round(page.height * scale)), Image.Resampling.LANCZOS)
+        return cls(page, scale)
+
+    def box(self, b: BBox) -> BBox:
+        """A box in page pixels, in preview pixels."""
+        x0, y0, x1, y1 = (round(v * self.scale) for v in b)
+        return (x0, y0, x1, y1)
+
+
+def draw_not_read(img: Image.Image, boxes: Iterable[BBox]) -> Image.Image:
     """Hatch the areas no tile could read in red, so missing text can't pass for an empty area."""
-    base = page.convert("RGBA")
+    base = img.convert("RGBA")
     layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(layer)
-    font = load_font(140)
+    font = load_font(46)
     for x0, y0, x1, y1 in boxes:
         hatch = Image.new("RGBA", (x1 - x0, y1 - y0), (0, 0, 0, 0))
         lines = ImageDraw.Draw(hatch)
-        for d in range(-hatch.height, hatch.width, 90):  # 45-degree stripes, 90 px apart
-            lines.line([(d, hatch.height), (d + hatch.height, 0)], fill=(*NOT_READ_COLOR, 110), width=14)
+        for d in range(-hatch.height, hatch.width, 30):  # 45-degree stripes, 30 px apart
+            lines.line([(d, hatch.height), (d + hatch.height, 0)], fill=(*NOT_READ_COLOR, 110), width=5)
         layer.alpha_composite(hatch, (x0, y0))
-        draw.rectangle([x0, y0, x1 - 1, y1 - 1], outline=(*NOT_READ_COLOR, 255), width=18)
-        draw.text((x0 + 40, y0 + 30), "NOT READ", fill=(*NOT_READ_COLOR, 255), font=font)
+        draw.rectangle([x0, y0, x1 - 1, y1 - 1], outline=(*NOT_READ_COLOR, 255), width=6)
+        draw.text((x0 + 13, y0 + 10), "NOT READ", fill=(*NOT_READ_COLOR, 255), font=font)
     return Image.alpha_composite(base, layer).convert("RGB")
 
 
-def draw_tile_grid(page: Image.Image, tiles: Sequence[Tile]) -> Image.Image:
+def draw_tile_grid(img: Image.Image, tiles: Sequence[BBox]) -> Image.Image:
     """Each tile gets a translucent fill, so the overlap bands show up darker."""
-    base = page.convert("RGBA")
+    base = img.convert("RGBA")
     layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
     draw = ImageDraw.Draw(layer)
-    font = load_font(140)
-    for i, t in enumerate(tiles):
+    font = load_font(46)
+    for i, (x0, y0, x1, y1) in enumerate(tiles):
         r, g, b = TILE_COLORS[i % len(TILE_COLORS)]
-        draw.rectangle(t.box, fill=(r, g, b, 40), outline=(r, g, b, 255), width=14)
-        draw.text((t.x0 + 40, t.y0 + 30), f"tile {i}", fill=(r, g, b, 255), font=font)
+        draw.rectangle([x0, y0, x1, y1], fill=(r, g, b, 40), outline=(r, g, b, 255), width=5)
+        draw.text((x0 + 13, y0 + 10), f"tile {i}", fill=(r, g, b, 255), font=font)
     return Image.alpha_composite(base, layer).convert("RGB")
 
 
 def draw_boxes(
-    page: Image.Image, items: Iterable[tuple[BBox, str]], color: tuple[int, int, int], font_size: int = 46
+    img: Image.Image, items: Iterable[tuple[BBox, str]], color: tuple[int, int, int], font_size: int = 15
 ) -> Image.Image:
-    img = page.convert("RGB").copy()
+    img = img.convert("RGB")  # always a new image, so the one passed in is never drawn on
     draw = ImageDraw.Draw(img)
     font = load_font(font_size)
     for bbox, label in items:
         x0, y0, x1, y1 = bbox
-        draw.rectangle([x0 - 6, y0 - 6, x1 + 6, y1 + 6], outline=color, width=8)
+        draw.rectangle([x0 - 2, y0 - 2, x1 + 2, y1 + 2], outline=color, width=3)
         if label:
-            ty = max(0, y0 - font_size - 18)
+            ty = max(0, y0 - font_size - 6)
             tb = draw.textbbox((x0, ty), label, font=font)
-            draw.rectangle([tb[0] - 6, tb[1] - 4, tb[2] + 6, tb[3] + 4], fill=(255, 255, 255))
+            draw.rectangle([tb[0] - 2, tb[1] - 1, tb[2] + 2, tb[3] + 1], fill=(255, 255, 255))
             draw.text((x0, ty), label, fill=color, font=font)
     return img
-
-
-def save_preview(img: Image.Image, path: Path, max_dim: int = 3000) -> Path:
-    """Save a downscaled copy; full-size 9000 px PNGs are slow to open."""
-    scale = min(1.0, max_dim / max(img.size))
-    if scale < 1.0:
-        img = img.resize((int(img.width * scale), int(img.height * scale)), Image.Resampling.LANCZOS)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    img.save(path)
-    return path
 
 
 def _tile_color(i: int) -> tuple[int, int, int]:
