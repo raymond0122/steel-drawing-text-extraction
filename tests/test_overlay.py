@@ -21,6 +21,14 @@ def test_small_page_is_its_own_preview_and_is_never_drawn_on():
     assert page.getcolors() == [(300 * 200, (255, 255, 255))]  # ...so every draw function works on a copy
 
 
+def test_a_grayscale_page_gets_coloured_boxes():
+    preview = Preview.of(Image.new("L", (300, 200), 255))
+    boxes = draw_boxes(preview.image, [((10, 10, 50, 30), "C50")], (255, 0, 0))
+    assert boxes.mode == "RGB" and boxes.getpixel((8, 20)) == (255, 0, 0)  # on the box's left edge
+    assert draw_tile_grid(preview.image, [(0, 0, 300, 200)]).mode == "RGB"
+    assert draw_not_read(preview.image, [(0, 0, 150, 200)]).mode == "RGB"
+
+
 def test_closeup_panel_draws_at_most_max_rows():
     page = Image.new("RGB", (400, 200), "white")
     chunks = [OcrChunk(f"T{i}", (10 + 100 * i, 50, 60 + 100 * i, 80), tile_index=i % 2) for i in range(3)]

@@ -60,6 +60,8 @@ This is one clean synthetic sheet at one resolution, with each size run once. Sc
 
 ## OCR per tile (`steel_text/ocr_stage.py`)
 
+A grayscale page, like the test sheet, stays grayscale (`steel_text/page_image.py`): as RGB it would hold each pixel's one value three times. Opening the 14,400 × 9,600 px test sheet then peaks at 150 MB instead of 678 MB, and its 15 tiles send 2.2 MB instead of 4.4 MB. Azure read the grayscale tiles exactly as it read RGB ones: the same 696 lines, with the same text and boxes ([results](../experiments/tiling/results/tiled_grayscale.json)).
+
 Each tile is cut from the page and sent to Azure on its own. For every line of text it reads, Azure returns the text and a polygon: the four corners of the area the line covers, in pixels of the tile image. It is a polygon rather than a rectangle because text can be slanted.
 
 Two steps turn the polygon into the box the rest of the pipeline uses:

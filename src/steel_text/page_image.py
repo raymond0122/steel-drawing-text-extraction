@@ -23,9 +23,12 @@ class PageTooLargeError(ValueError):
 
 
 def open_page(source: str | Path | BinaryIO) -> Image.Image:
-    """Open a page image as RGB, refusing one over MAX_PAGE_PIXELS before its pixels are decoded.
+    """Open a page image, refusing one over MAX_PAGE_PIXELS before its pixels are decoded.
 
-    Raises PageTooLargeError, or OSError for a file PIL can't read.
+    A grayscale page stays grayscale ("L"; a 1-bit scan becomes "L"): as RGB it would
+    hold each pixel's one value three times, three times the memory for nothing.
+    Every other page is opened as RGB. Raises PageTooLargeError, or OSError for a
+    file PIL can't read.
     """
     try:
         img = Image.open(source)  # reads only the header
@@ -34,7 +37,7 @@ def open_page(source: str | Path | BinaryIO) -> Image.Image:
     with img:  # closes a file PIL opened itself; the decoded pixels stay usable
         if img.width * img.height > MAX_PAGE_PIXELS:
             raise PageTooLargeError(f"{img.width} x {img.height} px is over the limit of {MAX_PAGE_PIXELS:,} pixels")
-        if img.mode == "RGB":
+        if img.mode in ("L", "RGB"):
             img.load()  # convert() would decode the page and then copy it: twice the memory at its peak
             return img
-        return img.convert("RGB")
+        return img.convert("L" if img.mode == "1" else "RGB")

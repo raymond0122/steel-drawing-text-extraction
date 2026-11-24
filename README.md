@@ -39,7 +39,7 @@ source .venv/Scripts/activate                  # Git Bash on Windows; PowerShell
 pip install -e ".[dev]"                        # the app, plus pytest, ruff and mypy for development
 
 steel-demo                                     # offline: synthetic drawing, simulated OCR and LLM, no API keys
-python -m pytest                               # 107 tests
+python -m pytest                               # 109 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # web UI, then open http://127.0.0.1:8000

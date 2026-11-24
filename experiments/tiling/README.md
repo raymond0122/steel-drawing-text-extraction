@@ -112,6 +112,7 @@ What this shows:
 
 - **One drawing,** cleanly rendered and synthetic. Scanned drawings have noise and skew and may break down earlier, and other resolutions or denser text may move the point where accuracy drops. The results are a measured default for drawings like this one, not a rule for every drawing.
 - **Each condition ran once.** The 3,500 px tiled run was repeated and gave exactly the same output ([`results/tiled_first_run.json`](results/tiled_first_run.json)).
+- **Experiments 1 and 2 sent RGB tiles.** The app now keeps a grayscale page like this one grayscale. The 3,500 px run repeated with grayscale tiles read the same 696 lines, with the same text and boxes ([`results/tiled_grayscale.json`](results/tiled_grayscale.json)).
 - **The whole-page images were shrunk from the 400 dpi image.** Rendering the PDF at a lower dpi could differ slightly.
 - **Only the beam labels and the smallest lines are verified.** `summary.json` also compares all 391 lines against the tiled reading, which is agreement, not accuracy.
 - **OCR only.** The LLM label filter isn't part of either experiment.
@@ -127,13 +128,14 @@ python experiments/tiling/dedup_thresholds.py     # experiment 3, from the same 
 
 python experiments/tiling/run_ocr.py              # experiment 1: calls Azure, needs .env
 python experiments/tiling/run_tile_sizes.py       # experiment 2: calls Azure, needs .env
+python experiments/tiling/run_grayscale.py        # the 3,500 px run with grayscale tiles: calls Azure, needs .env
 ```
 
 The `run_` scripts skip any condition whose result is already in `results/`, so they never pay for the same requests twice. Delete a result file to measure that condition again.
 
 | File | What it holds |
 |---|---|
-| `run_ocr.py`, `run_tile_sizes.py` | send the drawing to Azure and save the raw OCR in `results/` |
+| `run_ocr.py`, `run_tile_sizes.py`, `run_grayscale.py` | send the drawing to Azure and save the raw OCR in `results/` |
 | `analyze.py`, `analyze_tile_sizes.py`, `dedup_thresholds.py` | build the answer key, score every condition, print the tables |
 | `results/*.json` | the raw OCR of each condition, in page coordinates |
 | `ground_truth.json` | the 82 verified beam labels |

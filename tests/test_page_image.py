@@ -18,11 +18,20 @@ def png_bytes(width, height, mode="L"):
     return buf.getvalue()
 
 
-@pytest.mark.parametrize("mode", ["L", "RGB", "RGBA", "P"])
-def test_page_is_opened_as_rgb(mode):
+@pytest.mark.parametrize(
+    "mode, opened_as, white",
+    [
+        ("L", "L", 255),  # grayscale stays grayscale: a third of the memory
+        ("1", "L", 255),
+        ("RGB", "RGB", (255, 255, 255)),
+        ("RGBA", "RGB", (255, 255, 255)),
+        ("P", "RGB", (255, 255, 255)),
+    ],
+)
+def test_page_is_opened_as_grayscale_or_rgb(mode, opened_as, white):
     page = open_page(io.BytesIO(png_bytes(20, 10, mode)))
-    assert page.mode == "RGB" and page.size == (20, 10)
-    assert page.getpixel((0, 0)) == (255, 255, 255)  # decoded, not just the header
+    assert page.mode == opened_as and page.size == (20, 10)
+    assert page.getpixel((0, 0)) == white  # decoded, not just the header
 
 
 def test_page_file_is_closed_once_opened(tmp_path):
