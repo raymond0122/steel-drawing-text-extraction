@@ -194,6 +194,7 @@ class FilterResult:
     batch_ids: list[list[str]]  # the line IDs sent in each batch, in order
     failed_batches: list[tuple[int, str]] = field(default_factory=list)  # (batch index, error)
     not_checked: list[NotChecked] = field(default_factory=list)  # the lines of the failed batches
+    batch_ms: list[int] = field(default_factory=list)  # how long each batch took, failed batches included
 
     @property
     def batches(self) -> int:
@@ -225,6 +226,7 @@ def filter_labels(
     entries: list[LabelEntry] = []
     failed: list[tuple[int, str]] = []
     not_checked: list[NotChecked] = []
+    batch_ms: list[int] = []
     labelled: set[str] = set()
 
     for b_idx, batch_ids in enumerate(batches):
@@ -232,6 +234,7 @@ def filter_labels(
             sleep(request_sleep_s)
         items = [{"id": sid, "raw_text": by_id[sid].text} for sid in batch_ids]
 
+        start = time.perf_counter()
         try:
             parsed = extractor.extract(items)
         except LlmCallError as e:
@@ -240,6 +243,8 @@ def filter_labels(
             not_checked.extend(NotChecked(sid, by_id[sid].text, by_id[sid].bbox, str(e)) for sid in batch_ids)
             logger.warning("batch %d skipped, its %d lines not checked: %s", b_idx, len(batch_ids), e)
             continue
+        finally:
+            batch_ms.append(round((time.perf_counter() - start) * 1000))
 
         in_batch = set(batch_ids)
         dropped = 0
@@ -266,4 +271,11 @@ def filter_labels(
 
     ok = not batches or len(failed) < len(batches)
     logger.info("LLM filter: %d batches, %d failed, %d labels", len(batches), len(failed), len(entries))
-    return FilterResult(ok=ok, entries=entries, batch_ids=batches, failed_batches=failed, not_checked=not_checked)
+    return FilterResult(
+        ok=ok,
+        entries=entries,
+        batch_ids=batches,
+        failed_batches=failed,
+        not_checked=not_checked,
+        batch_ms=batch_ms,
+    )

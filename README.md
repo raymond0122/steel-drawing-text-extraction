@@ -39,7 +39,7 @@ source .venv/Scripts/activate                  # Git Bash on Windows; PowerShell
 pip install -e ".[dev]"                        # the app, plus pytest, ruff and mypy for development
 
 steel-demo                                     # offline: synthetic drawing, simulated OCR and LLM, no API keys
-python -m pytest                               # 102 tests
+python -m pytest                               # 107 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # web UI, then open http://127.0.0.1:8000
@@ -97,7 +97,7 @@ src/steel_text/          one package, installed with pip install -e .
   mock_clients.py        demo only: offline stand-ins for Azure OCR and the LLM
   overlay.py, fonts.py   demo only: the step-by-step images
   auth/                  FastAPI app, password hashing and JWT, SQLite user store; guards the web UI's live runs
-  web/                   local web UI: a FastAPI server, its response models, and a single HTML page
+  web/                   local web UI: a FastAPI server, its response models, and the page (index.html, app.js, style.css)
 tests/                   unit tests, an offline end-to-end test, web API tests, and a check that the experiment still runs
 experiments/tiling/      the tiling experiment: tiles against a shrunk page, and tile sizes, measured with Azure
 docs/                    design notes and README images

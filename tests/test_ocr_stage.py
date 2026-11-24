@@ -24,6 +24,7 @@ def test_a_failed_tile_is_recorded_and_the_other_tiles_are_still_read():
     assert [c.text for c in ocr.merged] == ["W310X39"]
     assert ocr.failed_tiles == [(1, "HTTP 500 (simulated failure)")]
     assert ocr.not_read == [(1, (800, 0, 1800, 1000), "HTTP 500 (simulated failure)")]
+    assert len(ocr.tile_ms) == 2  # the failed tile is timed too
 
 
 def test_a_page_where_no_tile_can_be_read_fails():

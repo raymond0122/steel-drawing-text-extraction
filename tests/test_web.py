@@ -109,6 +109,19 @@ def test_page_and_auth_api_are_served(client):
     assert client.get("/auth-api/me").status_code == 401
 
 
+@pytest.mark.parametrize("name, media_type", [("app.js", "text/javascript"), ("style.css", "text/css")])
+def test_the_page_script_and_styles_are_served_with_their_types(client, name, media_type):
+    assert f'"/static/{name}"' in client.get("/").text
+    r = client.get(f"/static/{name}")
+    assert r.status_code == 200 and r.headers["content-type"].startswith(media_type)
+    assert r.headers["cache-control"] == "no-cache"
+
+
+@pytest.mark.parametrize("name", ["index.html", "server.py", "..%2Fserver.py"])
+def test_no_other_file_is_served(client, name):
+    assert client.get(f"/static/{name}").status_code == 404
+
+
 def test_live_run_needs_a_login(client):
     r = client.post("/api/run", params={"live": True})
     assert r.status_code == 401 and "needs a login" in r.json()["detail"]

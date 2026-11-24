@@ -60,7 +60,7 @@ def test_failed_batch_is_skipped_and_the_rest_still_processed():
     )
     res = filter_labels(CHUNKS, ex, batch_size=2)
     assert ex.seen == res.batch_ids == [["0", "1"], ["2", "3"], ["4"]]
-    assert res.ok and res.batches == 3
+    assert res.ok and res.batches == 3 and len(res.batch_ms) == 3  # the failed batch is timed too
     assert res.failed_batches == [(1, "HTTP 500")]
     assert [e.normalized_label for e in res.entries] == ["C50", "WT155*79"]
     # the lines of the skipped batch are kept, so the outputs can show they may hold labels

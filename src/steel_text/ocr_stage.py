@@ -28,6 +28,7 @@ class TiledOcrResult:
     dedup_log: list[DedupDecision] = field(default_factory=list)
     failed_tiles: list[tuple[int, str]] = field(default_factory=list)  # (tile index, error)
     dedup_config: DedupConfig = field(default_factory=DedupConfig)  # the thresholds `merged` was made with
+    tile_ms: list[int] = field(default_factory=list)  # how long each tile's OCR took, failed tiles included
 
     @property
     def not_read(self) -> list[tuple[int, BBox, str]]:
@@ -64,15 +65,19 @@ def run_tiled_ocr(
 
     raw: list[OcrChunk] = []
     failed: list[tuple[int, str]] = []
+    tile_ms: list[int] = []
     for i, tile in enumerate(tiles):
         if i > 0 and request_sleep_s > 0:
             sleep(request_sleep_s)  # pace requests to stay under the rate limit
+        start = time.perf_counter()
         try:
             lines = client.read_tile(image.crop(tile.box), tile)
         except TileReadError as e:
             failed.append((i, str(e)))
             logger.warning("tile %d/%d %s not read, its text is missing: %s", i + 1, len(tiles), tile.box, e)
             continue
+        finally:
+            tile_ms.append(round((time.perf_counter() - start) * 1000))
 
         added = 0
         for line in lines:
@@ -82,7 +87,7 @@ def run_tiled_ocr(
             page_box = (x0 + tile.x0, y0 + tile.y0, x1 + tile.x0, y1 + tile.y0)
             raw.append(OcrChunk(text=line.text, bbox=page_box, tile_index=i))
             added += 1
-        logger.info("tile %d/%d %s: %d lines", i + 1, len(tiles), tile.box, added)
+        logger.info("tile %d/%d %s: %d lines in %.1f s", i + 1, len(tiles), tile.box, added, tile_ms[-1] / 1000)
 
     if len(failed) == len(tiles):
         raise TileReadError(f"no tile could be read; the first error: {failed[0][1]}")
@@ -90,4 +95,15 @@ def run_tiled_ocr(
     log: list[DedupDecision] = []
     merged = merge_tile_results(raw, tiles, cfg=dedup, log=log)
     logger.info("dedup: %d raw -> %d merged (removed %d)", len(raw), len(merged), len(raw) - len(merged))
-    return TiledOcrResult(width, height, tiling, tiles, raw, merged, log, failed, dedup)
+    return TiledOcrResult(
+        width=width,
+        height=height,
+        tiling=tiling,
+        tiles=tiles,
+        raw=raw,
+        merged=merged,
+        dedup_log=log,
+        failed_tiles=failed,
+        dedup_config=dedup,
+        tile_ms=tile_ms,
+    )

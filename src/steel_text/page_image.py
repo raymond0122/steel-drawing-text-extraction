@@ -2,7 +2,9 @@
 
 PIL's default limit (about 89 million pixels) is too small for large drawings, so
 it is raised to ours rather than switched off: an A0 sheet at 400 dpi is about
-250 million pixels.
+250 million pixels. PIL has only a process-wide setting for this, so it is set
+once, on import: setting it around each call would race between the web
+server's threads.
 """
 
 from __future__ import annotations

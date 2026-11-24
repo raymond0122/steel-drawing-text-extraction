@@ -3,7 +3,8 @@
     uvicorn steel_text.web.server:app --reload      then open http://127.0.0.1:8000
 
 POST /api/run runs the same pipeline as the demo (steel_text/pipeline.py) and
-returns every intermediate result as JSON. The page in index.html draws them.
+returns every intermediate result as JSON. The page (index.html, with app.js
+and style.css) draws them.
 The auth API is mounted under /auth-api: live runs spend API credit, so they
 need an access token from it. Offline runs need none.
 """
@@ -13,11 +14,11 @@ from __future__ import annotations
 import base64
 import io
 import logging
-import time
-from collections.abc import Iterable, Sequence
+from collections.abc import AsyncIterator, Iterable, Sequence
+from contextlib import asynccontextmanager
 from functools import lru_cache
 from pathlib import Path
-from typing import Annotated, Any
+from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import run_in_threadpool
@@ -28,15 +29,16 @@ from PIL import Image
 from ..auth.main import app as auth_app
 from ..auth.main import bearer, current_user
 from ..auth.main import get_settings as auth_settings
+from ..dedup import DedupDecision
 from ..geometry import BBox, region_around
 from ..label_sheet import XLSX_MIME, write_label_sheet
-from ..llm_filter import DEFAULT_BATCH_SIZE, LabelExtractor, NotChecked
-from ..ocr_types import OcrChunk, OcrLine, TileOcrClient, TileReadError
+from ..llm_filter import DEFAULT_BATCH_SIZE, NotChecked
+from ..ocr_types import OcrChunk, TileReadError
 from ..page_image import PageTooLargeError, open_page
-from ..pipeline import MissingCredentialsError, make_clients, run_pipeline
+from ..pipeline import MissingCredentialsError, PipelineResult, make_clients, run_pipeline
 from ..sample_drawing import GroundTruthText, check_truth, make_sample_drawing
 from ..settings import ENV_FILE, Settings, is_filled, load_settings
-from ..tiling import DEFAULT_MAX_TILES, Tile, TileLimitError
+from ..tiling import DEFAULT_MAX_TILES, TileLimitError
 from .schemas import (
     Chunk,
     DedupDecisionOut,
@@ -53,14 +55,21 @@ from .schemas import (
     Timings,
 )
 
-# Same format as the demo. Prints per-tile progress, retries and timings in the uvicorn terminal.
-logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
 
 PREVIEW_MAX_SIDE = 4000  # the browser gets a downscaled page; close-ups are cropped at full resolution
 CLOSEUP_PAD = 120
 
-app = FastAPI(title="Steel text extraction: demo UI")
+
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    # When the server starts, not on import, so importing this module (the tests do) changes no
+    # logging. Same format as the demo: per-tile progress, retries and timings in the uvicorn terminal.
+    logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+    yield
+
+
+app = FastAPI(title="Steel text extraction: demo UI", lifespan=lifespan)
 app.mount("/auth-api", auth_app)
 
 
@@ -125,40 +134,6 @@ def _chunk(c: OcrChunk) -> Chunk:
     return Chunk(text=c.text, bbox=c.bbox, tile=c.tile_index)
 
 
-class _TimedOcr:
-    """Wraps the tile OCR client and records how long each tile took, in ms."""
-
-    def __init__(self, client: TileOcrClient) -> None:
-        self.client = client
-        self.ms: list[int] = []
-
-    def read_tile(self, tile_img: Image.Image, tile: Tile) -> list[OcrLine]:
-        start = time.perf_counter()
-        try:
-            return self.client.read_tile(tile_img, tile)
-        finally:
-            self.ms.append(_ms_since(start))
-
-
-class _TimedLabeler:
-    """Wraps the LLM label extractor and records how long each batch took, in ms, failed ones included."""
-
-    def __init__(self, extractor: LabelExtractor) -> None:
-        self.extractor = extractor
-        self.ms: list[int] = []
-
-    def extract(self, items: Sequence[dict[str, str]]) -> dict[str, Any]:
-        start = time.perf_counter()
-        try:
-            return self.extractor.extract(items)
-        finally:
-            self.ms.append(_ms_since(start))
-
-
-def _ms_since(start: float) -> int:
-    return round((time.perf_counter() - start) * 1000)
-
-
 def _run(
     image_bytes: bytes,
     live: bool,
@@ -168,22 +143,12 @@ def _run(
     batch_size: int,
     max_tiles: int,
 ) -> RunResponse:
-    truth: list[GroundTruthText] | None
-    if image_bytes:
-        if not live:
-            raise HTTPException(
-                400, "Uploading an image needs live mode: the offline simulator only knows the synthetic drawing."
-            )
-        try:
-            page = open_page(io.BytesIO(image_bytes))
-        except PageTooLargeError as e:
-            raise HTTPException(413, f"Image too large: {e}") from e
-        except OSError as e:
-            raise HTTPException(400, f"Could not read the image: {e}") from e
-        truth = None
-    else:
-        page, truth = _sample()
+    """Load the page, pick the clients, run the pipeline, and answer with every step's result.
 
+    Each way a run can fail becomes an HTTP error here; a single failed tile or
+    batch is not one of them, since it is part of the result.
+    """
+    page, truth = _load_page(image_bytes, live)
     try:
         ocr_client, labeler = make_clients(
             live,
@@ -196,42 +161,50 @@ def _run(
         hint = "Fill in the keys in .env." if ENV_FILE.exists() else "Copy .env.example to .env and fill in the keys."
         raise HTTPException(400, f"Live mode needs credentials ({e}). {hint}") from e
 
-    timed_ocr, timed_labeler = _TimedOcr(ocr_client), _TimedLabeler(labeler)
     try:
-        outcome = run_pipeline(page, timed_ocr, timed_labeler, live=live, max_tiles=max_tiles, batch_size=batch_size)
+        outcome = run_pipeline(page, ocr_client, labeler, live=live, max_tiles=max_tiles, batch_size=batch_size)
     except TileLimitError as e:
         raise HTTPException(400, f"Too few tiles allowed: {e}") from e
     except TileReadError as e:  # no tile could be read at all; a single failed tile is in the result
         raise HTTPException(502, f"OCR failed: {e}") from e
-    ocr, result = outcome.ocr, outcome.labels
     logger.info(
         "%s run: OCR %.1f s over %d tiles (%d not read), LLM %.1f s over %d batches (%d skipped)",
         "live" if live else "offline",
         outcome.ocr_seconds,
-        len(ocr.tiles),
-        len(ocr.failed_tiles),
+        len(outcome.ocr.tiles),
+        len(outcome.ocr.failed_tiles),
         outcome.llm_seconds,
-        result.batches,
-        len(result.failed_batches),
+        outcome.labels.batches,
+        len(outcome.labels.failed_batches),
     )
+    return _response(page, truth, outcome, live=live, uploaded=bool(image_bytes))
 
-    errors = dict(result.failed_batches)
-    decisions = []
-    for d in ocr.dedup_log:
-        region = region_around(d.dropped.bbox, d.kept.bbox, CLOSEUP_PAD, page.width, page.height)
-        decisions.append(
-            DedupDecisionOut(
-                dropped=_chunk(d.dropped),
-                kept=_chunk(d.kept),
-                reason=d.reason,
-                region=region,
-                crop=_png_data_url(page.crop(region)),
-            )
+
+def _load_page(image_bytes: bytes, live: bool) -> tuple[Image.Image, list[GroundTruthText] | None]:
+    """The uploaded page, which needs live mode, with no ground truth; or else the synthetic drawing and its own."""
+    if not image_bytes:
+        return _sample()
+    if not live:
+        raise HTTPException(
+            400, "Uploading an image needs live mode: the offline simulator only knows the synthetic drawing."
         )
+    try:
+        return open_page(io.BytesIO(image_bytes)), None
+    except PageTooLargeError as e:
+        raise HTTPException(413, f"Image too large: {e}") from e
+    except OSError as e:
+        raise HTTPException(400, f"Could not read the image: {e}") from e
 
+
+def _response(
+    page: Image.Image, truth: list[GroundTruthText] | None, outcome: PipelineResult, *, live: bool, uploaded: bool
+) -> RunResponse:
+    """Every intermediate result, in the shape app.js reads (see schemas.py)."""
+    ocr, filtered = outcome.ocr, outcome.labels
+    errors = dict(filtered.failed_batches)
     return RunResponse(
         mode="live" if live else "offline",
-        source="upload" if image_bytes else "synthetic",
+        source="upload" if uploaded else "synthetic",
         page=PageInfo(width=page.width, height=page.height, preview=_preview(page)),
         tiling=Tiling(
             tile_size=ocr.tiling.tile_size,
@@ -242,30 +215,55 @@ def _run(
         ),
         raw=[_chunk(c) for c in ocr.raw],
         merged=[MergedChunk(id=str(i), **_chunk(c).model_dump()) for i, c in enumerate(ocr.merged)],
-        dedup=DedupInfo(config=ocr.dedup_config, decisions=decisions),
+        dedup=DedupInfo(config=ocr.dedup_config, decisions=[_decision(page, d) for d in ocr.dedup_log]),
         llm=LlmInfo(
-            ok=result.ok,
-            batches=[LlmBatch(ids=ids, error=errors.get(b)) for b, ids in enumerate(result.batch_ids)],
+            ok=filtered.ok,
+            batches=[LlmBatch(ids=ids, error=errors.get(b)) for b, ids in enumerate(filtered.batch_ids)],
         ),
         labels=[
             LabelOut(str_id=e.str_id, label=e.normalized_label, kind=e.material_kind, bbox=e.bbox, raw_text=e.raw_text)
-            for e in result.entries
+            for e in filtered.entries
         ],
-        truth_check=check_truth(truth, result.entries) if truth is not None else None,
-        labels_xlsx=_xlsx_data_url((e.normalized_label for e in result.entries), ocr.not_read, result.not_checked),
+        truth_check=check_truth(truth, filtered.entries) if truth is not None else None,
+        labels_xlsx=_xlsx_data_url((e.normalized_label for e in filtered.entries), ocr.not_read, filtered.not_checked),
         timings_ms=Timings(
             ocr=round(outcome.ocr_seconds * 1000),
             llm=round(outcome.llm_seconds * 1000),
-            tiles=timed_ocr.ms,
-            llm_batches=timed_labeler.ms,
+            tiles=ocr.tile_ms,
+            llm_batches=filtered.batch_ms,
         ),
     )
 
 
+def _decision(page: Image.Image, d: DedupDecision) -> DedupDecisionOut:
+    """A dedup decision, with a full-resolution crop of the area around both readings."""
+    region = region_around(d.dropped.bbox, d.kept.bbox, CLOSEUP_PAD, page.width, page.height)
+    return DedupDecisionOut(
+        dropped=_chunk(d.dropped),
+        kept=_chunk(d.kept),
+        reason=d.reason,
+        region=region,
+        crop=_png_data_url(page.crop(region)),
+    )
+
+
+WEB_DIR = Path(__file__).parent
+NO_CACHE = {"Cache-Control": "no-cache"}  # the browser re-checks on every load, so edits show without a hard refresh
+# Named here, so no other file can be asked for, and with their types: on Windows, Python can
+# guess text/plain for .js from the registry, and a browser refuses a stylesheet that isn't text/css.
+STATIC_FILES = {"app.js": "text/javascript", "style.css": "text/css"}
+
+
 @app.get("/", include_in_schema=False)
 def index() -> FileResponse:
-    # no-cache: the browser re-checks the page on every load, so edits show up without a hard refresh
-    return FileResponse(Path(__file__).with_name("index.html"), headers={"Cache-Control": "no-cache"})
+    return FileResponse(WEB_DIR / "index.html", headers=NO_CACHE)
+
+
+@app.get("/static/{name}", include_in_schema=False)
+def static_file(name: str) -> FileResponse:
+    if name not in STATIC_FILES:
+        raise HTTPException(404, "Not Found")
+    return FileResponse(WEB_DIR / name, media_type=STATIC_FILES[name], headers=NO_CACHE)
 
 
 @app.get("/api/live-status")

@@ -1,4 +1,4 @@
-"""Response bodies of the web UI's API. index.html reads exactly these fields."""
+"""Response bodies of the web UI's API. app.js reads exactly these fields."""
 
 from __future__ import annotations
 
