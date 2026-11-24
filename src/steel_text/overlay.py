@@ -14,6 +14,24 @@ from .ocr_types import OcrChunk
 from .tiling import Tile
 
 TILE_COLORS = [(230, 57, 70), (29, 120, 116), (69, 123, 157), (244, 162, 97), (131, 56, 236), (42, 157, 143)]
+NOT_READ_COLOR = (198, 40, 40)  # red, as in the web UI
+
+
+def draw_not_read(page: Image.Image, boxes: Iterable[BBox]) -> Image.Image:
+    """Hatch the areas no tile could read in red, so missing text can't pass for an empty area."""
+    base = page.convert("RGBA")
+    layer = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(layer)
+    font = load_font(140)
+    for x0, y0, x1, y1 in boxes:
+        hatch = Image.new("RGBA", (x1 - x0, y1 - y0), (0, 0, 0, 0))
+        lines = ImageDraw.Draw(hatch)
+        for d in range(-hatch.height, hatch.width, 90):  # 45-degree stripes, 90 px apart
+            lines.line([(d, hatch.height), (d + hatch.height, 0)], fill=(*NOT_READ_COLOR, 110), width=14)
+        layer.alpha_composite(hatch, (x0, y0))
+        draw.rectangle([x0, y0, x1 - 1, y1 - 1], outline=(*NOT_READ_COLOR, 255), width=18)
+        draw.text((x0 + 40, y0 + 30), "NOT READ", fill=(*NOT_READ_COLOR, 255), font=font)
+    return Image.alpha_composite(base, layer).convert("RGB")
 
 
 def draw_tile_grid(page: Image.Image, tiles: Sequence[Tile]) -> Image.Image:

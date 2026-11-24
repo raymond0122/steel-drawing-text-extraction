@@ -16,7 +16,7 @@ def drawing():
 @pytest.fixture(scope="module")
 def ocr(drawing):
     page, truth = drawing
-    return run_tiled_ocr(page, SimulatedOcr(truth), request_sleep_s=0)
+    return run_tiled_ocr(page, SimulatedOcr(truth))
 
 
 def test_tile_edges_create_the_intended_duplicates_and_fragments(ocr):
@@ -39,6 +39,6 @@ def test_dedup_leaves_each_printed_text_exactly_once(drawing, ocr):
 
 def test_all_steel_labels_found_and_corrected(drawing, ocr):
     _, truth = drawing
-    res = filter_labels(ocr.merged, RuleBasedLabeler(), batch_size=10, sleep=lambda s: None)
+    res = filter_labels(ocr.merged, RuleBasedLabeler(), batch_size=10)
     assert res.ok
     assert {e.normalized_label for e in res.entries} == {t.expected_label for t in truth if t.expected_label}

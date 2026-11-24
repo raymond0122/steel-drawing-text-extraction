@@ -24,26 +24,26 @@ from fastapi.responses import FileResponse
 from PIL import Image
 
 from ..auth.main import app as auth_app
-from ..azure_ocr import AzureOcrError
 from ..dedup import DedupConfig
-from ..geometry import region_around
+from ..geometry import BBox, region_around
 from ..label_sheet import XLSX_MIME, write_label_sheet
-from ..llm_filter import LabelExtractor
-from ..ocr_types import OcrChunk, OcrLine, TileOcrClient
+from ..llm_filter import DEFAULT_BATCH_SIZE, LabelExtractor
+from ..ocr_types import OcrChunk, OcrLine, TileOcrClient, TileReadError
 from ..page_image import PageTooLargeError, open_page
 from ..pipeline import MissingCredentialsError, make_clients, run_pipeline
 from ..sample_drawing import GroundTruthText, check_truth, make_sample_drawing
 from ..settings import ENV_FILE, Settings, is_filled, load_settings
-from ..tiling import Tile
+from ..tiling import DEFAULT_MAX_TILES, Tile, TileLimitError
 from .schemas import (
     Chunk,
     DedupDecisionOut,
     DedupInfo,
-    FailedBatch,
     LabelOut,
     LiveStatus,
+    LlmBatch,
     LlmInfo,
     MergedChunk,
+    NotRead,
     PageInfo,
     RunResponse,
     Tiling,
@@ -88,10 +88,10 @@ def _preview(page: Image.Image) -> str:
     return _png_data_url(page)
 
 
-def _xlsx_data_url(labels: Iterable[str]) -> str:
+def _xlsx_data_url(labels: Iterable[str], not_read: Sequence[tuple[int, BBox, str]]) -> str:
     """The label sheet as a data URL, so the page can offer it as a download without a second request."""
     buf = io.BytesIO()
-    write_label_sheet(labels, buf)
+    write_label_sheet(labels, buf, not_read=not_read)
     return f"data:{XLSX_MIME};base64," + base64.b64encode(buf.getvalue()).decode("ascii")
 
 
@@ -137,6 +137,7 @@ def _run(
     image_bytes: bytes,
     live: bool,
     settings: Settings,
+    simulate_ocr_failure: bool,
     simulate_llm_failure: bool,
     batch_size: int,
     max_tiles: int,
@@ -158,7 +159,13 @@ def _run(
         page, truth = _sample()
 
     try:
-        ocr_client, labeler = make_clients(live, truth, settings=settings, simulate_llm_failure=simulate_llm_failure)
+        ocr_client, labeler = make_clients(
+            live,
+            truth,
+            settings=settings,
+            simulate_ocr_failure=simulate_ocr_failure,
+            simulate_llm_failure=simulate_llm_failure,
+        )
     except MissingCredentialsError as e:
         hint = "Fill in the keys in .env." if ENV_FILE.exists() else "Copy .env.example to .env and fill in the keys."
         raise HTTPException(400, f"Live mode needs credentials ({e}). {hint}") from e
@@ -166,18 +173,23 @@ def _run(
     timed_ocr, timed_labeler = _TimedOcr(ocr_client), _TimedLabeler(labeler)
     try:
         outcome = run_pipeline(page, timed_ocr, timed_labeler, live=live, max_tiles=max_tiles, batch_size=batch_size)
-    except AzureOcrError as e:  # a tile still failing after its retries (live mode only)
+    except TileLimitError as e:
+        raise HTTPException(400, f"Too few tiles allowed: {e}") from e
+    except TileReadError as e:  # no tile could be read at all; a single failed tile is in the result
         raise HTTPException(502, f"OCR failed: {e}") from e
     ocr, result = outcome.ocr, outcome.labels
     logger.info(
-        "%s run: OCR %.1f s over %d tiles, LLM %.1f s over %d batches",
+        "%s run: OCR %.1f s over %d tiles (%d not read), LLM %.1f s over %d batches (%d skipped)",
         "live" if live else "offline",
         outcome.ocr_seconds,
         len(ocr.tiles),
+        len(ocr.failed_tiles),
         outcome.llm_seconds,
         result.batches,
+        len(result.failed_batches),
     )
 
+    errors = dict(result.failed_batches)
     decisions = []
     for d in ocr.dedup_log:
         region = region_around(d.dropped.bbox, d.kept.bbox, CLOSEUP_PAD, page.width, page.height)
@@ -195,22 +207,26 @@ def _run(
         mode="live" if live else "offline",
         source="upload" if image_bytes else "synthetic",
         page=PageInfo(width=page.width, height=page.height, preview=_preview(page)),
-        tiling=Tiling(tile_size=ocr.tile_size, overlap=ocr.overlap, tiles=[t.box for t in ocr.tiles]),
+        tiling=Tiling(
+            tile_size=ocr.tiling.tile_size,
+            overlap=ocr.tiling.overlap,
+            reason=ocr.tiling.reason,
+            tiles=[t.box for t in ocr.tiles],
+            not_read=[NotRead(tile=i, box=box, error=error) for i, box, error in ocr.not_read],
+        ),
         raw=[_chunk(c) for c in ocr.raw],
         merged=[MergedChunk(id=str(i), **_chunk(c).model_dump()) for i, c in enumerate(ocr.merged)],
         dedup=DedupInfo(config=DedupConfig(), decisions=decisions),
         llm=LlmInfo(
             ok=result.ok,
-            batch_size=batch_size,
-            batches=result.batches,
-            failed=[FailedBatch(batch=b, error=err) for b, err in result.failed_batches],
+            batches=[LlmBatch(ids=ids, error=errors.get(b)) for b, ids in enumerate(result.batch_ids)],
         ),
         labels=[
             LabelOut(str_id=e.str_id, label=e.normalized_label, kind=e.material_kind, bbox=e.bbox, raw_text=e.raw_text)
             for e in result.entries
         ],
         truth_check=check_truth(truth, result.entries) if truth is not None else None,
-        labels_xlsx=_xlsx_data_url(e.normalized_label for e in result.entries),
+        labels_xlsx=_xlsx_data_url((e.normalized_label for e in result.entries), ocr.not_read),
         timings_ms=Timings(
             ocr=round(outcome.ocr_seconds * 1000),
             llm=round(outcome.llm_seconds * 1000),
@@ -233,7 +249,7 @@ def live_status(settings: SettingsDep) -> LiveStatus:
         azure_endpoint=is_filled(settings.azure_docint_endpoint),
         azure_key=is_filled(settings.azure_docint_key),
         openai_key=is_filled(settings.openai_api_key),
-        openai_model=settings.openai_model.strip() or "gpt-4o",
+        openai_model=settings.openai_model,
     )
 
 
@@ -242,11 +258,21 @@ async def run(
     request: Request,
     settings: SettingsDep,
     live: bool = False,
+    simulate_ocr_failure: bool = False,
     simulate_llm_failure: bool = False,
-    batch_size: int = Query(10, ge=1, le=200),
-    max_tiles: int = Query(20, ge=1, le=100),
+    batch_size: int = Query(DEFAULT_BATCH_SIZE, ge=1, le=200),
+    max_tiles: int = Query(DEFAULT_MAX_TILES, ge=1, le=100),
 ) -> RunResponse:
     """Body: optional raw image bytes (live mode only). Without one, the synthetic drawing is used."""
     image_bytes = await request.body()
     # Live calls block for seconds, so keep them off the event loop.
-    return await run_in_threadpool(_run, image_bytes, live, settings, simulate_llm_failure, batch_size, max_tiles)
+    return await run_in_threadpool(
+        _run,
+        image_bytes,
+        live,
+        settings,
+        simulate_ocr_failure=simulate_ocr_failure,
+        simulate_llm_failure=simulate_llm_failure,
+        batch_size=batch_size,
+        max_tiles=max_tiles,
+    )

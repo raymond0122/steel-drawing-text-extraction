@@ -150,4 +150,4 @@ def test_read_tile_parses_lines_and_skips_empty_text():
 
     session = FakeSession(post=[ACCEPTED], get=[FakeResponse(200, body=SUCCEEDED)])
     lines = make_client(session, []).read_tile(Image.new("RGB", (200, 100), "white"), Tile(0, 0, 200, 100))
-    assert [(line.text, line.bbox, line.conf) for line in lines] == [("W310X39", (10, 20, 110, 60), -1.0)]
+    assert [(line.text, line.bbox) for line in lines] == [("W310X39", (10, 20, 110, 60))]

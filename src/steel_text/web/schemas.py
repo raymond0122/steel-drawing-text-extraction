@@ -17,10 +17,20 @@ class PageInfo(BaseModel):
     preview: str  # PNG data URL, downscaled for the browser
 
 
+class NotRead(BaseModel):
+    """A tile OCR could not read: any text in its area is missing from every step."""
+
+    tile: int
+    box: BBox
+    error: str
+
+
 class Tiling(BaseModel):
     tile_size: int
     overlap: int
+    reason: str  # why this tile size, in one sentence
     tiles: list[BBox]
+    not_read: list[NotRead]
 
 
 class Chunk(BaseModel):
@@ -46,16 +56,14 @@ class DedupInfo(BaseModel):
     decisions: list[DedupDecisionOut]
 
 
-class FailedBatch(BaseModel):
-    batch: int
-    error: str
+class LlmBatch(BaseModel):
+    ids: list[str]  # the merged lines sent in this batch
+    error: str | None  # why it failed and was skipped; None if it succeeded
 
 
 class LlmInfo(BaseModel):
     ok: bool
-    batch_size: int
-    batches: int
-    failed: list[FailedBatch]
+    batches: list[LlmBatch]
 
 
 class LabelOut(BaseModel):

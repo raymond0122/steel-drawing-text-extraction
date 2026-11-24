@@ -83,7 +83,3 @@ def overlap_ratio_min(a: BBox, b: BBox) -> float:
     if inter <= 0:
         return 0.0
     return inter / float(max(1, min(area(a), area(b))))
-
-
-def contains(outer: BBox, inner: BBox) -> bool:
-    return outer[0] <= inner[0] and outer[1] <= inner[1] and inner[2] <= outer[2] and inner[3] <= outer[3]

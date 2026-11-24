@@ -24,9 +24,9 @@ def drawing():
 
 def test_offline_mode_uses_the_stand_ins(drawing):
     _, truth = drawing
-    ocr_client, labeler = make_clients(False, truth, simulate_llm_failure=True)
+    ocr_client, labeler = make_clients(False, truth, simulate_ocr_failure=True, simulate_llm_failure=True)
     assert isinstance(ocr_client, SimulatedOcr) and isinstance(labeler, RuleBasedLabeler)
-    assert labeler.fail_calls == {1}
+    assert ocr_client.fail_calls == {1} and labeler.fail_calls == {1}
 
 
 def test_offline_mode_needs_the_ground_truth():

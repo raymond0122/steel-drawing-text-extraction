@@ -1,0 +1,178 @@
+[
+ {
+  "tile_size": 2000,
+  "requests": 54,
+  "seconds": 394.8,
+  "rate_limited": 86,
+  "raw": 716,
+  "kept": 468,
+  "removed": 248,
+  "same_tile_removals": 0,
+  "labels_not_whole_in_any_tile": 0,
+  "labels": {
+   "found": 82,
+   "section": 81,
+   "studs": 82,
+   "camber_total": 56,
+   "camber": 56,
+   "exact": 81,
+   "total": 82
+  },
+  "smallest_exact": 23,
+  "same_as_3500": 377
+ },
+ {
+  "tile_size": 2500,
+  "requests": 35,
+  "seconds": 255.0,
+  "rate_limited": 60,
+  "raw": 760,
+  "kept": 495,
+  "removed": 265,
+  "same_tile_removals": 0,
+  "labels_not_whole_in_any_tile": 0,
+  "labels": {
+   "found": 82,
+   "section": 82,
+   "studs": 82,
+   "camber_total": 56,
+   "camber": 56,
+   "exact": 81,
+   "total": 82
+  },
+  "smallest_exact": 23,
+  "same_as_3500": 358
+ },
+ {
+  "tile_size": 3000,
+  "requests": 24,
+  "seconds": 170.5,
+  "rate_limited": 51,
+  "raw": 823,
+  "kept": 485,
+  "removed": 338,
+  "same_tile_removals": 0,
+  "labels_not_whole_in_any_tile": 0,
+  "labels": {
+   "found": 82,
+   "section": 82,
+   "studs": 82,
+   "camber_total": 56,
+   "camber": 56,
+   "exact": 82,
+   "total": 82
+  },
+  "smallest_exact": 23,
+  "same_as_3500": 364
+ },
+ {
+  "tile_size": 3500,
+  "requests": 15,
+  "seconds": 123.2,
+  "rate_limited": null,
+  "raw": 696,
+  "kept": 464,
+  "removed": 232,
+  "same_tile_removals": 0,
+  "labels_not_whole_in_any_tile": 0,
+  "labels": {
+   "found": 82,
+   "section": 82,
+   "studs": 82,
+   "camber_total": 56,
+   "camber": 56,
+   "exact": 81,
+   "total": 82
+  },
+  "smallest_exact": 23,
+  "same_as_3500": 391
+ },
+ {
+  "tile_size": 4500,
+  "requests": 12,
+  "seconds": 98.8,
+  "rate_limited": 18,
+  "raw": 928,
+  "kept": 464,
+  "removed": 464,
+  "same_tile_removals": 0,
+  "labels_not_whole_in_any_tile": 0,
+  "labels": {
+   "found": 82,
+   "section": 82,
+   "studs": 82,
+   "camber_total": 56,
+   "camber": 56,
+   "exact": 82,
+   "total": 82
+  },
+  "smallest_exact": 23,
+  "same_as_3500": 386
+ },
+ {
+  "tile_size": 6000,
+  "requests": 6,
+  "seconds": 49.7,
+  "rate_limited": 7,
+  "raw": 897,
+  "kept": 455,
+  "removed": 442,
+  "same_tile_removals": 0,
+  "labels_not_whole_in_any_tile": 0,
+  "labels": {
+   "found": 82,
+   "section": 82,
+   "studs": 82,
+   "camber_total": 56,
+   "camber": 54,
+   "exact": 80,
+   "total": 82
+  },
+  "smallest_exact": 22,
+  "same_as_3500": 374
+ },
+ {
+  "tile_size": 8000,
+  "requests": 4,
+  "seconds": 39.2,
+  "rate_limited": 1,
+  "raw": 861,
+  "kept": 452,
+  "removed": 409,
+  "same_tile_removals": 0,
+  "labels_not_whole_in_any_tile": 0,
+  "labels": {
+   "found": 82,
+   "section": 82,
+   "studs": 82,
+   "camber_total": 56,
+   "camber": 56,
+   "exact": 72,
+   "total": 82
+  },
+  "smallest_exact": 22,
+  "same_as_3500": 372
+ },
+ {
+  "tile_size": 10000,
+  "requests": 2,
+  "seconds": 27.9,
+  "rate_limited": 0,
+  "raw": 569,
+  "kept": 447,
+  "removed": 122,
+  "same_tile_removals": 0,
+  "labels_not_whole_in_any_tile": 0,
+  "labels": {
+   "found": 82,
+   "section": 82,
+   "studs": 82,
+   "camber_total": 56,
+   "camber": 55,
+   "exact": 78,
+   "total": 82
+  },
+  "smallest_exact": 21,
+  "same_as_3500": 362
+ }
+]

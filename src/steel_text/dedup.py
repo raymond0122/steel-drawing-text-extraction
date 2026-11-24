@@ -15,19 +15,19 @@ UI can show why each chunk was dropped.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 from dataclasses import dataclass
 
 from . import geometry as g
 from .ocr_types import OcrChunk
-from .text_norm import is_fragment, norm_text
 from .tiling import Tile
 
 
 @dataclass
 class DedupDecision:
     dropped: OcrChunk
-    kept: OcrChunk  # the chunk that survived the merge; updated if a later chunk replaces it
+    kept: OcrChunk
     reason: str
 
     def __str__(self) -> str:
@@ -40,9 +40,8 @@ class DedupDecision:
 @dataclass(frozen=True)
 class DedupConfig:
     # Kept strict on purpose: looser values merge different labels that sit close together.
-    iou: float = 0.50
-    overlap_min: float = 0.80
-    very_high_iou: float = 0.90  # only near-identical boxes
+    iou: float = 0.50  # with center_dist_px: how near two readings of the same text must be
+    overlap_min: float = 0.80  # share of the smaller box the other must cover: a cut-off piece, or another reading
     center_dist_px: float = 80.0
 
 
@@ -56,28 +55,23 @@ def merge_tile_results(
     """Drop duplicates and cut-off fragments; return the chunks that remain.
 
     `tiles` are the tiles the chunks came from: each chunk's tile_index points
-    into it. Longest text goes first, so a full string is already kept when its
-    fragments come up.
+    into it. The best reading goes first (longest text, then the larger box), and
+    of two readings of one text the first is kept. So a full string is already
+    kept when its fragments come up.
     """
     for c in chunks:
         if not 0 <= c.tile_index < len(tiles):
             raise ValueError(f"chunk {c.text!r} has tile_index {c.tile_index}, but there are {len(tiles)} tiles")
 
-    ordered = sorted(chunks, key=lambda c: (len(norm_text(c.text)), c.conf, g.area(c.bbox)), reverse=True)
+    ordered = sorted(chunks, key=lambda c: (len(_norm_text(c.text)), g.area(c.bbox)), reverse=True)
     kept: list[OcrChunk] = []
     for c in ordered:
-        for idx, k in enumerate(kept):
-            match = _same_text(c, k, cfg) if _read_twice(c, k, tiles) else None
-            if match is None:
-                continue
-            winner, reason = match
-            loser = k if winner is c else c
-            if winner is c:
-                kept[idx] = c
-                _redirect(log, k, c)
-            if log is not None:
-                log.append(DedupDecision(dropped=loser, kept=winner, reason=reason))
-            break
+        for k in kept:
+            reason = _duplicate_reason(c, k, cfg) if _read_twice(c, k, tiles) else None
+            if reason is not None:
+                if log is not None:
+                    log.append(DedupDecision(dropped=c, kept=k, reason=reason))
+                break
         else:
             kept.append(c)
     return kept
@@ -91,47 +85,21 @@ def _read_twice(a: OcrChunk, b: OcrChunk, tiles: Sequence[Tile]) -> bool:
     return shared is not None and g.intersection_area(a.bbox, shared) > 0 and g.intersection_area(b.bbox, shared) > 0
 
 
-def _same_text(c: OcrChunk, k: OcrChunk, cfg: DedupConfig) -> tuple[OcrChunk, str] | None:
-    """If c and k are two readings of one text, return the one to keep and why. None keeps both."""
-    iou = g.iou(c.bbox, k.bbox)
+def _duplicate_reason(c: OcrChunk, k: OcrChunk, cfg: DedupConfig) -> str | None:
+    """Why c is another reading of the kept chunk k, or None if they are two different texts."""
+    near = g.iou(c.bbox, k.bbox) >= cfg.iou or g.center_distance(c.bbox, k.bbox) <= cfg.center_dist_px
+    text = _norm_text(c.text)
+    if near and text and text == _norm_text(k.text):
+        return "same text nearby"
+
     overlap = g.overlap_ratio_min(c.bbox, k.bbox)
-    near = iou >= cfg.iou or overlap >= cfg.overlap_min or g.center_distance(c.bbox, k.bbox) <= cfg.center_dist_px
-    if not near:
-        return None
-
-    # 1) almost the same box: two readings of one text, whatever they say
-    if iou >= cfg.very_high_iou:
-        return _better(c, k), f"same box (IoU={iou:.2f})"
-
-    # 2) same text close by
-    tc, tk = norm_text(c.text), norm_text(k.text)
-    if tc and tc == tk:
-        return _better(c, k), "same text nearby"
-
-    # 3) one box inside the other, or mostly covering it: a cut-off fragment, or another reading
-    if g.contains(c.bbox, k.bbox) or g.contains(k.bbox, c.bbox) or overlap >= cfg.overlap_min:
-        short, long_ = (c, k) if len(tc) <= len(tk) else (k, c)
-        if is_fragment(short.text, long_.text):
-            return long_, f"fragment (overlap={overlap:.2f})"
-        return _better(c, k), f"overlapping box (overlap={overlap:.2f})"
+    if overlap >= cfg.overlap_min:
+        # one box mostly covers the other: a cut-off piece of the same text, or a different reading of it
+        return f"overlapping box (overlap={overlap:.2f})"
 
     return None  # different text that happens to be close: keep both
 
 
-def _better(a: OcrChunk, b: OcrChunk) -> OcrChunk:
-    """Which of two readings to keep: higher confidence, then longer text, then the larger box."""
-    if a.conf != b.conf:
-        return a if a.conf > b.conf else b
-    la, lb = len(norm_text(a.text)), len(norm_text(b.text))
-    if la != lb:
-        return a if la > lb else b
-    if g.area(a.bbox) != g.area(b.bbox):
-        return a if g.area(a.bbox) > g.area(b.bbox) else b
-    return a
-
-
-def _redirect(log: list[DedupDecision] | None, old: OcrChunk, new: OcrChunk) -> None:
-    """`new` has replaced `old`: earlier decisions that kept `old` now point at `new`."""
-    for d in log or ():
-        if d.kept is old:
-            d.kept = new
+def _norm_text(s: str) -> str:
+    """Uppercase, the multiplication sign as X, whitespace collapsed."""
+    return re.sub(r"\s+", " ", s.strip().upper().replace("×", "X"))

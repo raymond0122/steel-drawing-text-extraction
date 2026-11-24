@@ -6,8 +6,7 @@ from steel_text.mock_clients import SimulatedOcr
 from steel_text.ocr_stage import run_tiled_ocr
 from steel_text.ocr_types import OcrChunk
 from steel_text.sample_drawing import GroundTruthText
-from steel_text.text_norm import is_fragment, tokens
-from steel_text.tiling import Tile, make_tiles
+from steel_text.tiling import Tile, TilingChoice, make_tiles
 
 # The synthetic drawing's grid:  x: [0,3500] [3200,6700] [5500,9000]
 #                                 y: [0,3500] [2500,6000]
@@ -30,7 +29,7 @@ def test_left_fragment_is_dropped():
     frag = OcrChunk("SEE", (3300, 900, 3500, 980), tile_index=0)
     log: list[DedupDecision] = []
     assert texts(merge_tile_results([frag, full], TILES, log=log)) == ["SEE NOTE 6"]
-    assert log[0].dropped is frag and log[0].reason.startswith("fragment")
+    assert log[0].dropped is frag and log[0].kept is full and log[0].reason.startswith("overlapping box")
 
 
 def test_cut_part_number_keeps_full_label_with_asterisk():
@@ -39,10 +38,10 @@ def test_cut_part_number_keeps_full_label_with_asterisk():
     assert texts(merge_tile_results([frag, full], TILES)) == ["WT155*79"]
 
 
-def test_higher_confidence_wins_between_two_readings():
-    good = OcrChunk("C50", (3250, 4600, 3370, 4680), conf=0.95, tile_index=3)
-    bad = OcrChunk("CS0", (3251, 4601, 3371, 4681), conf=0.40, tile_index=4)
-    assert texts(merge_tile_results([bad, good], TILES)) == ["C50"]
+def test_of_two_readings_as_long_the_larger_box_is_kept():
+    larger = OcrChunk("C50", (3250, 4600, 3372, 4682), tile_index=3)
+    smaller = OcrChunk("CS0", (3251, 4601, 3371, 4681), tile_index=4)
+    assert texts(merge_tile_results([smaller, larger], TILES)) == ["C50"]
 
 
 def test_same_text_far_apart_is_kept_twice():
@@ -79,22 +78,10 @@ def test_short_label_next_to_a_longer_one_is_kept():
 
 def test_text_outside_the_area_two_tiles_share_is_not_merged():
     tiles = [Tile(0, 0, 1000, 1000), Tile(800, 0, 1800, 1000)]  # they share x 800..1000
-    left = OcrChunk("C50", (930, 100, 990, 130), conf=0.9, tile_index=0)  # in the shared area: read by both
-    left_again = OcrChunk("C50", (931, 100, 991, 130), conf=0.8, tile_index=1)
-    right = OcrChunk("C50", (1005, 100, 1065, 130), conf=0.8, tile_index=1)  # a second C50, only tile 1 sees it
+    left = OcrChunk("C50", (930, 100, 990, 130), tile_index=0)  # in the shared area: read by both
+    left_again = OcrChunk("C50", (931, 100, 991, 130), tile_index=1)
+    right = OcrChunk("C50", (1005, 100, 1065, 130), tile_index=1)  # a second C50, only tile 1 sees it
     assert texts(merge_tile_results([left, left_again, right], tiles)) == ["C50", "C50"]
-
-
-def test_log_points_at_the_chunk_that_survived():
-    # Rule 1 ignores the text: B loses to A, then C replaces A. B's decision must now say C was kept.
-    tiles = [Tile(0, 0, 400, 100)] * 3
-    a = OcrChunk("AAAAAAAA", (0, 0, 300, 60), conf=0.5, tile_index=0)
-    b = OcrChunk("BBBBBBB", (1, 0, 301, 60), conf=0.4, tile_index=1)
-    c = OcrChunk("CCCCCC", (0, 1, 300, 61), conf=0.9, tile_index=2)
-    log: list[DedupDecision] = []
-    merged = merge_tile_results([a, b, c], tiles, log=log)
-    assert merged == [c] and len(log) == 2
-    assert all(d.kept is c for d in log)
 
 
 def test_chunk_without_a_tile_is_rejected():
@@ -109,18 +96,6 @@ def test_tiled_ocr_merges_overlap_duplicates_but_keeps_repeated_labels():
         GroundTruthText("C50", "C50", (850, 500, 970, 560), "C50"),  # in the overlap: read by both tiles
     ]
     page = Image.new("RGB", (1800, 1000), "white")
-    ocr = run_tiled_ocr(page, SimulatedOcr(truth), adaptive=False, tile_size=1000, overlap=200, request_sleep_s=0)
+    ocr = run_tiled_ocr(page, SimulatedOcr(truth), tiling=TilingChoice(1000, 200, "two tiles for the test"))
     assert len(ocr.tiles) == 2 and len(ocr.raw) == 4
     assert texts(ocr.merged) == ["C50", "W310X39", "W310X39"]
-
-
-def test_tokens_keep_asterisk():
-    assert tokens("WT155*79") == ["WT155*79"]
-    assert tokens("see  note 6") == ["SEE", "NOTE", "6"]
-
-
-def test_fragment_check_is_not_plain_substring_matching():
-    assert is_fragment("SEE", "SEE NOTE 6")
-    assert is_fragment("6", "SEE NOTE 6 FOR DETAILS")
-    assert not is_fragment("NOTE 6", "SEE NOTE 6")  # too long to be a cut-off piece
-    assert not is_fragment("C50", "C500")

@@ -42,7 +42,7 @@ def test_labels_are_joined_back_to_ocr_boxes_by_id():
             }
         ]
     )
-    res = filter_labels(CHUNKS, ex, batch_size=50, sleep=lambda s: None)
+    res = filter_labels(CHUNKS, ex, batch_size=50)
     assert res.ok
     assert [(e.normalized_label, e.material_kind, e.bbox, e.raw_text) for e in res.entries] == [
         ("C50", "C", (0, 0, 100, 50), "CS0"),
@@ -58,8 +58,8 @@ def test_failed_batch_is_skipped_and_the_rest_still_processed():
             {"entries": [{"str_id": "4", "normalized_label": "WT155*79", "material_kind": "Other"}]},
         ]
     )
-    res = filter_labels(CHUNKS, ex, batch_size=2, sleep=lambda s: None)
-    assert ex.seen == [["0", "1"], ["2", "3"], ["4"]]
+    res = filter_labels(CHUNKS, ex, batch_size=2)
+    assert ex.seen == res.batch_ids == [["0", "1"], ["2", "3"], ["4"]]
     assert res.ok and res.batches == 3
     assert res.failed_batches == [(1, "HTTP 500")]
     assert [e.normalized_label for e in res.entries] == ["C50", "WT155*79"]
@@ -79,13 +79,13 @@ def test_ids_from_another_batch_and_repeated_ids_are_dropped():
             {"entries": []},
         ]
     )
-    res = filter_labels(CHUNKS, ex, batch_size=2, sleep=lambda s: None)
+    res = filter_labels(CHUNKS, ex, batch_size=2)
     assert [(e.str_id, e.normalized_label) for e in res.entries] == [("2", "W310X39")]
 
 
 def test_all_batches_failing_marks_the_page_failed():
     ex = ScriptedExtractor([LlmCallError("HTTP 500")] * 3)
-    res = filter_labels(CHUNKS, ex, batch_size=2, sleep=lambda s: None)
+    res = filter_labels(CHUNKS, ex, batch_size=2)
     assert not res.ok and len(res.failed_batches) == 3
 
 

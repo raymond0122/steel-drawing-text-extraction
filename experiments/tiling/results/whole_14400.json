@@ -1,0 +1,13 @@
+{
+ "name": "whole_14400",
+ "requests": 1,
+ "image_size": [
+  14400,
+  9600
+ ],
+ "png_mb": 3.37,
+ "scale": 1.0,
+ "error": "POST failed: HTTP 400 {\"error\":{\"code\":\"InvalidRequest\",\"message\":\"Invalid request.\",\"innererror\":{\"code\":\"InvalidContentDimensions\",\"message\":\"The input image dimensions are out of range. Refer to documentation for supported image dimensions.\"}}}",
+ "lines": [],
+ "seconds": 8.3
+}

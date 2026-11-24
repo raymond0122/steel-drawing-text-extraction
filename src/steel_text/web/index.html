@@ -209,6 +209,7 @@
   .banner.ok { background: var(--ok-soft); color: var(--ok); }
   .banner.warn { background: var(--warn-soft); color: var(--warn); }
   .banner.info { background: var(--surface-2); color: var(--muted); }
+  .banner.bad { background: var(--bad-soft); color: var(--bad); }
 
   table.labels { width: 100%; border-collapse: collapse; font-size: 13px; }
   table.labels th { text-align: left; font-size: 12px; color: var(--muted); font-weight: 500; padding: 4px 6px; border-bottom: 1px solid var(--border); }
@@ -273,6 +274,7 @@
       </div>
       <label class="field"><span class="label">LLM batch size</span><input type="number" id="batch-size" value="10" min="1" max="200"></label>
       <label class="field"><span class="label">Max tiles</span><input type="number" id="max-tiles" value="20" min="1" max="100"></label>
+      <label class="check" id="ocr-fail-wrap"><input type="checkbox" id="simulate-ocr-failure"> Make OCR tile 1 fail</label>
       <label class="check" id="fail-wrap"><input type="checkbox" id="simulate-failure"> Make LLM batch 1 fail</label>
       <label class="field"><span class="label" id="image-label">Page image</span><input type="file" id="image" accept="image/*"></label>
       <span class="spacer"></span>
@@ -347,7 +349,7 @@
   const NS = 'http://www.w3.org/2000/svg';
   // Same palette as steel_text/overlay.py, so the UI matches the PNGs in docs/.
   const TILE_COLORS = ['rgb(230,57,70)', 'rgb(29,120,116)', 'rgb(69,123,157)', 'rgb(244,162,97)', 'rgb(131,56,236)', 'rgb(42,157,143)'];
-  const C = { merged: '#168c3c', dropped: '#dc2626', label: '#e66e00', other: '#8a94a3', skipped: '#b45309', focus: '#2457d6' };
+  const C = { merged: '#168c3c', dropped: '#dc2626', label: '#e66e00', other: '#8a94a3', skipped: '#b45309', focus: '#2457d6', notRead: '#c62828' };
   const tileColor = i => TILE_COLORS[((i % TILE_COLORS.length) + TILE_COLORS.length) % TILE_COLORS.length];
   const fmt = n => n.toLocaleString('en-US');
   const dur = ms => (ms === undefined ? '' : ms < 1000 ? `${fmt(ms)} ms` : `${(ms / 1000).toFixed(1)} s`);
@@ -387,6 +389,7 @@
     $('#image').disabled = !live;
     $('#image-label').textContent = live ? 'Page image (optional, PNG/JPG)' : 'Page image (Live mode only)';
     $('#fail-wrap').hidden = live;
+    $('#ocr-fail-wrap').hidden = live;
     $('#mode-note').textContent = live
       ? 'Live: real Azure Document Intelligence and OpenAI calls, with keys from .env. Each run costs money. Without an image, the synthetic drawing is used.'
       : 'Offline: synthetic drawing, simulated OCR and a rule-based stand-in for the LLM. No API keys needed.';
@@ -422,9 +425,13 @@
   async function run() {
     const live = mode() === 'live';
     const params = new URLSearchParams({
-      live, batch_size: $('#batch-size').value || 10, max_tiles: $('#max-tiles').value || 20,
+      live,
+      simulate_ocr_failure: !live && $('#simulate-ocr-failure').checked,
       simulate_llm_failure: !live && $('#simulate-failure').checked,
     });
+    // A field left empty is not sent, so the server's default applies.
+    if ($('#batch-size').value) params.set('batch_size', $('#batch-size').value);
+    if ($('#max-tiles').value) params.set('max_tiles', $('#max-tiles').value);
     const file = live ? $('#image').files[0] : null;
     $('#run-btn').disabled = true;
     $('#loading').hidden = false;
@@ -457,6 +464,9 @@
     $('#empty').hidden = true;
 
     svg.replaceChildren();
+    // Red 45-degree stripes for tiles that were not read, sized in page pixels.
+    const hatch = el('pattern', { id: 'not-read', patternUnits: 'userSpaceOnUse', width: 80, height: 80, patternTransform: 'rotate(45)' }, el('defs', {}, svg));
+    el('line', { x1: 0, y1: 0, x2: 0, y2: 80, stroke: C.notRead, 'stroke-width': 24, 'stroke-opacity': 0.4 }, hatch);
     el('image', { href: d.page.preview, x: 0, y: 0, width: d.page.width, height: d.page.height, preserveAspectRatio: 'none' }, svg);
     el('g', { id: 'layer' }, svg);
     if (firstLoad || !samePage) state.vb = { x: 0, y: 0, w: d.page.width, h: d.page.height };
@@ -468,24 +478,26 @@
   // ---------- stats
   function xlsxName(d) {
     const base = d.source === 'upload' && state.fileName ? state.fileName.replace(/\.[^.]+$/, '') : 'synthetic_drawing';
-    return `${base}_labels.xlsx`;
+    return `${base}_labels${d.tiling.not_read.length ? '_incomplete' : ''}.xlsx`;
   }
   const xlsxLink = (d, cls, text) => `<a class="${cls}" href="${d.labels_xlsx}" download="${esc(xlsxName(d))}">${text}</a>`;
 
   function renderStats() {
     const d = state.data;
     const removed = d.raw.length - d.merged.length;
-    const failed = d.llm.failed.length;
+    const failed = d.llm.batches.filter(b => b.error).length;
     let truth = { v: d.labels.length, s: 'no ground truth for this page', tone: '' };
     if (d.truth_check) {
       const n = d.truth_check.expected.length, found = n - d.truth_check.missing.length;
       truth.s = `${found} of ${n} expected labels found`;
       truth.tone = d.truth_check.missing.length || d.truth_check.unexpected.length ? 'warn' : 'ok';
     }
+    const notRead = d.tiling.not_read.length;
+    const tiling = d.tiling.overlap ? `${fmt(d.tiling.tile_size)} px, ${d.tiling.overlap} px overlap` : 'page sent whole';
     const cards = [
-      { k: 'Tiles', v: d.tiling.tiles.length, s: d.tiling.overlap ? `${fmt(d.tiling.tile_size)} px, ${d.tiling.overlap} px overlap` : 'page sent whole' },
+      { k: 'Tiles', v: d.tiling.tiles.length, s: notRead ? `${notRead} not read: text there is missing` : tiling, tone: notRead ? 'warn' : '' },
       { k: 'OCR lines', v: `${d.raw.length} → ${d.merged.length}`, s: `${removed} removed by dedup` },
-      { k: 'LLM batches', v: d.llm.batches, s: failed ? `${failed} failed and skipped` : 'all succeeded', tone: failed ? 'warn' : 'ok' },
+      { k: 'LLM batches', v: d.llm.batches.length, s: failed ? `${failed} failed and skipped` : 'all succeeded', tone: failed ? 'warn' : 'ok' },
       { k: 'Steel labels', v: truth.v, s: truth.s, tone: truth.tone, html: xlsxLink(d, 'stat-link', 'Download Excel ↓') },
       { k: `Time (${d.mode})`, v: `${((d.timings_ms.ocr + d.timings_ms.llm) / 1000).toFixed(2)} s`, s: `OCR ${dur(d.timings_ms.ocr)} · LLM ${dur(d.timings_ms.llm)} (details in steps 1 and 4)` },
     ];
@@ -513,6 +525,7 @@
       dedup: [['Kept', C.merged], ['Dropped', C.dropped, true]],
       labels: [['Steel label', C.label], ['Not a label', C.other], ['In a skipped batch', C.skipped, true]],
     }[state.step];
+    if (state.data && state.data.tiling.not_read.length) items.push(['Not read (tile failed)', C.notRead]);
     $('#legend').innerHTML = items.map(([t, c, dash]) => `<span><i class="${dash ? 'dash' : ''}" style="border-color:${c}"></i>${esc(t)}</span>`).join('');
   }
 
@@ -552,6 +565,15 @@
     const k = scale();
     const zoomedIn = k < 4;
     const tiles = d.tiling.tiles;
+
+    // On every step, first, so the boxes drawn on top keep their tooltips.
+    for (const f of d.tiling.not_read) {
+      box(g, f.box, k, {
+        stroke: C.notRead, width: 3, pad: 0, fill: 'url(#not-read)',
+        tip: `tile ${f.tile} was not read\n${f.error}\nany text only this tile covers is missing`,
+      });
+      tag(g, f.box[0] + 10 * k, f.box[1] + 10 * k, `tile ${f.tile} not read`, C.notRead, k, 14);
+    }
 
     if (state.step === 'tiles') {
       tiles.forEach((t, i) => box(g, t, k, {
@@ -708,26 +730,24 @@
     if (z) focusOn(z.dataset.zoom.split(',').map(Number));
   });
 
-  function batchOf(id) { return Math.floor(Number(id) / state.data.llm.batch_size); }
-  function skippedIds() {
-    const failed = new Set(state.data.llm.failed.map(f => f.batch));
-    return new Set(state.data.merged.filter(c => failed.has(batchOf(c.id))).map(c => c.id));
-  }
-
-  function tilingRule(d) {
-    const { width: W, height: H } = d.page, m = Math.max(W, H), t = d.tiling;
-    if (m <= 4000) return `The longest side is ${fmt(m)} px (4,000 px or less), so the page is sent as one image.`;
-    const base = m <= 8000 ? 3000 : 3500;
-    let s = `The longest side is ${fmt(m)} px (${m <= 8000 ? '8,000 px or less' : 'over 8,000 px'}), so the page is cut into ${fmt(base)} px tiles that overlap by ${t.overlap} px.`;
-    if (t.tile_size !== base) s += ` That grid had more tiles than the limit, so the tile size grew by 15% steps to ${fmt(t.tile_size)} px.`;
-    return s;
-  }
+  function batchOf(id) { return state.data.llm.batches.findIndex(b => b.ids.includes(id)); }
+  function skippedIds() { return new Set(state.data.llm.batches.filter(b => b.error).flatMap(b => b.ids)); }
 
   function renderPanel() {
     const d = state.data, p = $('#panel');
     if (!d) { p.innerHTML = '<p class="muted">No results yet.</p>'; return; }
-    p.innerHTML = { tiles: panelTiles, raw: panelRaw, dedup: panelDedup, labels: panelLabels }[state.step](d);
+    p.innerHTML = notReadBanner(d) + { tiles: panelTiles, raw: panelRaw, dedup: panelDedup, labels: panelLabels }[state.step](d);
     if (state.step === 'dedup') p.querySelectorAll('svg.mini').forEach(renderMini);
+  }
+
+  // Above every step: a failed tile's text is missing from all of them, not only from step 1.
+  function notReadBanner(d) {
+    const f = d.tiling.not_read;
+    if (!f.length) return '';
+    const which = f.map(x => `tile ${x.tile}`).join(', ');
+    return `<p class="banner bad">${f.length === 1 ? 'One tile' : `${f.length} tiles`} (${which}) could not be read, so text in the
+      hatched area may be missing from every step: only the strips it shares with neighbouring tiles were read.
+      The rest of the page is complete. Error: ${esc(f[0].error)}</p>`;
   }
 
   // Live runs only: the offline simulator takes no real time.
@@ -743,7 +763,7 @@
     const tileMs = d.timings_ms.tiles || [];
     return `
       <h2>Step 1 · Tiling</h2>
-      <p class="lead">${esc(tilingRule(d))}</p>
+      <p class="lead">${esc(d.tiling.reason)}</p>
       <p class="note">Overlap bands look darker. Text inside a band is read whole by both tiles, which creates duplicates. Text that crosses a tile edge comes back cut off, which creates fragments.</p>
       <dl class="kv">
         <dt>Page</dt><dd>${fmt(d.page.width)} × ${fmt(d.page.height)} px</dd>
@@ -753,10 +773,16 @@
       </dl>
       ${ocrTimingNote(d)}
       <h3>Tiles</h3>
-      <ul class="list">${d.tiling.tiles.map((t, i) => `
+      <ul class="list">${d.tiling.tiles.map((t, i) => {
+        const failed = d.tiling.not_read.find(f => f.tile === i);
+        const result = failed
+          ? `<span class="pill bad" title="${esc(failed.error)}">not read</span>`
+          : `<span class="muted">${perTile[i]} line${perTile[i] === 1 ? '' : 's'} · ${dur(tileMs[i])}</span>`;
+        return `
         <li ${zoomAttr(t)}><span class="swatch" style="background:${tileColor(i)}"></span>
           <span class="grow">tile ${i} <span class="muted mono">${t[0]},${t[1]} → ${t[2]},${t[3]}</span></span>
-          <span class="muted">${perTile[i]} line${perTile[i] === 1 ? '' : 's'} · ${dur(tileMs[i])}</span></li>`).join('')}
+          ${result}</li>`;
+      }).join('')}
       </ul>`;
   }
 
@@ -790,7 +816,7 @@
       </div>`).join('');
     return `
       <h2>Step 3 · Merge and dedup</h2>
-      <p class="lead">Only lines from two different tiles, inside the area both tiles cover, are compared; lines from one tile are always kept. Such boxes count as near when IoU ≥ ${cfg.iou}, overlap ≥ ${cfg.overlap_min} of the smaller box, or centres ≤ ${cfg.center_dist_px} px apart. Boxes with IoU ≥ ${cfg.very_high_iou} count as the same box.</p>
+      <p class="lead">Only lines from two different tiles, inside the area both tiles cover, are compared; lines from one tile are always kept. Such a pair is merged when both say the same thing and are near (IoU ≥ ${cfg.iou} or centres ≤ ${cfg.center_dist_px} px apart), or when the boxes overlap by ≥ ${cfg.overlap_min} of the smaller box.</p>
       <p class="note">${d.raw.length} → ${d.merged.length} lines. The longest text is processed first, so a full string is kept before its fragments come up. Click a card to zoom to it.</p>
       ${decisions || '<p class="banner info">Nothing to merge on this page.</p>'}`;
   }
@@ -808,14 +834,14 @@
   }
 
   function panelLabels(d) {
-    const bs = d.llm.batch_size, failed = new Map(d.llm.failed.map(f => [f.batch, f.error]));
-    const batches = Array.from({ length: d.llm.batches }, (_, b) => {
-      const lo = b * bs, hi = Math.min(d.merged.length, lo + bs) - 1;
+    const anyFailed = d.llm.batches.some(b => b.error);
+    const batches = d.llm.batches.map(({ ids, error }, b) => {
+      const lo = ids[0], hi = ids[ids.length - 1];
       const range = lo === hi ? `line ${lo}` : `lines ${lo}–${hi}`;
-      const n = d.labels.filter(l => batchOf(l.str_id) === b).length;
+      const n = d.labels.filter(l => ids.includes(l.str_id)).length;
       const ms = dur((d.timings_ms.llm_batches || [])[b]);
-      return failed.has(b)
-        ? `<li title="${esc(failed.get(b))}"><span class="pill bad">failed</span><span class="grow">Batch ${b} <span class="muted">· ${range} · ${ms} · ${esc(failed.get(b))}</span></span><span class="muted">skipped</span></li>`
+      return error
+        ? `<li title="${esc(error)}"><span class="pill bad">failed</span><span class="grow">Batch ${b} <span class="muted">· ${range} · ${ms} · ${esc(error)}</span></span><span class="muted">skipped</span></li>`
         : `<li><span class="pill ok">ok</span><span class="grow">Batch ${b} <span class="muted">· ${range} · ${ms}</span></span><span class="muted">${n} label${n === 1 ? '' : 's'}</span></li>`;
     }).join('');
 
@@ -826,7 +852,7 @@
       else banner = `<p class="banner warn">${found} of ${t.expected.length} expected labels found.`
         + (t.missing.length ? ` Missing: ${t.missing.map(esc).join(', ')}.` : '')
         + (t.unexpected.length ? ` Unexpected: ${t.unexpected.map(esc).join(', ')}.` : '')
-        + (failed.size ? ' A skipped batch is never checked, so its labels are lost; the rest of the page is still processed.' : '')
+        + (anyFailed ? ' A skipped batch is never checked, so its labels are lost; the rest of the page is still processed.' : '')
         + '</p>';
     }
     if (!d.llm.ok) banner += '<p class="banner warn">Every batch failed, so the page is marked as failed.</p>';
@@ -839,7 +865,7 @@
 
     return `
       <h2>Step 4 · LLM label filter</h2>
-      <p class="lead">Merged lines go to the model in batches of ${bs}. It returns only an ID, a normalized label and a kind. Boxes and raw text are joined back from the OCR results by ID, so the model cannot invent a location.</p>
+      <p class="lead">Merged lines go to the model in batches (${d.llm.batches.length} on this page). It returns only an ID, a normalized label and a kind. Boxes and raw text are joined back from the OCR results by ID, so the model cannot invent a location.</p>
       ${banner}
       <h3>Batches</h3>
       <ul class="list">${batches}</ul>

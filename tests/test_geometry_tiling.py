@@ -1,5 +1,7 @@
+import pytest
+
 from steel_text import geometry as g
-from steel_text.tiling import choose_tiling_params, make_tiles
+from steel_text.tiling import MAX_TILE_SIZE, TileLimitError, choose_tiling, make_tiles
 
 
 def test_poly_to_bbox_accepts_both_azure_formats():
@@ -29,14 +31,25 @@ def test_tiles_cover_whole_image_with_overlap():
 
 
 def test_small_page_is_not_tiled():
-    tile_size, overlap = choose_tiling_params(3000, 2000)
-    assert make_tiles(3000, 2000, tile_size=tile_size, overlap=overlap) == make_tiles(
-        3000, 2000, tile_size=3100, overlap=0
-    )
-    assert len(make_tiles(3000, 2000, tile_size=tile_size, overlap=overlap)) == 1
+    tile_size, overlap, reason = choose_tiling(3000, 2000)
+    assert overlap == 0 and "sent whole" in reason
+    assert [t.box for t in make_tiles(3000, 2000, tile_size=tile_size, overlap=overlap)] == [(0, 0, 3000, 2000)]
+
+
+def test_a_page_larger_than_one_tile_is_cut_into_3500_px_tiles():
+    assert choose_tiling(3500, 2000).overlap == 0  # fits in one tile
+    assert choose_tiling(3600, 2000)[:2] == (3500, 300)
+    assert choose_tiling(9000, 6000)[:2] == (3500, 300)
+    assert "3,500 px tiles" in choose_tiling(9000, 6000).reason
 
 
 def test_tile_size_grows_until_under_the_cap():
-    tile_size, overlap = choose_tiling_params(20000, 14000, max_tiles=4)
-    assert tile_size > 3500
-    assert len(make_tiles(20000, 14000, tile_size=tile_size, overlap=overlap)) <= 4
+    tile_size, overlap, reason = choose_tiling(14400, 9600, max_tiles=4)
+    assert 3500 < tile_size <= MAX_TILE_SIZE and "grew" in reason
+    assert len(make_tiles(14400, 9600, tile_size=tile_size, overlap=overlap)) <= 4
+
+
+def test_tiles_never_grow_past_what_azure_accepts():
+    assert choose_tiling(14400, 9600, max_tiles=2).tile_size == MAX_TILE_SIZE  # two 10,000 px tiles cover it
+    with pytest.raises(TileLimitError, match="at least 2 tiles"):
+        choose_tiling(14400, 9600, max_tiles=1)  # one tile would have to be 14,400 px

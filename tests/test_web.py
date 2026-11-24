@@ -22,7 +22,9 @@ def test_offline_run_returns_every_step(client):
     merged_ids = {c["id"] for c in d["merged"]}
     assert all(label["str_id"] in merged_ids for label in d["labels"])
     assert len(d["timings_ms"]["tiles"]) == len(d["tiling"]["tiles"])
-    assert len(d["timings_ms"]["llm_batches"]) == d["llm"]["batches"]
+    assert len(d["timings_ms"]["llm_batches"]) == len(d["llm"]["batches"])
+    assert [i for b in d["llm"]["batches"] for i in b["ids"]] == [c["id"] for c in d["merged"]]  # each line once
+    assert "3,500 px tiles" in d["tiling"]["reason"]
 
 
 def test_excel_download_lists_the_labels_found(client):
@@ -38,10 +40,24 @@ def test_excel_download_lists_the_labels_found(client):
     assert rows == ["Profile"] + sorted(label["label"] for label in d["labels"])
 
 
+def test_a_tile_that_fails_is_returned_as_not_read(client):
+    import base64
+    import io
+
+    from openpyxl import load_workbook
+
+    d = client.post("/api/run", params={"simulate_ocr_failure": True}).json()
+    assert [f["tile"] for f in d["tiling"]["not_read"]] == [1]
+    assert d["tiling"]["not_read"][0]["box"] == d["tiling"]["tiles"][1]
+    assert "L102X76X7.9" in d["truth_check"]["missing"]  # printed where only tile 1 reads it
+    excel = load_workbook(io.BytesIO(base64.b64decode(d["labels_xlsx"].split(",", 1)[1])))
+    assert excel.sheetnames == ["Labels (incomplete)", "Not read"]
+
+
 def test_simulated_llm_failure_is_reported_per_batch(client):
     d = client.post("/api/run", params={"simulate_llm_failure": True}).json()
     assert d["llm"]["ok"]
-    assert [f["batch"] for f in d["llm"]["failed"]] == [1]
+    assert [b for b, batch in enumerate(d["llm"]["batches"]) if batch["error"]] == [1]
 
 
 def test_image_upload_needs_live_mode(client):

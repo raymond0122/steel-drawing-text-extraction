@@ -24,10 +24,11 @@ import requests
 from .geometry import BBox
 from .http import HttpSession
 from .ocr_types import OcrChunk
-from .settings import Settings
+from .settings import DEFAULT_OPENAI_BASE_URL, DEFAULT_OPENAI_MODEL, Settings
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_BATCH_SIZE = 10  # OCR lines per request
 MATERIAL_KINDS: tuple[str, ...] = ("HSS", "H", "L", "C", "Other")
 
 SCHEMA: dict[str, Any] = {
@@ -88,8 +89,8 @@ class OpenAIResponsesClient:
         self,
         api_key: str,
         *,
-        model: str = "gpt-4o",
-        base_url: str = "https://api.openai.com/v1",
+        model: str = DEFAULT_OPENAI_MODEL,
+        base_url: str = DEFAULT_OPENAI_BASE_URL,
         timeout_s: float = 60.0,
         session: HttpSession | None = None,
     ) -> None:
@@ -103,11 +104,7 @@ class OpenAIResponsesClient:
 
     @classmethod
     def from_settings(cls, settings: Settings) -> OpenAIResponsesClient:
-        return cls(
-            settings.openai_api_key.strip(),
-            model=settings.openai_model.strip() or "gpt-4o",
-            base_url=settings.openai_base_url.strip() or "https://api.openai.com/v1",
-        )
+        return cls(settings.openai_api_key, model=settings.openai_model, base_url=settings.openai_base_url)
 
     def extract(self, items: Sequence[dict[str, str]]) -> dict[str, Any]:
         payload = {
@@ -158,8 +155,12 @@ class LabelEntry:
 class FilterResult:
     ok: bool
     entries: list[LabelEntry]
-    batches: int
-    failed_batches: list[tuple[int, str]] = field(default_factory=list)
+    batch_ids: list[list[str]]  # the line IDs sent in each batch, in order
+    failed_batches: list[tuple[int, str]] = field(default_factory=list)  # (batch index, error)
+
+    @property
+    def batches(self) -> int:
+        return len(self.batch_ids)
 
 
 def normalize_label(s: str) -> str:
@@ -170,27 +171,26 @@ def filter_labels(
     chunks: Sequence[OcrChunk],
     extractor: LabelExtractor,
     *,
-    batch_size: int = 50,
-    request_sleep_s: float = 0.1,
+    batch_size: int = DEFAULT_BATCH_SIZE,
+    request_sleep_s: float = 0.0,
     sleep: Callable[[float], None] = time.sleep,
 ) -> FilterResult:
     """Send the OCR lines to the extractor in batches and return the steel labels it found.
 
     Each line gets an ID ("0", "1", ...) that the model must copy back; boxes and
-    raw text are joined back by that ID. The result is not ok only if every batch failed.
+    raw text are joined back by that ID. The result is not ok only if every batch
+    failed. `request_sleep_s` is the pause between batches.
     """
     by_id = {str(i): c for i, c in enumerate(chunks)}
     ids = list(by_id)
+    batches = [ids[start : start + batch_size] for start in range(0, len(ids), batch_size)]
     entries: list[LabelEntry] = []
     failed: list[tuple[int, str]] = []
     labelled: set[str] = set()
-    n_batches = 0
 
-    for b_idx, start in enumerate(range(0, len(ids), batch_size)):
-        n_batches += 1
+    for b_idx, batch_ids in enumerate(batches):
         if b_idx > 0 and request_sleep_s > 0:
             sleep(request_sleep_s)
-        batch_ids = ids[start : start + batch_size]
         items = [{"id": sid, "raw_text": by_id[sid].text} for sid in batch_ids]
 
         try:
@@ -224,6 +224,6 @@ def filter_labels(
         if dropped:
             logger.warning("batch %d: dropped %d entries (unknown or repeated ID, or empty label)", b_idx, dropped)
 
-    ok = n_batches == 0 or len(failed) < n_batches
-    logger.info("LLM filter: %d batches, %d failed, %d labels", n_batches, len(failed), len(entries))
-    return FilterResult(ok=ok, entries=entries, batches=n_batches, failed_batches=failed)
+    ok = not batches or len(failed) < len(batches)
+    logger.info("LLM filter: %d batches, %d failed, %d labels", len(batches), len(failed), len(entries))
+    return FilterResult(ok=ok, entries=entries, batch_ids=batches, failed_batches=failed)

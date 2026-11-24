@@ -23,7 +23,7 @@ from PIL import Image
 
 from .geometry import poly_to_bbox
 from .http import HttpResponse, HttpSession
-from .ocr_types import OcrLine
+from .ocr_types import OcrLine, TileReadError
 from .settings import Settings
 from .tiling import Tile
 
@@ -34,7 +34,7 @@ MAX_BACKOFF_S = 30.0
 MAX_RETRY_AFTER_S = 60.0  # a longer Retry-After (a quota window) isn't worth holding a request for
 
 
-class AzureOcrError(RuntimeError):
+class AzureOcrError(TileReadError):
     pass
 
 
@@ -72,7 +72,7 @@ class AzureReadClient:
 
     @classmethod
     def from_settings(cls, settings: Settings) -> AzureReadClient:
-        return cls(settings.azure_docint_endpoint.strip(), settings.azure_docint_key.strip())
+        return cls(settings.azure_docint_endpoint, settings.azure_docint_key)
 
     # -- public ---------------------------------------------------------------
 
@@ -88,8 +88,7 @@ class AzureReadClient:
                 bbox = poly_to_bbox(item.get("polygon", []))
                 if not text or bbox is None:
                     continue
-                conf = item.get("confidence")
-                lines.append(OcrLine(text=text, bbox=bbox, conf=float(conf) if conf is not None else -1.0))
+                lines.append(OcrLine(text=text, bbox=bbox))  # lines carry no confidence score, only words do
         return lines
 
     def analyze(self, image_bytes: bytes) -> dict[str, Any]:

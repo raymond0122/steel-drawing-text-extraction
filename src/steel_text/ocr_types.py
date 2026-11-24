@@ -17,7 +17,6 @@ class OcrLine:
 
     text: str
     bbox: BBox
-    conf: float = -1.0
 
 
 @dataclass
@@ -30,8 +29,11 @@ class OcrChunk:
 
     text: str
     bbox: BBox  # page coordinates
-    conf: float = -1.0  # -1 when the OCR gives no confidence (Azure "lines")
     tile_index: int = -1
+
+
+class TileReadError(RuntimeError):
+    """A tile could not be read, even after retries. Tiled OCR records it and reads the other tiles."""
 
 
 class TileOcrClient(Protocol):

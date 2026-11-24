@@ -29,3 +29,14 @@ def test_no_labels_gives_just_the_header():
     buf = io.BytesIO()
     write_label_sheet([], buf)
     assert read_column(buf)[0] == ["Profile"]
+
+
+def test_areas_not_read_mark_the_file_incomplete():
+    buf = io.BytesIO()
+    write_label_sheet(["C50"], buf, not_read=[(1, (3200, 0, 6700, 3500), "HTTP 500")])
+    wb = load_workbook(buf)
+    assert wb.sheetnames == ["Labels (incomplete)", "Not read"]
+    assert list(wb["Not read"].iter_rows(values_only=True)) == [
+        ("Tile", "x0", "y0", "x1", "y1", "Error"),
+        (1, 3200, 0, 6700, 3500, "HTTP 500"),
+    ]

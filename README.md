@@ -39,7 +39,7 @@ source .venv/Scripts/activate                  # Git Bash on Windows; PowerShell
 pip install -e ".[dev]"                        # the app, plus pytest, ruff and mypy for development
 
 steel-demo                                     # offline: synthetic drawing, simulated OCR and LLM, no API keys
-python -m pytest                               # 76 tests
+python -m pytest                               # 81 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # web UI, then open http://127.0.0.1:8000
@@ -56,10 +56,10 @@ The web UI runs the same flow in the browser and shows each step on the drawing:
 ## Key design decisions
 
 - **Built for human review, not a final answer.** Each label keeps its box on the drawing and the raw OCR text, so a reviewer can find it and see what the LLM corrected. In place of the sponsor's spreadsheets, the synthetic drawing comes with a ground-truth file, and the demo and web UI report which expected labels were found or missed.
-- **Overlapping tiles.** Large drawings can exceed 10,000 px, and small text is missed when the page is sent whole. Tiles overlap by 300 px, so text cut at one tile's edge is complete in its neighbour.
+- **Overlapping tiles, sized by measurement.** Large drawings can exceed 10,000 px, the largest image Azure accepts, and shrinking them loses small text. Pages are cut into 3,500 px tiles at full resolution that overlap by 300 px, so text cut at one tile's edge is complete in its neighbour. On a test sheet, tiles up to 4,500 px read as well as smaller ones, and larger tiles read worse ([the numbers](docs/DESIGN.md#why-3500-px)).
 - **Duplicates and cut-off pieces from tile edges are merged.** Text in an overlap band is read by two tiles, and text crossing an edge can come back cut off: one tile reads `"SEE"` while its neighbour reads `"SEE NOTE 6"`. Dedup keeps one full reading of each text and logs why it dropped the others. Only text that two different tiles read, inside the area both cover, is compared, so a label printed twice stays twice.
 - **The LLM cannot invent locations.** Under a strict JSON schema it returns only an ID and a label. Boxes are joined back from the OCR results by ID, and IDs that weren't in the batch, or repeat, are dropped.
-- **Transient errors are retried, bad LLM batches are skipped.** Azure calls retry on 429, 5xx and network errors, honouring `Retry-After` up to 60 s. A failed LLM batch is logged and the remaining batches continue.
+- **Transient errors are retried; what still fails is skipped, and shown.** Azure calls retry on 429, 5xx and network errors, honouring `Retry-After` up to 60 s. An OCR tile or LLM batch that still fails is skipped, and the rest of the page goes on. A tile that wasn't read is hatched red in the web UI and the demo images and listed on a "Not read" sheet in the Excel file, so missing text can't pass for an empty area. Only a page where no tile can be read fails.
 - **Auth tokens cannot be swapped.** Access and refresh JWTs carry a `type` claim. Login gives the same error, in about the same time, for an unknown user and a wrong password.
 
 Thresholds, retry rules and the web UI are described in [docs/DESIGN.md](docs/DESIGN.md).
@@ -67,10 +67,10 @@ Thresholds, retry rules and the web UI are described in [docs/DESIGN.md](docs/DE
 ## Known limitations
 
 - **Text wider than the overlap** that crosses a tile edge may never be read whole by any tile.
-- **One failed tile fails the page.** If an OCR tile still fails after its retries, the whole page fails rather than returning partial results.
+- **A tile that wasn't read can't be retried on its own.** Its area is marked, but reading it means running the whole page again.
 - **No jitter in the backoff.**
 - **LLM labels aren't validated** against a catalogue of standard steel sections.
-- **Thresholds were set by hand**, without a systematic tuning method. The sponsor's drawing–spreadsheet pairs are confidential, so the only evaluation here is the synthetic drawing's ground truth.
+- **Dedup thresholds were set by hand**, and the tile size was measured on one synthetic sheet only. The sponsor's drawing–spreadsheet pairs are confidential, so every evaluation here uses synthetic drawings.
 - **No review step.** The web UI shows the results but cannot correct or approve them.
 - **Tokens can't be revoked** (they are stateless), and passlib's default PBKDF2 iteration count is below current OWASP guidance.
 - **The web UI is for local use only.** It has no access control of its own, and in live mode every run spends API credit.
@@ -78,16 +78,28 @@ Thresholds, retry rules and the web UI are described in [docs/DESIGN.md](docs/DE
 ## Layout
 
 ```
-src/steel_text/   one package, installed with pip install -e .
-  pipeline.py     the flow shared by the demo and the web UI, and its parts: geometry, tiling, dedup, Azure client,
-                  tiled OCR, LLM filter, Excel label sheet, page loading, mocks, sample drawing, overlays
-  settings.py     every setting the app reads, from the environment and .env
-  http.py         the slice of an HTTP client the Azure and OpenAI clients use, so tests and the web UI can stand in
-  auth/           FastAPI app, password hashing and JWT, SQLite user store
-  web/            local web UI: a FastAPI server, its response models, and a single HTML page
-  demo.py         the steel-demo command: runs the whole flow and writes images to out/
-tests/            unit tests, an offline end-to-end test, and web API tests
-docs/             design notes and README images
-.github/          CI: ruff, mypy and pytest on every push to main and every pull request
-pyproject.toml    dependencies, the steel-demo command, and the pytest, ruff and mypy settings
+src/steel_text/          one package, installed with pip install -e .
+  pipeline.py            the flow shared by the demo and the web UI: tiled OCR, then the LLM label filter
+  tiling.py              split the page into overlapping tiles
+  ocr_stage.py           OCR each tile and map its lines back onto the page
+  azure_ocr.py           the Azure Document Intelligence client, with retry and backoff
+  dedup.py               merge the duplicates and cut-off pieces that tile edges create
+  llm_filter.py          pick out the steel labels with the OpenAI API
+  geometry.py            box helpers: IoU, overlap ratio, centre distance
+  ocr_types.py           the OCR data types the stages share
+  http.py                the slice of an HTTP client the Azure and OpenAI clients use, so tests and the web UI can stand in
+  settings.py            every setting the app reads, from the environment and .env
+  page_image.py          open a page image, refusing one too large to decode
+  label_sheet.py         write the labels to an Excel list
+  demo.py                the steel-demo command: runs the whole flow and writes images to out/
+  sample_drawing.py      demo only: the synthetic drawing and its ground truth
+  mock_clients.py        demo only: offline stand-ins for Azure OCR and the LLM
+  overlay.py, fonts.py   demo only: the step-by-step images
+  auth/                  FastAPI app, password hashing and JWT, SQLite user store
+  web/                   local web UI: a FastAPI server, its response models, and a single HTML page
+tests/                   unit tests, an offline end-to-end test, web API tests, and a check that the experiment still runs
+experiments/tiling/      the tiling experiment: tiles against a shrunk page, and tile sizes, measured with Azure
+docs/                    design notes and README images
+.github/                 CI: ruff, mypy and pytest on every push to main and every pull request
+pyproject.toml           dependencies, the steel-demo command, and the pytest, ruff and mypy settings
 ```
