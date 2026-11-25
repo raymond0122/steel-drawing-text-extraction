@@ -17,7 +17,6 @@ default 9000x6000 tile grid will cut or duplicate them:
 from __future__ import annotations
 
 import json
-from collections import Counter
 from collections.abc import Iterable
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -25,7 +24,7 @@ from pathlib import Path
 from PIL import Image, ImageDraw
 
 from .fonts import ImageFont, load_font
-from .geometry import BBox
+from .geometry import BBox, intersection_area
 from .llm_filter import LabelEntry
 
 WIDTH, HEIGHT = 9000, 6000
@@ -155,15 +154,27 @@ class TruthCheck:
 
 
 def check_truth(truth: Iterable[GroundTruthText], entries: Iterable[LabelEntry]) -> TruthCheck:
-    """Compare the labels found with the expected labels, counting repeats.
+    """Compare the labels found with the expected labels, by text and by place.
 
-    A label printed twice must be found twice; one found twice but printed once
-    is listed as unexpected once, which is how a missed duplicate shows up.
+    An expected label is found only by a label with the same text whose box overlaps
+    its own, and each label found counts once. So a label printed twice must be found
+    twice, and one read at the wrong place is missing where it is printed. The labels
+    left over are unexpected, which is how a missed duplicate shows up.
     """
-    expected = Counter(t.expected_label for t in truth if t.expected_label)
-    found = Counter(e.normalized_label for e in entries)
+    expected = [(label, t.bbox) for t in truth if (label := t.expected_label)]
+    left = list(entries)
+    missing: list[str] = []
+    for label, box in expected:
+        match = next(
+            (i for i, e in enumerate(left) if e.normalized_label == label and intersection_area(e.bbox, box) > 0),
+            None,
+        )
+        if match is None:
+            missing.append(label)
+        else:
+            del left[match]
     return TruthCheck(
-        expected=sorted(expected.elements()),
-        missing=sorted((expected - found).elements()),
-        unexpected=sorted((found - expected).elements()),
+        expected=sorted(label for label, _ in expected),
+        missing=sorted(missing),
+        unexpected=sorted(e.normalized_label for e in left),
     )

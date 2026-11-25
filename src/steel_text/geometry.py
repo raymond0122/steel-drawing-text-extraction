@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
+import math
 from typing import Any
 
 BBox = tuple[int, int, int, int]
 
 
 def poly_to_bbox(poly: Any) -> BBox | None:
-    """Convert an Azure polygon to the smallest enclosing box.
+    """Convert an Azure polygon to the smallest whole-pixel box that encloses it.
 
     Azure returns either a flat list [x1, y1, x2, y2, ...] or a list of
-    {"x": .., "y": ..} points, depending on the API version.
+    {"x": .., "y": ..} points, depending on the API version. Its corners can fall
+    between pixels, so the box's start is rounded down and its end up.
     """
     xs: list[float] = []
     ys: list[float] = []
@@ -24,7 +26,7 @@ def poly_to_bbox(poly: Any) -> BBox | None:
             ys = [float(p["y"]) for p in poly]
     if not xs or not ys:
         return None
-    return (int(min(xs)), int(min(ys)), int(max(xs)), int(max(ys)))
+    return (math.floor(min(xs)), math.floor(min(ys)), math.ceil(max(xs)), math.ceil(max(ys)))
 
 
 def area(b: BBox) -> int:

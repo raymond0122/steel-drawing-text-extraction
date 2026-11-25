@@ -103,3 +103,12 @@ def test_truth_check_counts_repeated_labels():
     assert check.expected == ["C50", "C50"] and check.missing == ["C50"] and check.found == 1
     three_times = once * 3
     assert check_truth(truth, three_times).unexpected == ["C50"]
+
+
+def test_truth_check_counts_a_label_read_at_the_wrong_place_as_missing_and_unexpected():
+    truth = [GroundTruthText("C50", "C50", (100, 100, 200, 150), "C50")]
+    elsewhere = [LabelEntry("0", "C50", "C", (500, 100, 600, 150), "C50")]
+    check = check_truth(truth, elsewhere)
+    assert check.missing == ["C50"] and check.unexpected == ["C50"] and check.found == 0
+    in_place = [LabelEntry("0", "C50", "C", (110, 105, 190, 145), "C50")]
+    assert check_truth(truth, in_place).found == 1

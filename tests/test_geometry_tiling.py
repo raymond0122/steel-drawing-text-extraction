@@ -12,6 +12,10 @@ def test_poly_to_bbox_accepts_both_azure_formats():
     assert g.poly_to_bbox([]) is None
 
 
+def test_poly_to_bbox_encloses_corners_that_fall_between_pixels():
+    assert g.poly_to_bbox([10.6, 20.4, 110.2, 20.4, 110.2, 60.7, 10.6, 60.7]) == (10, 20, 111, 61)
+
+
 def test_overlap_ratio_catches_fragment_that_iou_misses():
     long_text = (0, 0, 1000, 50)
     fragment = (0, 0, 200, 50)  # fully inside the long box

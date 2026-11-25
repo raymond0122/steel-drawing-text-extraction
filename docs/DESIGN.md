@@ -80,7 +80,7 @@ Each tile is cut from the page and sent to Azure on its own. For every line of t
 
 Two steps turn the polygon into the box the rest of the pipeline uses:
 
-1. **Polygon to box** (`geometry.poly_to_bbox`): the smallest upright rectangle around the four corners, `(x0, y0, x1, y1)`. With upright boxes, areas and overlaps are just width × height.
+1. **Polygon to box** (`geometry.poly_to_bbox`): the smallest upright rectangle around the four corners, `(x0, y0, x1, y1)`, in whole pixels: the corners can fall between pixels, so the start is rounded down and the end up. With upright boxes, areas and overlaps are just width × height.
 2. **Tile to page coordinates:** Azure measures from the tile's top-left corner, so the tile's position on the page is added. A line at `(100, 50, 400, 100)` in a tile that starts at `(1800, 0)` is at `(1900, 50, 2200, 100)` on the page. Boxes from two tiles can only be compared once both are in page coordinates.
 
 Lines shorter than 2 characters are dropped here: single letters are grid marks, not labels. Each remaining line becomes a **chunk**: its text, its box on the page, and the tile that read it. Dedup works on these chunks.
@@ -179,7 +179,7 @@ Both the demo and the web UI pick their clients and run the stages through `stee
   - **Tiles:** the grid, how many lines each tile read, and which tiles could not be read. Those stay hatched red on every step.
   - **Raw OCR:** every line from every tile, with the ones dedup will drop marked.
   - **Dedup:** each decision with its reason and a before/after close-up.
-  - **Labels:** the labels found, which batches succeeded or were skipped, and a check against the ground truth, which counts repeats: a label printed twice must be found twice. **Download Excel** saves them as `labels.xlsx`.
+  - **Labels:** the labels found, which batches succeeded or were skipped, and a check against the ground truth by text and place: a label printed twice must be found twice, and one read at the wrong place counts as missing. **Download Excel** saves them as `labels.xlsx`.
 - **Viewing the drawing:** scroll to zoom, drag to pan, and click a row to jump to it.
 - **Log in** (top right): register or log in, which unlocks live runs; the page then shows who is logged in. A live run refused with a 401, for example after the 60-minute access token expires, logs the page out again.
 - **Auth API tab:** register, log in, call `/me` with the access token, the refresh token, or no token, and refresh. Each request and response is shown, with the decoded token claims. It uses the same login as the top bar.
