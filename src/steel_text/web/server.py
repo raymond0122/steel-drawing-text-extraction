@@ -32,13 +32,13 @@ from ..auth.main import get_settings as auth_settings
 from ..dedup import DedupDecision
 from ..geometry import BBox, region_around
 from ..label_sheet import XLSX_MIME, write_label_sheet
-from ..llm_filter import NotChecked
+from ..llm_filter import MAX_BATCH_SIZE, NotChecked
 from ..ocr_types import OcrChunk, TileReadError
 from ..page_image import PageTooLargeError, open_page
 from ..pipeline import MissingCredentialsError, PipelineResult, make_clients, run_pipeline
 from ..sample_drawing import GroundTruthText, check_truth, make_sample_drawing
 from ..settings import ENV_FILE, Settings, is_filled, load_settings
-from ..tiling import DEFAULT_MAX_TILES, MAX_OVERLAP, OVERLAP, TileLimitError
+from ..tiling import DEFAULT_MAX_TILES, MAX_OVERLAP, OVERLAP, TILE_LIMIT_CAP, TileLimitError
 from .schemas import (
     Chunk,
     DedupDecisionOut,
@@ -96,7 +96,7 @@ def require_login_for_live(
     if creds is None:
         raise HTTPException(
             401,
-            "Live mode spends API credit, so it needs a login: log in on the Auth API tab first.",
+            "Live mode spends API credit, so it needs a login: use Log in at the top right.",
             headers={"WWW-Authenticate": "Bearer"},
         )
     current_user(settings, creds)  # 401 for an expired or invalid token, or a refresh token
@@ -294,8 +294,8 @@ async def run(
     live: bool = False,
     simulate_ocr_failure: bool = False,
     simulate_llm_failure: bool = False,
-    batch_size: int | None = Query(None, ge=1, le=200),  # None: the pipeline's default for the mode
-    max_tiles: int = Query(DEFAULT_MAX_TILES, ge=1, le=100),
+    batch_size: int | None = Query(None, ge=1, le=MAX_BATCH_SIZE),  # None: the pipeline's default for the mode
+    max_tiles: int = Query(DEFAULT_MAX_TILES, ge=1, le=TILE_LIMIT_CAP),
     overlap: int = Query(OVERLAP, ge=0, le=MAX_OVERLAP),
 ) -> RunResponse:
     """Body: optional raw image bytes (live mode only). Without one, the synthetic drawing is used."""

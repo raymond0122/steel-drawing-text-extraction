@@ -3,6 +3,7 @@
 import json
 import sys
 
+import pytest
 from openpyxl import load_workbook
 
 from steel_text import demo
@@ -25,3 +26,15 @@ def test_a_skipped_llm_batch_marks_every_output_incomplete_until_a_clean_run(tmp
     assert run_demo(monkeypatch, tmp_path) == 0
     assert not (tmp_path / "not_checked.json").exists()  # the previous run's gaps don't linger
     assert load_workbook(tmp_path / "labels.xlsx").sheetnames == ["Labels"]
+
+
+@pytest.mark.parametrize(
+    "flag, value",
+    [("--overlap", "5000"), ("--overlap", "-5"), ("--batch-size", "0"), ("--batch-size", "ten"), ("--max-tiles", "0")],
+)
+def test_a_bad_setting_is_refused_before_anything_runs(monkeypatch, capsys, flag, value):
+    monkeypatch.setattr(sys, "argv", ["steel-demo", flag, value])
+    with pytest.raises(SystemExit) as exit_:
+        demo.parse_args()
+    assert exit_.value.code == 2  # nothing written, unlike 1 (written, but incomplete)
+    assert f"argument {flag}" in capsys.readouterr().err

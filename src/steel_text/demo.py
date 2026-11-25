@@ -19,13 +19,14 @@ import argparse
 import json
 import logging
 import sys
+from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
 
 from PIL import Image
 
 from .label_sheet import write_label_sheet
-from .llm_filter import DEFAULT_BATCH_SIZE, FilterResult
+from .llm_filter import DEFAULT_BATCH_SIZE, MAX_BATCH_SIZE, FilterResult
 from .ocr_stage import TiledOcrResult
 from .ocr_types import TileReadError
 from .overlay import Preview, draw_boxes, draw_dedup_closeups, draw_not_read, draw_tile_grid
@@ -33,11 +34,26 @@ from .page_image import PageTooLargeError, open_page
 from .pipeline import OFFLINE_BATCH_SIZE, MissingCredentialsError, make_clients, run_pipeline
 from .sample_drawing import GroundTruthText, check_truth, load_truth, save_sample
 from .settings import load_settings
-from .tiling import DEFAULT_MAX_TILES, OVERLAP, TileLimitError
+from .tiling import DEFAULT_MAX_TILES, MAX_OVERLAP, OVERLAP, TILE_LIMIT_CAP, TileLimitError
 
 RAW_OCR_COLOR = (220, 38, 38)  # red: every OCR line, before dedup
 MERGED_OCR_COLOR = (22, 140, 60)  # green: OCR lines after dedup
 LABEL_COLOR = (230, 110, 0)  # orange: steel labels from the LLM filter
+
+
+def whole_number(low: int, high: int) -> Callable[[str], int]:
+    """An argparse type: a whole number from low to high. Anything else is a usage error (exit code 2)."""
+
+    def parse(text: str) -> int:
+        try:
+            value = int(text)
+        except ValueError:
+            raise argparse.ArgumentTypeError(f"{text!r} is not a whole number") from None
+        if not low <= value <= high:
+            raise argparse.ArgumentTypeError(f"must be from {low} to {high:,}, not {value}")
+        return value
+
+    return parse
 
 
 def parse_args() -> argparse.Namespace:
@@ -47,13 +63,18 @@ def parse_args() -> argparse.Namespace:
     ap.add_argument("--out", type=Path, default=Path("out"))
     ap.add_argument(
         "--batch-size",
-        type=int,
+        type=whole_number(1, MAX_BATCH_SIZE),
         help=f"OCR lines per LLM request (default: {DEFAULT_BATCH_SIZE} live, {OFFLINE_BATCH_SIZE} offline)",
     )
-    ap.add_argument("--max-tiles", type=int, default=DEFAULT_MAX_TILES)
+    ap.add_argument(
+        "--max-tiles",
+        type=whole_number(1, TILE_LIMIT_CAP),
+        default=DEFAULT_MAX_TILES,
+        help=f"at most this many tiles, one OCR request each (default {DEFAULT_MAX_TILES})",
+    )
     ap.add_argument(
         "--overlap",
-        type=int,
+        type=whole_number(0, MAX_OVERLAP),
         default=OVERLAP,
         help=f"px by which tiles overlap (default {OVERLAP}: longer than the longest label at 400 dpi)",
     )

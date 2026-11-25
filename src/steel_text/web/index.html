@@ -48,7 +48,7 @@
         </div>
       </div>
       <label class="field"><span class="label">LLM batch size</span><input type="number" id="batch-size" min="1" max="200">
-        <span class="hint" id="batch-hint" title="OCR lines per LLM request. On the test sheet, 25 found every beam label; 10 missed some, and 50 or more missed more. Offline, 10 keeps several batches on the small synthetic drawing."></span></label>
+        <span class="hint" id="batch-hint" title="OCR lines per LLM request. On the test sheet, 10 and 25 found the beam labels alike and 25 took half the time; 50 or more missed labels. Offline, 10 keeps several batches on the small synthetic drawing."></span></label>
       <label class="field"><span class="label">Max tiles</span><input type="number" id="max-tiles" value="20" min="1" max="100">
         <span class="hint" title="At most one Azure request per tile. A lower cap makes the tiles larger, and tiles of 6,000 px or more read worse.">Recommended: 20</span></label>
       <label class="field"><span class="label">Tile overlap (px)</span><input type="number" id="overlap" value="350" min="0" max="1000">

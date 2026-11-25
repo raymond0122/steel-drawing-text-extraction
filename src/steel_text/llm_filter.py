@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 # labels alike with gpt-4o, and 25 took half the time and a third fewer tokens; 50 or more missed
 # labels (experiments/llm_batch).
 DEFAULT_BATCH_SIZE = 25
+MAX_BATCH_SIZE = 200  # the most a run may ask for; at 200 the model answered for few lines
 # A reply with no text came back twice in the batch experiments; it is asked for once more.
 EMPTY_REPLY_ATTEMPTS = 2
 MATERIAL_KINDS: tuple[str, ...] = ("HSS", "H", "L", "C", "Other")
@@ -246,6 +247,8 @@ def filter_labels(
     `not_checked`. The result is not ok only if every batch failed.
     `request_sleep_s` is the pause between batches.
     """
+    if batch_size < 1:
+        raise ValueError(f"batch_size must be at least 1, not {batch_size}")
     by_id = {str(i): c for i, c in enumerate(chunks)}
     ids = list(by_id)
     batches = [ids[start : start + batch_size] for start in range(0, len(ids), batch_size)]

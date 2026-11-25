@@ -17,6 +17,7 @@ MAX_OVERLAP = 1_000
 TILE_GROWTH = 1.15  # when the grid has more than max_tiles tiles
 MAX_TILE_SIZE = 10_000  # Azure Document Intelligence rejects an image over 10,000 px on a side
 DEFAULT_MAX_TILES = 20
+TILE_LIMIT_CAP = 100  # the highest max_tiles a run may ask for
 
 
 class TileLimitError(ValueError):

@@ -95,6 +95,11 @@ def test_ids_from_another_batch_and_repeated_ids_are_dropped():
     assert [(e.str_id, e.normalized_label) for e in res.entries] == [("2", "W310X39")]
 
 
+def test_a_batch_size_below_one_is_refused():
+    with pytest.raises(ValueError, match="batch_size must be at least 1"):
+        filter_labels(CHUNKS, ScriptedExtractor([]), batch_size=0)
+
+
 def test_all_batches_failing_marks_the_page_failed():
     ex = ScriptedExtractor([LlmCallError("HTTP 500")] * 3)
     res = filter_labels(CHUNKS, ex, batch_size=2)

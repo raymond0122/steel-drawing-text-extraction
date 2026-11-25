@@ -143,7 +143,7 @@ def test_no_other_file_is_served(client, name):
 
 def test_live_run_needs_a_login(client):
     r = client.post("/api/run", params={"live": True})
-    assert r.status_code == 401 and "needs a login" in r.json()["detail"]
+    assert r.status_code == 401 and "needs a login: use Log in at the top right" in r.json()["detail"]
 
 
 def test_live_run_does_not_take_a_refresh_token(client):

@@ -66,7 +66,7 @@ Live mode calls the real Azure and OpenAI services. Copy `.env.example` to `.env
 ### Development
 
 ```bash
-python -m pytest                               # 123 tests
+python -m pytest                               # 129 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # the web UI, restarted on every code change
