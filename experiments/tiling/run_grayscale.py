@@ -26,6 +26,7 @@ HERE = Path(__file__).resolve().parent
 RESULTS = HERE / "results"
 DRAWING = HERE / "steel_framing_plan_S-201_400dpi.png"
 REQUEST_SLEEP_S = 0.2  # the same pacing as the app's live mode
+OVERLAP = 300  # as in results/tiled.json, which this run is compared with
 
 
 def main() -> int:
@@ -36,7 +37,8 @@ def main() -> int:
         page = open_page(DRAWING)
         assert page.mode == "L", f"expected a grayscale page, got {page.mode}"
         t0 = time.perf_counter()
-        r = run_tiled_ocr(page, AzureReadClient.from_settings(load_settings()), request_sleep_s=REQUEST_SLEEP_S)
+        client = AzureReadClient.from_settings(load_settings())
+        r = run_tiled_ocr(page, client, overlap=OVERLAP, request_sleep_s=REQUEST_SLEEP_S)
         secs = time.perf_counter() - t0
         record = {
             "name": "tiled_grayscale",

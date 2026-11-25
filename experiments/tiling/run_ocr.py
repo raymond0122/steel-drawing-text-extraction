@@ -33,6 +33,7 @@ HERE = Path(__file__).resolve().parent
 RESULTS = HERE / "results"
 DRAWING = HERE / "steel_framing_plan_S-201_400dpi.png"
 WHOLE_LONG_SIDES = [14400, 10000, 8000, 6000, 4000, 3000]
+OVERLAP = 300  # the app's overlap when this was measured; it uses 350 px since experiment 5
 
 
 def main() -> int:
@@ -48,7 +49,7 @@ def main() -> int:
         print("tiled: cached")
     else:
         t0 = time.perf_counter()
-        r = run_tiled_ocr(page, client)
+        r = run_tiled_ocr(page, client, overlap=OVERLAP)
         secs = time.perf_counter() - t0
         out.write_text(
             json.dumps(

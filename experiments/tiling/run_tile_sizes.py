@@ -25,13 +25,14 @@ from steel_text.azure_ocr import AzureOcrError, AzureReadClient
 from steel_text.ocr_stage import run_tiled_ocr
 from steel_text.page_image import open_page
 from steel_text.settings import load_settings
-from steel_text.tiling import OVERLAP, TilingChoice
+from steel_text.tiling import TilingChoice
 
 HERE = Path(__file__).resolve().parent
 RESULTS = HERE / "results"
 DRAWING = HERE / "steel_framing_plan_S-201_400dpi.png"
 SIZES = [10000, 8000, 6000, 4500, 3000, 2500, 2000]  # fewest requests first
 REQUEST_SLEEP_S = 0.2  # the same pacing as the app's live mode
+OVERLAP = 300  # the app's overlap when this was measured; it uses 350 px since experiment 5
 
 
 class RetryCounter(logging.Handler):
@@ -55,7 +56,7 @@ def main() -> int:
     print(f"drawing {page.width}x{page.height}", flush=True)
     client = AzureReadClient.from_settings(load_settings())
     counter = RetryCounter()
-    logging.getLogger("steel_text.azure_ocr").addHandler(counter)
+    logging.getLogger("steel_text.http").addHandler(counter)  # where retries are logged
 
     for size in SIZES:
         out = RESULTS / f"tile_{size}.json"

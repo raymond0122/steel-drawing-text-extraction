@@ -34,6 +34,7 @@ from steel_text.tiling import Tile, make_tiles
 HERE = Path(__file__).resolve().parent
 RESULTS = HERE / "results"
 SHIFT = 1_400
+OVERLAP = 300  # the app's overlap when this was measured; it uses 350 px since experiment 5
 
 
 def even_layout(width: int, height: int, *, tile_size: int, overlap: int) -> list[Tile]:
@@ -47,7 +48,8 @@ def run(name: str, page: Image.Image, layout) -> dict:
     ocr_stage.make_tiles = layout  # run_tiled_ocr cuts the page with this layout
     try:
         t0 = time.perf_counter()
-        r = ocr_stage.run_tiled_ocr(page, AzureReadClient.from_settings(load_settings()), request_sleep_s=0.2)
+        client = AzureReadClient.from_settings(load_settings())
+        r = ocr_stage.run_tiled_ocr(page, client, overlap=OVERLAP, request_sleep_s=0.2)
         secs = time.perf_counter() - t0
     finally:
         ocr_stage.make_tiles = make_tiles
