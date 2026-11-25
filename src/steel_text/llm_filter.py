@@ -19,7 +19,7 @@ import json
 import logging
 import re
 import time
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, NamedTuple, Protocol
 
@@ -256,7 +256,6 @@ def filter_labels(
     failed: list[tuple[int, str]] = []
     not_checked: list[NotChecked] = []
     batch_ms: list[int] = []
-    labelled: set[str] = set()
 
     for b_idx, batch_ids in enumerate(batches):
         if b_idx > 0 and request_sleep_s > 0:
@@ -275,26 +274,8 @@ def filter_labels(
         finally:
             batch_ms.append(round((time.perf_counter() - start) * 1000))
 
-        in_batch = set(batch_ids)
-        dropped = 0
-        for item in parsed.get("entries", []) if isinstance(parsed, dict) else []:
-            sid = str(item.get("str_id", "")).strip()
-            label = normalize_label(str(item.get("normalized_label", "")))
-            if sid not in in_batch or sid in labelled or not label:
-                dropped += 1  # an ID this batch never sent (invented, or from another batch), a repeat, or no label
-                continue
-            labelled.add(sid)
-            chunk = by_id[sid]
-            kind = str(item.get("material_kind", "")).strip()
-            entries.append(
-                LabelEntry(
-                    str_id=sid,
-                    normalized_label=label,
-                    material_kind=kind if kind in MATERIAL_KINDS else "Other",
-                    bbox=chunk.bbox,
-                    raw_text=chunk.text,
-                )
-            )
+        found, dropped = _join_reply(parsed, {sid: by_id[sid] for sid in batch_ids})
+        entries.extend(found)
         if dropped:
             logger.warning("batch %d: dropped %d entries (unknown or repeated ID, or empty label)", b_idx, dropped)
 
@@ -308,3 +289,31 @@ def filter_labels(
         not_checked=not_checked,
         batch_ms=batch_ms,
     )
+
+
+def _join_reply(parsed: dict[str, Any], sent: Mapping[str, OcrChunk]) -> tuple[list[LabelEntry], int]:
+    """Join a batch's reply back to the lines `sent` in it, by ID: the labels, and how many entries were dropped.
+
+    Dropped: an ID the batch never sent (invented, or from another batch), a repeat
+    of an ID already labelled, or an empty label. Batches share no IDs, so repeats
+    are only looked for within the batch.
+    """
+    entries: list[LabelEntry] = []
+    dropped = 0
+    for item in parsed.get("entries", []) if isinstance(parsed, dict) else []:
+        sid = str(item.get("str_id", "")).strip()
+        label = normalize_label(str(item.get("normalized_label", "")))
+        if sid not in sent or any(e.str_id == sid for e in entries) or not label:
+            dropped += 1
+            continue
+        kind = str(item.get("material_kind", "")).strip()
+        entries.append(
+            LabelEntry(
+                str_id=sid,
+                normalized_label=label,
+                material_kind=kind if kind in MATERIAL_KINDS else "Other",
+                bbox=sent[sid].bbox,
+                raw_text=sent[sid].text,
+            )
+        )
+    return entries, dropped

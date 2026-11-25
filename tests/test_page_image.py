@@ -7,7 +7,7 @@ from PIL import Image
 from steel_text import page_image
 from steel_text.auth.main import get_settings as auth_settings
 from steel_text.auth.security import create_token
-from steel_text.page_image import PageTooLargeError, open_page
+from steel_text.page_image import PageTooLargeError, open_page, shrink
 from steel_text.settings import Settings
 from steel_text.web import server
 
@@ -56,3 +56,11 @@ def test_upload_over_the_pixel_limit_is_a_413(monkeypatch):
     login = {"Authorization": f"Bearer {create_token('tester', 'access', auth.jwt_secret_key)}"}
     r = TestClient(server.app).post("/api/run", params={"live": True}, content=png_bytes(20, 20), headers=login)
     assert r.status_code == 413 and "too large" in r.json()["detail"]
+
+
+def test_a_page_is_shrunk_to_the_side_asked_for_and_stays_grayscale():
+    small, scale = shrink(Image.new("L", (9000, 6000)), 4000)
+    assert small.size == (4000, 2667) and small.mode == "L" and scale == 4000 / 9000
+    page = Image.new("L", (300, 200))
+    same, scale = shrink(page, 4000)
+    assert same is page and scale == 1.0  # already small enough: not copied

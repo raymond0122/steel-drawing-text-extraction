@@ -124,29 +124,39 @@ class AzureReadClient:
             )
             if resp is None:
                 raise AzureOcrError(f"GET poll failed after {self.max_attempts} attempts (network errors)")
-            if resp.status_code == 200:
-                # A reply that isn't a JSON object with a known status won't turn into a result
-                # by polling again: fail now, not at the poll timeout.
-                try:
-                    body = resp.json()
-                except ValueError:
-                    body = None
-                if not isinstance(body, dict):
-                    raise AzureOcrError(f"unexpected poll reply: {resp.text[:300]}")
-                status = str(body.get("status", "")).lower()
-                if status == "succeeded":
-                    return body
-                if status in ("failed", "canceled"):
-                    raise AzureOcrError(f"analysis {status}: {str(body)[:300]}")
-                if status not in ("notstarted", "running"):
-                    raise AzureOcrError(f"unexpected poll reply: {resp.text[:300]}")
-            elif is_retry_status(resp):
-                logger.warning("GET poll still returned HTTP %d after retries, will keep polling", resp.status_code)
-            else:
-                # 4xx (bad key, unknown operation...) won't fix itself: fail now, not at the poll timeout.
-                raise AzureOcrError(f"GET poll failed: HTTP {resp.status_code} {resp.text[:300]}")
-
+            result = _poll_result(resp)
+            if result is not None:
+                return result
             # Checked after each request too, since its retries can take a while.
             if self.clock() - start + self.poll_interval_s > self.poll_timeout_s:
                 raise AzureOcrError(f"polling timed out after {self.poll_timeout_s:.0f}s")
             self.sleep(self.poll_interval_s)
+
+
+def _poll_result(resp: HttpResponse) -> dict[str, Any] | None:
+    """The analysis result once it succeeded, or None while it is still running.
+
+    A reply that polling again won't turn into a result fails now, not at the poll
+    timeout: a 4xx (bad key, unknown operation...), a failed or cancelled analysis,
+    or a body that isn't a JSON object with a known status. A 429 or 5xx that
+    outlasted the retries is polled again.
+    """
+    if is_retry_status(resp):
+        logger.warning("GET poll still returned HTTP %d after retries, will keep polling", resp.status_code)
+        return None
+    if resp.status_code != 200:
+        raise AzureOcrError(f"GET poll failed: HTTP {resp.status_code} {resp.text[:300]}")
+    try:
+        body = resp.json()
+    except ValueError:
+        body = None
+    if not isinstance(body, dict):
+        raise AzureOcrError(f"unexpected poll reply: {resp.text[:300]}")
+    status = str(body.get("status", "")).lower()
+    if status == "succeeded":
+        return body
+    if status in ("notstarted", "running"):
+        return None
+    if status in ("failed", "canceled"):
+        raise AzureOcrError(f"analysis {status}: {str(body)[:300]}")
+    raise AzureOcrError(f"unexpected poll reply: {resp.text[:300]}")

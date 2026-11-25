@@ -1,4 +1,4 @@
-"""Open a page image with a size limit, so one upload can't exhaust the server's memory.
+"""Open a page image with a size limit, so one upload can't exhaust the server's memory, and shrink one for display.
 
 PIL's default limit (about 89 million pixels) is too small for large drawings, so
 it is raised to ours rather than switched off: an A0 sheet at 400 dpi is about
@@ -41,3 +41,17 @@ def open_page(source: str | Path | BinaryIO) -> Image.Image:
             img.load()  # convert() would decode the page and then copy it: twice the memory at its peak
             return img
         return img.convert("L" if img.mode == "1" else "RGB")
+
+
+def shrink(page: Image.Image, max_side: int) -> tuple[Image.Image, float]:
+    """The page shrunk so its longer side is at most max_side, and the scale used.
+
+    A page already that small comes back as itself, at scale 1. BOX (each new pixel
+    the average of the ones it covers) is enough for a preview, and about 4x faster
+    than LANCZOS on a 9,000 px page.
+    """
+    scale = min(1.0, max_side / max(page.size))
+    if scale == 1.0:
+        return page, scale
+    size = (max(1, round(page.width * scale)), max(1, round(page.height * scale)))
+    return page.resize(size, Image.Resampling.BOX), scale

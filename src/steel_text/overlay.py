@@ -17,6 +17,7 @@ from .dedup import DedupDecision
 from .fonts import load_font
 from .geometry import BBox, intersection_area, region_around
 from .ocr_types import OcrChunk
+from .page_image import shrink
 
 TILE_COLORS = [(230, 57, 70), (29, 120, 116), (69, 123, 157), (244, 162, 97), (131, 56, 236), (42, 157, 143)]
 NOT_READ_COLOR = (198, 40, 40)  # red, as in the web UI
@@ -37,10 +38,7 @@ class Preview:
 
     @classmethod
     def of(cls, page: Image.Image, max_side: int = PREVIEW_MAX_SIDE) -> Preview:
-        scale = min(1.0, max_side / max(page.size))
-        if scale < 1.0:
-            page = page.resize((round(page.width * scale), round(page.height * scale)), Image.Resampling.LANCZOS)
-        return cls(page, scale)
+        return cls(*shrink(page, max_side))
 
     def box(self, b: BBox) -> BBox:
         """A box in page pixels, in preview pixels."""

@@ -34,7 +34,7 @@ from ..geometry import BBox, region_around
 from ..label_sheet import XLSX_MIME, write_label_sheet
 from ..llm_filter import MAX_BATCH_SIZE, NotChecked
 from ..ocr_types import OcrChunk, TileReadError
-from ..page_image import PageTooLargeError, open_page
+from ..page_image import PageTooLargeError, open_page, shrink
 from ..pipeline import MissingCredentialsError, PipelineResult, make_clients, run_pipeline
 from ..sample_drawing import GroundTruthText, check_truth, make_sample_drawing
 from ..settings import ENV_FILE, Settings, is_filled, load_settings
@@ -111,14 +111,6 @@ def _png_data_url(img: Image.Image) -> str:
     buf = io.BytesIO()
     img.save(buf, format="PNG")
     return "data:image/png;base64," + base64.b64encode(buf.getvalue()).decode("ascii")
-
-
-def _preview(page: Image.Image) -> str:
-    scale = min(1.0, PREVIEW_MAX_SIDE / max(page.size))
-    if scale < 1.0:
-        # BOX (area average) is enough for a preview and about 3x faster than LANCZOS on a 9000 px page
-        page = page.resize((int(page.width * scale), int(page.height * scale)), Image.Resampling.BOX)
-    return _png_data_url(page)
 
 
 def _xlsx_data_url(
@@ -208,7 +200,7 @@ def _response(
     return RunResponse(
         mode="live" if live else "offline",
         source="upload" if uploaded else "synthetic",
-        page=PageInfo(width=page.width, height=page.height, preview=_preview(page)),
+        page=PageInfo(width=page.width, height=page.height, preview=_png_data_url(shrink(page, PREVIEW_MAX_SIDE)[0])),
         tiling=Tiling(
             tile_size=ocr.tiling.tile_size,
             overlap=ocr.tiling.overlap,
