@@ -48,20 +48,28 @@ def make_tiles(width: int, height: int, *, tile_size: int, overlap: int) -> list
     Row by row, left to right. The last tile on each side is moved back to end at
     the image edge instead of being cut short, so every tile keeps the full tile
     size when the image allows; it then overlaps its neighbour by more than `overlap`.
+    A last tile that would start at most `overlap` px after the one before it would
+    nearly repeat that tile (a 3,508 px side would get two tiles 8 px apart), so the
+    tile before it is stretched to the edge instead: up to `overlap` px longer, never
+    past MAX_TILE_SIZE. Every tile edge stays where it was, so no text is cut that
+    wasn't before.
     """
     if tile_size <= 0 or not 0 <= overlap < tile_size:
         raise ValueError("need tile_size > 0 and 0 <= overlap < tile_size")
-    stride = tile_size - overlap
-    xs = _tile_starts(width, tile_size, stride)
-    ys = _tile_starts(height, tile_size, stride)
-    return [Tile(x, y, min(x + tile_size, width), min(y + tile_size, height)) for y in ys for x in xs]
+    stretch = max(0, min(overlap, MAX_TILE_SIZE - tile_size))
+    xs = _spans(width, tile_size, overlap, stretch)
+    ys = _spans(height, tile_size, overlap, stretch)
+    return [Tile(x0, y0, x1, y1) for y0, y1 in ys for x0, x1 in xs]
 
 
-def _tile_starts(side: int, tile_size: int, stride: int) -> list[int]:
-    """Where the tiles along one side start: every `stride` px, plus one that ends at the edge."""
+def _spans(side: int, tile_size: int, overlap: int, stretch: int) -> list[tuple[int, int]]:
+    """Where the tiles along one side start and end: every tile_size - overlap px, the last one at the edge."""
     if side <= tile_size:
-        return [0]  # one tile covers the side; it is cut to the side's length
-    return [*range(0, side - tile_size, stride), side - tile_size]
+        return [(0, side)]  # one tile covers the side; it is cut to the side's length
+    starts = [*range(0, side - tile_size, tile_size - overlap), side - tile_size]
+    if starts[-1] - starts[-2] <= stretch:
+        starts.pop()  # it would nearly repeat the tile before it, which is stretched to the edge instead
+    return [(s, s + tile_size) for s in starts[:-1]] + [(starts[-1], side)]
 
 
 def choose_tiling(
@@ -69,8 +77,9 @@ def choose_tiling(
 ) -> TilingChoice:
     """Pick the tile size for a page.
 
-    A page that fits in one TILE_SIZE tile is sent whole. A larger one is cut into
-    TILE_SIZE tiles that overlap by `overlap` px. If that grid would have more than
+    A page that fits in one TILE_SIZE tile, stretched by up to `overlap` px as
+    make_tiles allows, is sent whole. A larger one is cut into TILE_SIZE tiles that
+    overlap by `overlap` px. If that grid would have more than
     max_tiles tiles, the tile size grows by 15% until it fits, but never past
     MAX_TILE_SIZE: a page that still needs more tiles raises TileLimitError.
     """
@@ -79,8 +88,11 @@ def choose_tiling(
     if not 0 <= overlap <= MAX_OVERLAP:
         raise ValueError(f"the overlap must be from 0 to {MAX_OVERLAP:,} px")
     side = max(width, height)
-    if side <= TILE_SIZE:
-        reason = f"The longest side is {side:,} px, which fits in one {TILE_SIZE:,} px tile, so the page is sent whole."
+    if len(make_tiles(width, height, tile_size=TILE_SIZE, overlap=overlap)) == 1:
+        reason = (
+            f"The longest side is {side:,} px, which fits in one {TILE_SIZE:,} px tile "
+            f"stretched by up to the {overlap} px overlap, so the page is sent whole."
+        )
         return TilingChoice(side, 0, reason)
 
     tile_size = TILE_SIZE

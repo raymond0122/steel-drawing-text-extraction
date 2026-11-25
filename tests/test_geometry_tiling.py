@@ -34,6 +34,26 @@ def test_tiles_cover_whole_image_with_overlap():
     assert xs[0][1] - xs[1][0] == 300  # neighbouring columns overlap by 300 px
 
 
+@pytest.mark.parametrize(
+    "width, height, boxes",
+    [
+        # A3 at 300 dpi: before, four tiles, the second row 8 px below the first
+        (4961, 3508, [(0, 0, 3500, 3508), (1461, 0, 4961, 3508)]),
+        # the last tile would start 8 px after the middle one: the middle one reaches the edge instead
+        (6658, 100, [(0, 0, 3500, 100), (3150, 0, 6658, 100)]),
+        # 351 px apart is more than the overlap: a tile of its own, as before
+        (7001, 100, [(0, 0, 3500, 100), (3150, 0, 6650, 100), (3501, 0, 7001, 100)]),
+    ],
+)
+def test_a_last_tile_that_would_nearly_repeat_the_one_before_is_merged_into_it(width, height, boxes):
+    assert [t.box for t in make_tiles(width, height, tile_size=3500, overlap=350)] == boxes
+
+
+def test_a_stretched_tile_stays_within_what_azure_accepts():
+    tiles = make_tiles(19_990, 100, tile_size=MAX_TILE_SIZE, overlap=350)
+    assert max(t.x1 - t.x0 for t in tiles) == MAX_TILE_SIZE and tiles[-1].x1 == 19_990
+
+
 def test_small_page_is_not_tiled():
     tile_size, overlap, reason = choose_tiling(3000, 2000)
     assert overlap == 0 and "sent whole" in reason
@@ -42,7 +62,8 @@ def test_small_page_is_not_tiled():
 
 def test_a_page_larger_than_one_tile_is_cut_into_3500_px_tiles():
     assert choose_tiling(3500, 2000).overlap == 0  # fits in one tile
-    assert choose_tiling(3600, 2000)[:2] == (3500, 350)
+    assert choose_tiling(3850, 2000)[:2] == (3850, 0)  # fits in one tile stretched by the 350 px overlap
+    assert choose_tiling(3851, 2000)[:2] == (3500, 350)
     assert choose_tiling(9000, 6000)[:2] == (3500, 350)
     assert "3,500 px tiles" in choose_tiling(9000, 6000).reason
     assert choose_tiling(9000, 6000, overlap=500)[:2] == (3500, 500)
@@ -65,6 +86,8 @@ def test_tile_size_grows_until_under_the_cap():
 
 
 def test_tiles_never_grow_past_what_azure_accepts():
-    assert choose_tiling(14400, 9600, max_tiles=2).tile_size == MAX_TILE_SIZE  # two 10,000 px tiles cover it
+    tile_size, overlap, _ = choose_tiling(14400, 9600, max_tiles=2)
+    tiles = make_tiles(14400, 9600, tile_size=tile_size, overlap=overlap)
+    assert len(tiles) == 2 and max(max(t.x1 - t.x0, t.y1 - t.y0) for t in tiles) <= MAX_TILE_SIZE
     with pytest.raises(TileLimitError, match="at least 2 tiles"):
         choose_tiling(14400, 9600, max_tiles=1)  # one tile would have to be 14,400 px

@@ -8,7 +8,7 @@ Five questions, measured on one drawing with Azure Document Intelligence `prebui
 4. **Should the tiles be spread evenly?** (run 2026-11-24; not adopted)
 5. **How much should the tiles overlap?** (run 2026-11-24; the app moved from 300 to 350 px)
 
-Experiments 1 to 4 used a 300 px overlap, which the app had then.
+Experiments 1 to 4 used a 300 px overlap, which the app had then. The geometry of experiments 4 and 5 is computed with the app's tiles of that day (`tiles_then` in `layout_geometry.py`). The app has since merged a last tile that would start within the overlap of the one before into that tile; that moves no tile edge, and every tile sent to Azure in experiments 1 to 5 is the same under both rules.
 
 The drawing is [`steel_framing_plan_S-201_400dpi.png`](steel_framing_plan_S-201_400dpi.png): a made-up 36 × 24 in steel framing plan rendered at 400 dpi, 14,400 × 9,600 px. It belongs to no real project.
 

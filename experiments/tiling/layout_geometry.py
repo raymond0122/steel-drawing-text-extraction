@@ -18,17 +18,35 @@ import statistics
 from collections.abc import Callable
 from pathlib import Path
 
-from steel_text.tiling import Tile, make_tiles
+from steel_text.tiling import Tile
 
 HERE = Path(__file__).resolve().parent
 W, H, TILE = 14_400, 9_600, 3_500
 
 
-def even_tiles(width: int, height: int, *, tile_size: int = TILE, overlap: int = 300) -> list[Tile]:
-    """As many tiles per side as make_tiles cuts, spread evenly over the page."""
+def tiles_then(width: int, height: int, *, tile_size: int, overlap: int) -> list[Tile]:
+    """The app's tiles when experiments 4 and 5 ran, which these scripts measure.
+
+    Since then the app merges a last tile that would start at most `overlap` px after
+    the one before into that one (steel_text/tiling.py). That moves no tile edge, so
+    no text is cut that wasn't before, but fewer tiles would change the counts here.
+    """
 
     def starts(side: int) -> list[int]:
-        n = len({t.x0 for t in make_tiles(side, 1, tile_size=tile_size, overlap=overlap)})
+        if side <= tile_size:
+            return [0]
+        return [*range(0, side - tile_size, tile_size - overlap), side - tile_size]
+
+    return [
+        Tile(x, y, min(x + tile_size, width), min(y + tile_size, height)) for y in starts(height) for x in starts(width)
+    ]
+
+
+def even_tiles(width: int, height: int, *, tile_size: int = TILE, overlap: int = 300) -> list[Tile]:
+    """As many tiles per side as the app's layout cuts, spread evenly over the page."""
+
+    def starts(side: int) -> list[int]:
+        n = len({t.x0 for t in tiles_then(side, 1, tile_size=tile_size, overlap=overlap)})
         return [0] if n == 1 else [round(i * (side - tile_size) / (n - 1)) for i in range(n)]
 
     return [
@@ -37,9 +55,9 @@ def even_tiles(width: int, height: int, *, tile_size: int = TILE, overlap: int =
 
 
 LAYOUTS: dict[str, Callable[[int, int], list[Tile]]] = {
-    "app": lambda w, h: make_tiles(w, h, tile_size=TILE, overlap=300),
+    "app": lambda w, h: tiles_then(w, h, tile_size=TILE, overlap=300),
     "even": lambda w, h: even_tiles(w, h),
-    "wide": lambda w, h: make_tiles(w, h, tile_size=TILE, overlap=450),
+    "wide": lambda w, h: tiles_then(w, h, tile_size=TILE, overlap=450),
 }
 
 

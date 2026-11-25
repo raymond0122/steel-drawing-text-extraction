@@ -29,9 +29,11 @@ When a tile could not be read, its area is hatched red on `01` to `04`. When eit
 
 ## Tiling (`steel_text/tiling.py`)
 
-Large-format drawings rendered at high DPI can exceed 10,000 px on the long side, the largest image Azure accepts, and shrinking a page to fit makes its small text unreadable. So a page whose longest side is over 3,500 px is cut into 3,500 px tiles at full resolution, and a smaller page is sent whole.
+Large-format drawings rendered at high DPI can exceed 10,000 px on the long side, the largest image Azure accepts, and shrinking a page to fit makes its small text unreadable. So a page whose longest side is over 3,850 px is cut into 3,500 px tiles at full resolution, and a smaller page is sent whole.
 
 Tiles overlap by 350 px, so a text up to 350 px long that crosses a tile edge is whole in one of the two tiles ([why 350 px](#why-350-px)). If the grid would exceed `max_tiles`, the tile size grows by 15% until it fits, but never past 10,000 px. A page that would still need more tiles is refused with an error that says how many it needs.
+
+The last tile on each side ends at the page edge. When it would start no more than the overlap after the tile before it, it would nearly repeat that tile: on an A3 sheet at 300 dpi (4,961 × 3,508 px), the second row would sit 8 px below the first. So the tile before it is stretched to the edge instead, at most 350 px longer, and a page up to 3,850 px is sent whole. No tile edge moves, so no text is cut that wasn't before. Over 5,000 random page sizes this sends 7.3% fewer tiles; the A3 sheet takes 2 tiles instead of 4.
 
 ### Why 3,500 px
 
@@ -67,6 +69,8 @@ The overlap follows from geometry, not from a measurement: a text no longer than
 | 300 px | 20 | (the base) |
 | **350 px** | **0** | **+1.7%** |
 | 450 px | 0 | +5.7% |
+
+The tile counts are from before the last tile was merged into the one before it ([Tiling](#tiling-steel_texttilingpy)); with that, 350 px costs 0.8% more tiles than 300 px.
 
 Read with Azure, the sheet moved 1,400 px right on a wider page lost one cut label at 300 px: `W24x55` came back as `V24x55`, and the LLM passed it on as the section `V24X55`, a wrong label in the final result. At 350 px nothing was cut or misread, and the sheet as it is read as well as at 300 px, with the same 15 tiles.
 

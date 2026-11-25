@@ -12,9 +12,7 @@ from __future__ import annotations
 import random
 import statistics
 
-from layout_geometry import cut, texts
-
-from steel_text.tiling import make_tiles
+from layout_geometry import cut, texts, tiles_then
 
 W, H, TILE = 14_400, 9_600, 3_500
 OVERLAPS = [150, 200, 250, 300, 343, 350, 400, 450, 500, 600, 800]
@@ -31,13 +29,13 @@ def main() -> None:
 
     random.seed(0)
     sizes = [(random.randint(3_500, 19_000), random.randint(3_500, 13_500)) for _ in range(3_000)]
-    base = sum(len(make_tiles(w, h, tile_size=TILE, overlap=300)) for w, h in sizes)
+    base = sum(len(tiles_then(w, h, tile_size=TILE, overlap=300)) for w, h in sizes)
     print("overlap | sheet as it is: tiles, labels cut | 400 placements: with a label cut | tiles, 3,000 page sizes")
     for o in OVERLAPS:
-        sheet = make_tiles(W, H, tile_size=TILE, overlap=o)
-        page = make_tiles(W + 2000, H + 2000, tile_size=TILE, overlap=o)
+        sheet = tiles_then(W, H, tile_size=TILE, overlap=o)
+        page = tiles_then(W + 2000, H + 2000, tile_size=TILE, overlap=o)
         placements = [cut(labels, page, dx, dy) for dx in range(0, 2000, 100) for dy in range(0, 2000, 100)]
-        tiles = sum(len(make_tiles(w, h, tile_size=TILE, overlap=o)) for w, h in sizes)
+        tiles = sum(len(tiles_then(w, h, tile_size=TILE, overlap=o)) for w, h in sizes)
         print(
             f"  {o:4}  |  {len(sheet):2} tiles, {cut(labels, sheet)} labels  |  "
             f"{sum(n > 0 for n in placements):3}/400  |  {tiles / base - 1:+.1%} against 300 px"
