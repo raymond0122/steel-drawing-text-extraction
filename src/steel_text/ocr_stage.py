@@ -12,7 +12,7 @@ from PIL import Image
 from .dedup import DedupConfig, DedupDecision, merge_tile_results
 from .geometry import BBox
 from .ocr_types import OcrChunk, TileOcrClient, TileReadError
-from .tiling import DEFAULT_MAX_TILES, Tile, TilingChoice, choose_tiling, make_tiles
+from .tiling import DEFAULT_MAX_TILES, OVERLAP, Tile, TilingChoice, choose_tiling, make_tiles
 
 logger = logging.getLogger(__name__)
 
@@ -41,6 +41,7 @@ def run_tiled_ocr(
     client: TileOcrClient,
     *,
     max_tiles: int = DEFAULT_MAX_TILES,
+    overlap: int = OVERLAP,
     tiling: TilingChoice | None = None,
     dedup: DedupConfig = DedupConfig(),
     min_chars: int = 2,
@@ -49,8 +50,8 @@ def run_tiled_ocr(
 ) -> TiledOcrResult:
     """OCR the page tile by tile and merge the results.
 
-    The tile size comes from the page size (see choose_tiling), unless `tiling`
-    is given. Lines shorter than `min_chars` are dropped: single letters are
+    The tile size comes from the page size, `max_tiles` and `overlap` (see
+    choose_tiling), unless `tiling` is given. Lines shorter than `min_chars` are dropped: single letters are
     grid marks, not labels. `request_sleep_s` is the pause between tiles.
 
     A tile that still fails after its retries is skipped and recorded in
@@ -59,7 +60,7 @@ def run_tiled_ocr(
     """
     width, height = image.size
     if tiling is None:
-        tiling = choose_tiling(width, height, max_tiles=max_tiles)
+        tiling = choose_tiling(width, height, max_tiles=max_tiles, overlap=overlap)
     tiles = make_tiles(width, height, tile_size=tiling.tile_size, overlap=tiling.overlap)
     logger.info("page %dx%d -> %d tiles: %s", width, height, len(tiles), tiling.reason)
 

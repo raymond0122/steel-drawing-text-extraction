@@ -21,7 +21,7 @@ The sponsor's drawings are confidential. So this repository re-implements my par
 page image ─► overlapping tiles ─► OCR per tile ─► merge + dedup ─► LLM label filter ─► labels with boxes
 ```
 
-| Tiles (300 px overlap) | Final labels |
+| Tiles (350 px overlap) | Final labels |
 |---|---|
 | ![tile grid](docs/tile_grid.png) | ![labels](docs/labels.png) |
 
@@ -66,7 +66,7 @@ Live mode calls the real Azure and OpenAI services. Copy `.env.example` to `.env
 ### Development
 
 ```bash
-python -m pytest                               # 112 tests
+python -m pytest                               # 114 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # the web UI, restarted on every code change
@@ -75,7 +75,7 @@ uvicorn steel_text.web.server:app --reload     # the web UI, restarted on every 
 ## Key design decisions
 
 - **Built for human review, not a final answer.** Each label keeps its box on the drawing and the raw OCR text, so a reviewer can find it and see what the LLM corrected. In place of the sponsor's spreadsheets, the synthetic drawing comes with a ground-truth file, and the demo and web UI report which expected labels were found or missed.
-- **Overlapping tiles, sized by measurement.** Large drawings can exceed 10,000 px, the largest image Azure accepts, and shrinking them loses small text. Pages are cut into 3,500 px tiles at full resolution that overlap by 300 px, so text cut at one tile's edge is complete in its neighbour. On a test sheet, tiles up to 4,500 px read as well as smaller ones, and larger tiles read worse ([the numbers](docs/DESIGN.md#why-3500-px)).
+- **Overlapping tiles, sized by measurement.** Large drawings can exceed 10,000 px, the largest image Azure accepts, and shrinking them loses small text. Pages are cut into 3,500 px tiles at full resolution. On a test sheet, tiles up to 4,500 px read as well as smaller ones, and larger tiles read worse ([the numbers](docs/DESIGN.md#why-3500-px)). Tiles overlap by 350 px, more than the longest label on that sheet, so a label crossing a tile edge is whole in one of the two tiles; for a higher-resolution drawing the overlap can be raised ([why 350 px](docs/DESIGN.md#why-350-px)).
 - **Duplicates and cut-off pieces from tile edges are merged.** Text in an overlap band is read by two tiles, and text crossing an edge can come back cut off: one tile reads `"SEE"` while its neighbour reads `"SEE NOTE 6"`. Dedup keeps one full reading of each text and logs why it dropped the others. Only text that two different tiles read, inside the area both cover, is compared, so a label printed twice stays twice.
 - **The LLM cannot invent locations.** Under a strict JSON schema it returns only an ID and a label. Boxes are joined back from the OCR results by ID, and IDs that weren't in the batch, or repeat, are dropped.
 - **Transient errors are retried; what still fails is skipped, and shown.** Azure and OpenAI calls retry on 429, 5xx and network errors, honouring `Retry-After` up to 60 s. OpenAI's 429 for a used-up quota is not retried, since waiting won't refill it. An OCR tile or LLM batch that still fails is skipped, and the rest of the page goes on. A tile that wasn't read is hatched red in the web UI and the demo images and listed on a "Not read" sheet in the Excel file. The lines of a skipped LLM batch are marked in the web UI and listed on a "Not checked" sheet. So missing text can't pass for an empty area, and the demo exits with code 1 when anything was skipped. Only a page where no tile can be read fails.
@@ -85,7 +85,7 @@ Thresholds, retry rules and the web UI are described in [docs/DESIGN.md](docs/DE
 
 ## Known limitations
 
-- **Text wider than the overlap** that crosses a tile edge may never be read whole by any tile.
+- **Text longer than the overlap** (350 px unless set), such as a long note line, that crosses a tile edge may never be read whole by any tile.
 - **A tile that wasn't read can't be retried on its own.** Its area is marked, but reading it means running the whole page again.
 - **No jitter in the backoff.**
 - **LLM labels aren't validated** against a catalogue of standard steel sections.

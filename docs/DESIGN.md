@@ -31,7 +31,7 @@ When a tile could not be read, its area is hatched red on `01` to `04`. When eit
 
 Large-format drawings rendered at high DPI can exceed 10,000 px on the long side, the largest image Azure accepts, and shrinking a page to fit makes its small text unreadable. So a page whose longest side is over 3,500 px is cut into 3,500 px tiles at full resolution, and a smaller page is sent whole.
 
-Tiles overlap by 300 px, so text cut at one tile's edge is complete in its neighbour. If the grid would exceed `max_tiles`, the tile size grows by 15% until it fits, but never past 10,000 px. A page that would still need more tiles is refused with an error that says how many it needs.
+Tiles overlap by 350 px, so a text up to 350 px long that crosses a tile edge is whole in one of the two tiles ([why 350 px](#why-350-px)). If the grid would exceed `max_tiles`, the tile size grows by 15% until it fits, but never past 10,000 px. A page that would still need more tiles is refused with an error that says how many it needs.
 
 ### Why 3,500 px
 
@@ -57,6 +57,20 @@ Times include the waits for rate limiting (HTTP 429), which grow with the number
 3,500 px is inside the range that read well, with a margin below where it drops. Lowering `max_tiles` makes the tiles grow, which trades accuracy for fewer requests.
 
 This is one clean synthetic sheet at one resolution, with each size run once. Scanned drawings, other resolutions or denser text may move the point where accuracy drops, so 3,500 px is a measured default for drawings like this one, not a rule for every drawing.
+
+### Why 350 px
+
+The overlap follows from geometry, not from a measurement: a text no longer than the overlap that crosses a tile edge always lies whole inside one of the two tiles, and a longer one may lie whole inside neither. So the overlap has to beat the longest text that must stay whole. On the test sheet the 82 beam labels are 309 px long at the median and 342 px at most, longer than the 300 px the tile size was measured with ([experiment 5](../experiments/tiling/README.md#experiment-5-tile-overlap)):
+
+| Overlap | Drawing placements with a beam label no tile holds whole (of 400) | Tiles over 3,000 random page sizes |
+|---|---|---|
+| 300 px | 20 | (the base) |
+| **350 px** | **0** | **+1.7%** |
+| 450 px | 0 | +5.7% |
+
+Read with Azure, the sheet moved 1,400 px right on a wider page lost one cut label at 300 px: `W24x55` came back as `V24x55`, and the LLM passed it on as the section `V24X55`, a wrong label in the final result. At 350 px nothing was cut or misread, and the sheet as it is read as well as at 300 px, with the same 15 tiles.
+
+Text is longer at a higher resolution: a 342 px label at 400 dpi is about 510 px at 600 dpi. So 350 px is the default for drawings like the test sheet, and the overlap can be set per run, from 0 to 1,000 px (`steel-demo --overlap`, the web UI's **Tile overlap**). Long note lines, up to 1,920 px on the test sheet, are not protected by any overlap of reasonable cost.
 
 ## OCR per tile (`steel_text/ocr_stage.py`)
 
@@ -159,7 +173,7 @@ Both the demo and the web UI pick their clients and run the stages through `stee
 
 ## Web UI (`steel_text/web/`)
 
-- **Pipeline tab:** pick offline or live mode, the LLM batch size and the tile limit, each with its recommended value below it, then run. Offline, an OCR tile or an LLM batch can be made to fail on purpose. Four steps can be inspected on the page:
+- **Pipeline tab:** pick offline or live mode, the LLM batch size, the tile limit and the tile overlap, each with its recommended value below it, then run. Offline, an OCR tile or an LLM batch can be made to fail on purpose. Four steps can be inspected on the page:
   - **Tiles:** the grid, how many lines each tile read, and which tiles could not be read. Those stay hatched red on every step.
   - **Raw OCR:** every line from every tile, with the ones dedup will drop marked.
   - **Dedup:** each decision with its reason and a before/after close-up.

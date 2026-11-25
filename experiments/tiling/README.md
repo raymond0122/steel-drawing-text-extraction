@@ -1,11 +1,14 @@
 # Tiling experiment
 
-Four questions, measured on one drawing with Azure Document Intelligence `prebuilt-read` (API version 2024-11-30):
+Five questions, measured on one drawing with Azure Document Intelligence `prebuilt-read` (API version 2024-11-30):
 
 1. **Is tiling needed at all,** or does the whole page, shrunk to fit, read just as well? (run 2026-11-15)
 2. **How large should the tiles be?** (run 2026-11-23)
 3. **How much do the dedup thresholds matter?** (the OCR saved by experiment 2, merged again; no new requests)
 4. **Should the tiles be spread evenly?** (run 2026-11-24; not adopted)
+5. **How much should the tiles overlap?** (run 2026-11-24; the app moved from 300 to 350 px)
+
+Experiments 1 to 4 used a 300 px overlap, which the app had then.
 
 The drawing is [`steel_framing_plan_S-201_400dpi.png`](steel_framing_plan_S-201_400dpi.png): a made-up 36 × 24 in steel framing plan rendered at 400 dpi, 14,400 × 9,600 px. It belongs to no real project.
 
@@ -134,6 +137,33 @@ Measured with Azure ([`run_layout.py`](run_layout.py), 45 requests, each conditi
 
 The app keeps its layout for now: the label gain showed only on a moved page, the note-line loss on the real sheet, and adopting it would mean measuring experiment 2 again.
 
+## Experiment 5: tile overlap
+
+A text no longer than the overlap that crosses a tile edge is always whole in one of the two tiles; a longer one may be whole in neither. So the overlap has to beat the longest text that must stay whole. The 300 px used so far was never measured, and the 82 beam labels are 309 px long at the median and 342 px at most.
+
+What each overlap cuts and costs ([`overlap_geometry.py`](overlap_geometry.py), no requests), with the drawing placed 400 ways on a page 2,000 px larger each way:
+
+| Overlap | Placements with a beam label no tile holds whole | Tiles over 3,000 random page sizes |
+|---|---|---|
+| 250 px | 77 of 400 | −1.9% |
+| 300 px | 20 of 400 | the base |
+| **350 px** | **none** | **+1.7%** |
+| 450 px | none | +5.7% |
+
+Measured with Azure at 300 and 350 px, 15 tiles each time ([`run_overlap.py`](run_overlap.py), 60 new requests), and the merged lines then sent twice through the LLM label filter:
+
+| Page | Beam labels read exactly (of 82), 300 px | 350 px |
+|---|---|---|
+| the sheet as it is | 81 | 82 |
+| moved 1,400 px right: 300 px cuts two `W24x55` labels | 79 | 82 |
+| moved 1,020 px right: 300 px cuts two `W18x35` labels | 82 | 82 |
+
+- **A cut label is not always misread,** but it can be. On the page moved 1,020 px Azure still read both cut labels right. On the page moved 1,400 px it read one as `V24x55`, and the LLM passed it on as the section `V24X55` in both runs: a wrong label in the final result.
+- **At 350 px no label was cut, and none was misread.** All 23 smallest lines were read exactly at both overlaps.
+- **The app now uses 350 px.** Text is longer at a higher resolution (a 342 px label at 400 dpi is about 510 px at 600 dpi), so the overlap can be set per run.
+
+The LLM's counts per run (in `results/overlap_llm_*.json`) vary for reasons that have nothing to do with the overlap, as the [LLM batch experiment](../llm_batch/README.md) shows, so the result here is how the cut labels were read, not those counts.
+
 ## Limits
 
 - **One drawing,** cleanly rendered and synthetic. Scanned drawings have noise and skew and may break down earlier, and other resolutions or denser text may move the point where accuracy drops. The results are a measured default for drawings like this one, not a rule for every drawing.
@@ -153,6 +183,8 @@ python experiments/tiling/analyze_tile_sizes.py   # score experiment 2 from the 
 python experiments/tiling/dedup_thresholds.py     # experiment 3, from the same saved results (no network)
 python experiments/tiling/layout_geometry.py      # experiment 4, geometry only (no network)
 python experiments/tiling/run_layout.py           # experiment 4 with Azure: calls Azure, needs .env; saved conditions are skipped
+python experiments/tiling/overlap_geometry.py     # experiment 5, geometry only (no network)
+python experiments/tiling/run_overlap.py          # experiment 5 with Azure and the LLM: needs .env; saved runs are skipped
 
 python experiments/tiling/run_ocr.py              # experiment 1: calls Azure, needs .env
 python experiments/tiling/run_tile_sizes.py       # experiment 2: calls Azure, needs .env
@@ -166,6 +198,7 @@ The `run_` scripts skip any condition whose result is already in `results/`, so 
 | `run_ocr.py`, `run_tile_sizes.py`, `run_grayscale.py` | send the drawing to Azure and save the raw OCR in `results/` |
 | `analyze.py`, `analyze_tile_sizes.py`, `dedup_thresholds.py` | build the answer key, score every condition, print the tables |
 | `layout_geometry.py`, `run_layout.py`, `results/layout_*.json` | experiment 4: the geometry, and the three Azure conditions with their scores |
+| `overlap_geometry.py`, `run_overlap.py`, `results/overlap_*.json` | experiment 5: the geometry, and the Azure and LLM runs at both overlaps |
 | `results/*.json` | the raw OCR of each condition, in page coordinates |
 | `ground_truth.json` | the 82 verified beam labels |
 | `summary.json`, `tile_sizes_summary.json`, `dedup_thresholds_summary.json` | the numbers in the tables above |

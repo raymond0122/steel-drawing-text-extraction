@@ -8,8 +8,8 @@ from steel_text.ocr_types import OcrChunk
 from steel_text.sample_drawing import GroundTruthText
 from steel_text.tiling import Tile, TilingChoice, make_tiles
 
-# The synthetic drawing's grid:  x: [0,3500] [3200,6700] [5500,9000]
-#                                 y: [0,3500] [2500,6000]
+# A 9,000 x 6,000 px page in 3,500 px tiles with a 300 px overlap:  x: [0,3500] [3200,6700] [5500,9000]
+#                                                                    y: [0,3500] [2500,6000]
 # t0 t1 t2 on the top row, t3 t4 t5 on the bottom row.
 TILES = make_tiles(9000, 6000, tile_size=3500, overlap=300)
 

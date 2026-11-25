@@ -120,12 +120,19 @@ def test_the_page_script_and_styles_are_served_with_their_types(client, name, me
 def test_the_values_the_page_shows_and_recommends_are_the_servers_defaults(client):
     from steel_text.llm_filter import DEFAULT_BATCH_SIZE
     from steel_text.pipeline import OFFLINE_BATCH_SIZE
-    from steel_text.tiling import DEFAULT_MAX_TILES
+    from steel_text.tiling import DEFAULT_MAX_TILES, OVERLAP
 
     script = client.get("/static/app.js").text
     assert f"const BATCH_SIZE_LIVE = '{DEFAULT_BATCH_SIZE}', BATCH_SIZE_OFFLINE = '{OFFLINE_BATCH_SIZE}';" in script
     page = client.get("/").text
     assert f'id="max-tiles" value="{DEFAULT_MAX_TILES}"' in page and f"Recommended: {DEFAULT_MAX_TILES}<" in page
+    assert f'id="overlap" value="{OVERLAP}"' in page and f"Recommended: {OVERLAP}<" in page
+
+
+def test_the_overlap_chosen_on_the_page_is_used(client):
+    d = client.post("/api/run", params={"overlap": 500}).json()
+    assert d["tiling"]["overlap"] == 500 and "overlap by 500 px" in d["tiling"]["reason"]
+    assert client.post("/api/run", params={"overlap": 5000}).status_code == 422  # over the 1,000 px cap
 
 
 @pytest.mark.parametrize("name", ["index.html", "server.py", "..%2Fserver.py"])

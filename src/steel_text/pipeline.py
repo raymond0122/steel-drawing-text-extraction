@@ -25,7 +25,7 @@ from .ocr_stage import TiledOcrResult, run_tiled_ocr
 from .ocr_types import TileOcrClient
 from .sample_drawing import GroundTruthText
 from .settings import Settings, load_settings
-from .tiling import DEFAULT_MAX_TILES
+from .tiling import DEFAULT_MAX_TILES, OVERLAP
 
 # Pause between requests in live mode, to stay under the services' rate limits.
 LIVE_OCR_REQUEST_SLEEP_S = 0.2
@@ -86,6 +86,7 @@ def run_pipeline(
     *,
     live: bool,
     max_tiles: int = DEFAULT_MAX_TILES,
+    overlap: int = OVERLAP,
     batch_size: int | None = None,
     sleep: Callable[[float], None] = time.sleep,
 ) -> PipelineResult:
@@ -105,6 +106,7 @@ def run_pipeline(
         page,
         ocr_client,
         max_tiles=max_tiles,
+        overlap=overlap,
         request_sleep_s=LIVE_OCR_REQUEST_SLEEP_S if live else 0,
         sleep=sleep,
     )

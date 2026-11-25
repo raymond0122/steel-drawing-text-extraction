@@ -33,7 +33,7 @@ from .page_image import PageTooLargeError, open_page
 from .pipeline import OFFLINE_BATCH_SIZE, MissingCredentialsError, make_clients, run_pipeline
 from .sample_drawing import GroundTruthText, check_truth, load_truth, save_sample
 from .settings import load_settings
-from .tiling import DEFAULT_MAX_TILES, TileLimitError
+from .tiling import DEFAULT_MAX_TILES, OVERLAP, TileLimitError
 
 RAW_OCR_COLOR = (220, 38, 38)  # red: every OCR line, before dedup
 MERGED_OCR_COLOR = (22, 140, 60)  # green: OCR lines after dedup
@@ -51,6 +51,12 @@ def parse_args() -> argparse.Namespace:
         help=f"OCR lines per LLM request (default: {DEFAULT_BATCH_SIZE} live, {OFFLINE_BATCH_SIZE} offline)",
     )
     ap.add_argument("--max-tiles", type=int, default=DEFAULT_MAX_TILES)
+    ap.add_argument(
+        "--overlap",
+        type=int,
+        default=OVERLAP,
+        help=f"px by which tiles overlap (default {OVERLAP}: longer than the longest label at 400 dpi)",
+    )
     ap.add_argument("--simulate-ocr-failure", action="store_true", help="offline only: make OCR tile 1 fail")
     ap.add_argument("--simulate-llm-failure", action="store_true", help="offline only: make LLM batch 1 fail")
     args = ap.parse_args()
@@ -184,7 +190,13 @@ def main() -> int:
 
     try:
         outcome = run_pipeline(
-            page, ocr_client, labeler, live=args.live, max_tiles=args.max_tiles, batch_size=args.batch_size
+            page,
+            ocr_client,
+            labeler,
+            live=args.live,
+            max_tiles=args.max_tiles,
+            overlap=args.overlap,
+            batch_size=args.batch_size,
         )
     except TileLimitError as e:
         print(f"Too few tiles allowed: {e}. Raise --max-tiles.")

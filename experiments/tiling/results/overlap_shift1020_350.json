@@ -1,0 +1,11210 @@
+{
+ "name": "overlap_shift1020_350",
+ "seconds": 124.2,
+ "tiles": [
+  [
+   0,
+   0,
+   3500,
+   3500
+  ],
+  [
+   3150,
+   0,
+   6650,
+   3500
+  ],
+  [
+   6300,
+   0,
+   9800,
+   3500
+  ],
+  [
+   9450,
+   0,
+   12950,
+   3500
+  ],
+  [
+   11920,
+   0,
+   15420,
+   3500
+  ],
+  [
+   0,
+   3150,
+   3500,
+   6650
+  ],
+  [
+   3150,
+   3150,
+   6650,
+   6650
+  ],
+  [
+   6300,
+   3150,
+   9800,
+   6650
+  ],
+  [
+   9450,
+   3150,
+   12950,
+   6650
+  ],
+  [
+   11920,
+   3150,
+   15420,
+   6650
+  ],
+  [
+   0,
+   6100,
+   3500,
+   9600
+  ],
+  [
+   3150,
+   6100,
+   6650,
+   9600
+  ],
+  [
+   6300,
+   6100,
+   9800,
+   9600
+  ],
+  [
+   9450,
+   6100,
+   12950,
+   9600
+  ],
+  [
+   11920,
+   6100,
+   15420,
+   9600
+  ]
+ ],
+ "raw": [
+  {
+   "text": "X-",
+   "bbox": [
+    2195,
+    647,
+    2240,
+    700
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    2913,
+    773,
+    3023,
+    812
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    2421,
+    938,
+    2518,
+    976
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    2920,
+    938,
+    3018,
+    976
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "10'-0",
+   "bbox": [
+    3424,
+    940,
+    3498,
+    975
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W21x44 (28) c=1\"",
+   "bbox": [
+    2816,
+    1170,
+    3117,
+    1212
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "E.O.S. 1'-0\" FROM",
+   "bbox": [
+    2317,
+    1443,
+    2579,
+    1479
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "C/L GRID (TYP.)",
+   "bbox": [
+    2319,
+    1481,
+    2537,
+    1519
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "28'-0\"",
+   "bbox": [
+    1922,
+    1805,
+    1961,
+    1913
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W16x31 (14) c=1/2\"",
+   "bbox": [
+    2230,
+    1704,
+    2272,
+    2022
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    2730,
+    1705,
+    2773,
+    2024
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    3230,
+    1707,
+    3273,
+    2025
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    2805,
+    2571,
+    3135,
+    2612
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "68'-0\"",
+   "bbox": [
+    1758,
+    2800,
+    1800,
+    2917
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "12'-0\"",
+   "bbox": [
+    1923,
+    2805,
+    1961,
+    2910
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    2231,
+    2761,
+    2273,
+    2959
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    2731,
+    2754,
+    2771,
+    2959
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    3232,
+    2761,
+    3272,
+    2960
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    2801,
+    3099,
+    3132,
+    3141
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "BF-2",
+   "bbox": [
+    2426,
+    3438,
+    2511,
+    3472
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "167'-0\"\"",
+   "bbox": [
+    6323,
+    617,
+    6477,
+    664
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    4412,
+    773,
+    4524,
+    813
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "25'-0\"",
+   "bbox": [
+    5789,
+    773,
+    5897,
+    814
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    3421,
+    937,
+    3514,
+    975
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    3923,
+    937,
+    4014,
+    975
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    4423,
+    938,
+    4518,
+    975
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    4921,
+    937,
+    5014,
+    975
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "4'-0\"",
+   "bbox": [
+    5280,
+    940,
+    5357,
+    972
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "8'-6\"",
+   "bbox": [
+    5594,
+    939,
+    5669,
+    972
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "8'-6\"",
+   "bbox": [
+    6022,
+    940,
+    6094,
+    974
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "4'-0\"",
+   "bbox": [
+    6333,
+    939,
+    6407,
+    975
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W21x44 (28) c=1\"",
+   "bbox": [
+    4317,
+    1170,
+    4616,
+    1212
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W21×44 (28) c=1\"",
+   "bbox": [
+    5484,
+    1170,
+    5778,
+    1211
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (4)",
+   "bbox": [
+    6062,
+    1236,
+    6241,
+    1277
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "T.O.S. EL. 99'-101/2\"",
+   "bbox": [
+    5445,
+    1256,
+    5714,
+    1293
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W12×19 (8)",
+   "bbox": [
+    5536,
+    1349,
+    5725,
+    1390
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    3229,
+    1704,
+    3273,
+    2016
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    3730,
+    1705,
+    3774,
+    2017
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    4228,
+    1704,
+    4274,
+    2017
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    4728,
+    1704,
+    4774,
+    2017
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    5231,
+    1704,
+    5272,
+    2016
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W18x40 (24) c=3/4\"",
+   "bbox": [
+    5358,
+    1707,
+    5402,
+    2013
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "OPENING",
+   "bbox": [
+    5751,
+    1807,
+    5935,
+    1845
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "STAIR 2 - SEE ARCH.",
+   "bbox": [
+    5685,
+    1875,
+    6001,
+    1909
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W18x40 (24) c=3/4\"",
+   "bbox": [
+    6282,
+    1704,
+    6321,
+    2012
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    6480,
+    1703,
+    6523,
+    2017
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "L4x4x1/4 EDGE ANGLE CONT. (TYP.)",
+   "bbox": [
+    5641,
+    2157,
+    6140,
+    2193
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W12×19 (8)",
+   "bbox": [
+    5535,
+    2321,
+    5726,
+    2362
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (4)",
+   "bbox": [
+    6062,
+    2412,
+    6242,
+    2450
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    3231,
+    2763,
+    3273,
+    2958
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    3732,
+    2761,
+    3772,
+    2957
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    4231,
+    2764,
+    4271,
+    2958
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    4732,
+    2763,
+    4772,
+    2959
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    5232,
+    2764,
+    5272,
+    2958
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W21×50 (30) c=1\"",
+   "bbox": [
+    5695,
+    2571,
+    5992,
+    2611
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    5644,
+    2757,
+    5689,
+    2958
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    6065,
+    2764,
+    6105,
+    2959
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    6481,
+    2763,
+    6522,
+    2957
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    4184,
+    3462,
+    4257,
+    3489
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    4302,
+    2571,
+    4642,
+    2612
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    4302,
+    3099,
+    4634,
+    3141
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W21x50 (30) c=1\"",
+   "bbox": [
+    5692,
+    3100,
+    5991,
+    3141
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "167'-0\"",
+   "bbox": [
+    6321,
+    616,
+    6474,
+    664
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    7161,
+    774,
+    7272,
+    812
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    8660,
+    774,
+    8772,
+    812
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "4'-0\"",
+   "bbox": [
+    6327,
+    938,
+    6410,
+    974
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    6670,
+    939,
+    6767,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    7170,
+    937,
+    7266,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    7670,
+    938,
+    7767,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    8172,
+    937,
+    8267,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    8670,
+    939,
+    8765,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    9170,
+    938,
+    9268,
+    976
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "11'-0\"",
+   "bbox": [
+    9699,
+    937,
+    9786,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W21×44 (28)",
+   "bbox": [
+    7113,
+    1172,
+    7323,
+    1211
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W18x35 (24)",
+   "bbox": [
+    9589,
+    1170,
+    9798,
+    1212
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "BF-1",
+   "bbox": [
+    7180,
+    1389,
+    7261,
+    1422
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    6480,
+    1703,
+    6523,
+    2014
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    6981,
+    1704,
+    7023,
+    2014
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    7481,
+    1704,
+    7522,
+    2014
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    7981,
+    1703,
+    8023,
+    2015
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    8481,
+    1704,
+    8521,
+    2012
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    8981,
+    1704,
+    9022,
+    2013
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    9478,
+    1706,
+    9522,
+    2015
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    7053,
+    2571,
+    7382,
+    2611
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    6981,
+    2764,
+    7022,
+    2957
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    7481,
+    2764,
+    7521,
+    2958
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    7982,
+    2763,
+    8022,
+    2959
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    8481,
+    2764,
+    8522,
+    2957
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    8981,
+    2764,
+    9021,
+    2958
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    9480,
+    2764,
+    9522,
+    2959
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W21×44 (26)",
+   "bbox": [
+    9588,
+    3099,
+    9798,
+    3141
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W21×44 (28) c=1\"",
+   "bbox": [
+    8569,
+    1171,
+    8868,
+    1212
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "3\"x20 GA. COMP. DECK",
+   "bbox": [
+    8551,
+    2114,
+    8888,
+    2148
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W/ 31/4\" LW CONC.",
+   "bbox": [
+    8586,
+    2156,
+    8847,
+    2194
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    8553,
+    2571,
+    8882,
+    2611
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W21×44 (26)",
+   "bbox": [
+    9591,
+    2570,
+    9798,
+    2612
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    6482,
+    2762,
+    6523,
+    2959
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    7054,
+    3100,
+    7384,
+    3141
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    8554,
+    3100,
+    8884,
+    3141
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "VV 10X40 (24) C-74",
+   "bbox": [
+    6300,
+    1712,
+    6320,
+    2017
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "22'-0\"",
+   "bbox": [
+    9960,
+    771,
+    10073,
+    813
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "11'-0\"",
+   "bbox": [
+    9695,
+    938,
+    9788,
+    975
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "11'-0\"",
+   "bbox": [
+    10247,
+    938,
+    10341,
+    976
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W18x35 (24) c=3/4\"",
+   "bbox": [
+    9586,
+    1170,
+    9899,
+    1213
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "BF-2",
+   "bbox": [
+    10276,
+    1439,
+    10362,
+    1473
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W18x35 (24) c=3/4\"",
+   "bbox": [
+    10030,
+    1703,
+    10073,
+    2017
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W16x31 (14)",
+   "bbox": [
+    10510,
+    1756,
+    10553,
+    1966
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "28'-0\"",
+   "bbox": [
+    10819,
+    1804,
+    10857,
+    1917
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    10031,
+    2763,
+    10071,
+    2959
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    10511,
+    2761,
+    10553,
+    2959
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "12'-0\"",
+   "bbox": [
+    10819,
+    2805,
+    10856,
+    2912
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "68'-0\"",
+   "bbox": [
+    10978,
+    2802,
+    11020,
+    2916
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "GENERAL STRUCTURAL STEEL NOTES",
+   "bbox": [
+    11496,
+    333,
+    12492,
+    386
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "1.",
+   "bbox": [
+    11503,
+    489,
+    11530,
+    525
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "STRUCTURAL STEEL W-SHAPES: ASTM A992, Fy = 50 KSI. HSS: ASTM A500 GR.",
+   "bbox": [
+    11584,
+    484,
+    12938,
+    528
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "PLATES, ANGLES AND CHANNELS: ASTM A36 U.N.O.",
+   "bbox": [
+    11581,
+    539,
+    12466,
+    580
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "2.",
+   "bbox": [
+    11500,
+    616,
+    11532,
+    651
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "HIGH-STRENGTH BOLTS: 3/4\"Ø ASTM F3125 GR. A325, TYPE N, SNUG-TIGHT U.N.C",
+   "bbox": [
+    11583,
+    611,
+    12948,
+    656
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "SHALL BE PRETENSIONED.",
+   "bbox": [
+    11582,
+    666,
+    12038,
+    709
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "3.",
+   "bbox": [
+    11499,
+    745,
+    11533,
+    777
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "WELDING SHALL CONFORM TO AWS D1.1 USING E70XX ELECTRODES. ALL WELL",
+   "bbox": [
+    11581,
+    740,
+    12948,
+    782
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "4.",
+   "bbox": [
+    11500,
+    820,
+    11530,
+    853
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "T.O.S. = EL. 100'-0\" U.N.O. ON PLAN. ELEVATIONS NOTED ARE TO TOP OF STEEL",
+   "bbox": [
+    11584,
+    813,
+    12948,
+    858
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "5.",
+   "bbox": [
+    11501,
+    893,
+    11531,
+    926
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "NUMBER IN PARENTHESES, e.g. (22), INDICATES QTY. OF 3/4\"Ø x 5\" HEADED SHE",
+   "bbox": [
+    11582,
+    888,
+    12948,
+    934
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "SPACED ALONG MEMBER.",
+   "bbox": [
+    11584,
+    944,
+    12018,
+    983
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "6.",
+   "bbox": [
+    11503,
+    1022,
+    11528,
+    1054
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "c=3/4\" INDICATES REQUIRED BEAM CAMBER. NO CAMBER INDICATED = NONE RE",
+   "bbox": [
+    11584,
+    1016,
+    12945,
+    1060
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "7.",
+   "bbox": [
+    11500,
+    1093,
+    11537,
+    1130
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "BEAM CONNECTIONS NOT DETAILED SHALL BE SINGLE-PLATE SHEAR CONNECTI",
+   "bbox": [
+    11581,
+    1091,
+    12948,
+    1133
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "DESIGNED FOR 1/2 UNIFORM LOAD CAPACITY.",
+   "bbox": [
+    11585,
+    1143,
+    12344,
+    1187
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "8.",
+   "bbox": [
+    11499,
+    1223,
+    11526,
+    1256
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "FLOOR DECK: 3\" x 20 GA. GALV. COMPOSITE DECK, 3-SPAN CONTINUOUS MIN., V",
+   "bbox": [
+    11581,
+    1218,
+    12948,
+    1261
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "TOPPING (61/4\" TOTAL).",
+   "bbox": [
+    11585,
+    1272,
+    11975,
+    1315
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "9.",
+   "bbox": [
+    11499,
+    1349,
+    11530,
+    1384
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "PROVIDE L4x4x1/4 EDGE ANGLES AT ALL FLOOR OPENINGS. COORDINATE OPENIN",
+   "bbox": [
+    11582,
+    1347,
+    12948,
+    1390
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "DRAWINGS.",
+   "bbox": [
+    11585,
+    1402,
+    11787,
+    1442
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "10. CONTRACTOR SHALL VERIFY ALL DIMENSIONS AND ELEVATIONS IN FIELD PRIOR",
+   "bbox": [
+    11499,
+    1474,
+    12948,
+    1517
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "11. SHOP DRAWINGS SHALL BE SUBMITTED FOR REVIEW PRIOR TO FABRICATION.",
+   "bbox": [
+    11496,
+    1547,
+    12910,
+    1591
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "LEGEND",
+   "bbox": [
+    11494,
+    1702,
+    11715,
+    1756
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "STEEL COLUMN - SEE COLUMN SCHEDULE",
+   "bbox": [
+    11934,
+    1883,
+    12677,
+    1927
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    11545,
+    2025,
+    11813,
+    2061
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "BEAM: SIZE, (NO. OF STUDS), CAMBER",
+   "bbox": [
+    11936,
+    2035,
+    12598,
+    2079
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "VERTICAL BRACED FRAME - SEE ELEVATIONS (BF-1, BF-2)",
+   "bbox": [
+    11937,
+    2186,
+    12928,
+    2232
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "DECK SPAN DIRECTION (SHADED END = DECK START)",
+   "bbox": [
+    11935,
+    2339,
+    12858,
+    2384
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    11698,
+    2543,
+    11779,
+    2572
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "SECTION CUT: DETAIL NO. / SHEET NO.",
+   "bbox": [
+    11935,
+    2507,
+    12598,
+    2552
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    11636,
+    2712,
+    11717,
+    2740
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "DETAIL REFERENCE",
+   "bbox": [
+    11937,
+    2674,
+    12274,
+    2718
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "COLUMN GRID LINE",
+   "bbox": [
+    11936,
+    2844,
+    12274,
+    2887
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "EDGE OF SLAB (E.O.S.)",
+   "bbox": [
+    11932,
+    2994,
+    12335,
+    3041
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "MEMBER TAKE-OFF - LEVEL 3 (FOR REFERENCE)",
+   "bbox": [
+    11499,
+    3205,
+    12800,
+    3264
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "SIZE",
+   "bbox": [
+    11517,
+    3359,
+    11610,
+    3398
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "QTY",
+   "bbox": [
+    12040,
+    3359,
+    12121,
+    3402
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "LENGTH (FT)",
+   "bbox": [
+    12399,
+    3357,
+    12641,
+    3403
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "WEI",
+   "bbox": [
+    12858,
+    3360,
+    12943,
+    3397
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W24x55",
+   "bbox": [
+    11519,
+    3435,
+    11660,
+    3473
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "225.6",
+   "bbox": [
+    12397,
+    3435,
+    12502,
+    3472
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "12,40",
+   "bbox": [
+    12864,
+    3435,
+    12948,
+    3474
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    9479,
+    1702,
+    9522,
+    2016
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W21x44 (26) c=3/4\"",
+   "bbox": [
+    9587,
+    2571,
+    9898,
+    2612
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    9480,
+    2757,
+    9521,
+    2959
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W21x44 (26) c=3/4\"",
+   "bbox": [
+    9587,
+    3100,
+    9899,
+    3140
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "CTURAL STEEL NOTES",
+   "bbox": [
+    11920,
+    331,
+    12492,
+    387
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "W-SHAPES: ASTM A992, Fy = 50 KSI. HSS: ASTM A500 GR. C, Fy = 50 KSI.",
+   "bbox": [
+    11920,
+    483,
+    13186,
+    529
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "ID CHANNELS: ASTM A36 U.N.O.",
+   "bbox": [
+    11920,
+    539,
+    12464,
+    581
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "LTS: 3/4\"Ø ASTM F3125 GR. A325, TYPE N, SNUG-TIGHT U.N.O. BRACE CONNECTIONS",
+   "bbox": [
+    11920,
+    610,
+    13357,
+    656
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "ONED.",
+   "bbox": [
+    11922,
+    669,
+    12041,
+    708
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "ONFORM TO AWS D1.1 USING E70XX ELECTRODES. ALL WELDS BY CERTIFIED WELDERS.",
+   "bbox": [
+    11920,
+    740,
+    13409,
+    783
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "U.N.O. ON PLAN. ELEVATIONS NOTED ARE TO TOP OF STEEL.",
+   "bbox": [
+    11923,
+    813,
+    12960,
+    858
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "HESES, e.g. (22), INDICATES QTY. OF 3/4\"Ø x 5\" HEADED SHEAR STUDS, EQUALLY",
+   "bbox": [
+    11920,
+    888,
+    13292,
+    935
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "MBER.",
+   "bbox": [
+    11920,
+    944,
+    12022,
+    982
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "QUIRED BEAM CAMBER. NO CAMBER INDICATED = NONE REQUIRED.",
+   "bbox": [
+    11920,
+    1016,
+    13094,
+    1060
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "S NOT DETAILED SHALL BE SINGLE-PLATE SHEAR CONNECTIONS PER DETAIL 2/S-201,",
+   "bbox": [
+    11920,
+    1091,
+    13378,
+    1133
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "UNIFORM LOAD CAPACITY.",
+   "bbox": [
+    11920,
+    1143,
+    12347,
+    1187
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "0 GA. GALV. COMPOSITE DECK, 3-SPAN CONTINUOUS MIN., W/ 31/4\" LW CONCRETE",
+   "bbox": [
+    11920,
+    1217,
+    13320,
+    1261
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "AL).",
+   "bbox": [
+    11920,
+    1274,
+    11972,
+    1317
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "DGE ANGLES AT ALL FLOOR OPENINGS. COORDINATE OPENINGS WITH ARCH. AND MEP",
+   "bbox": [
+    11922,
+    1347,
+    13395,
+    1389
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "L VERIFY ALL DIMENSIONS AND ELEVATIONS IN FIELD PRIOR TO FABRICATION.",
+   "bbox": [
+    11920,
+    1474,
+    13247,
+    1517
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "HALL BE SUBMITTED FOR REVIEW PRIOR TO FABRICATION.",
+   "bbox": [
+    11920,
+    1547,
+    12905,
+    1592
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "STEEL COLUMN - SEE COLUMN SCHEDULE",
+   "bbox": [
+    11932,
+    1883,
+    12679,
+    1927
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "BEAM: SIZE, (NO. OF STUDS), CAMBER",
+   "bbox": [
+    11936,
+    2036,
+    12598,
+    2079
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "VERTICAL BRACED FRAME - SEE ELEVATIONS (BF-1, BF-2)",
+   "bbox": [
+    11933,
+    2186,
+    12931,
+    2232
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "DECK SPAN DIRECTION (SHADED END = DECK START)",
+   "bbox": [
+    11931,
+    2339,
+    12858,
+    2384
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "SECTION CUT: DETAIL NO. / SHEET NO.",
+   "bbox": [
+    11934,
+    2507,
+    12594,
+    2551
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "DETAIL REFERENCE",
+   "bbox": [
+    11936,
+    2675,
+    12274,
+    2718
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "COLUMN GRID LINE",
+   "bbox": [
+    11934,
+    2844,
+    12274,
+    2886
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "EDGE OF SLAB (E.O.S.)",
+   "bbox": [
+    11931,
+    2994,
+    12336,
+    3041
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "OFF - LEVEL 3 (FOR REFERENCE)",
+   "bbox": [
+    11920,
+    3204,
+    12800,
+    3265
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "QTY",
+   "bbox": [
+    12038,
+    3358,
+    12119,
+    3402
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "LENGTH (FT)",
+   "bbox": [
+    12399,
+    3358,
+    12639,
+    3403
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "WEIGHT (LB)",
+   "bbox": [
+    12859,
+    3355,
+    13102,
+    3403
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "LB/FT",
+   "bbox": [
+    13339,
+    3361,
+    13450,
+    3397
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "225.6",
+   "bbox": [
+    12399,
+    3434,
+    12502,
+    3472
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "12,408",
+   "bbox": [
+    12860,
+    3435,
+    12981,
+    3475
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "55",
+   "bbox": [
+    13339,
+    3437,
+    13383,
+    3473
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "EXAMPLE STRUCTURAL",
+   "bbox": [
+    14321,
+    436,
+    14973,
+    493
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "ENGINEERING LTD.",
+   "bbox": [
+    14318,
+    525,
+    14839,
+    581
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "FICTIONAL FIRM - SAMPLE SHEET",
+   "bbox": [
+    14314,
+    616,
+    14855,
+    653
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "100 SAMPLE AVENUE, ANYTOWN",
+   "bbox": [
+    14300,
+    754,
+    14839,
+    796
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "TEL. 000-000-0000",
+   "bbox": [
+    14408,
+    822,
+    14728,
+    863
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "PROJECT",
+   "bbox": [
+    13962,
+    973,
+    14100,
+    1012
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "SAMPLE OFFICE BUILDING",
+   "bbox": [
+    14142,
+    1080,
+    14993,
+    1143
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "4-STOREY STEEL FRAME",
+   "bbox": [
+    14324,
+    1190,
+    14813,
+    1237
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "123 EXAMPLE STREET, ANYTOWN",
+   "bbox": [
+    14280,
+    1273,
+    14858,
+    1317
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "SEAL",
+   "bbox": [
+    13962,
+    1457,
+    14043,
+    1489
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "SAMPLE",
+   "bbox": [
+    14416,
+    1857,
+    14716,
+    1924
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "NOT FOR",
+   "bbox": [
+    14457,
+    1990,
+    14677,
+    2036
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "CONSTRUCTION",
+   "bbox": [
+    14375,
+    2081,
+    14758,
+    2131
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "KEY PLAN",
+   "bbox": [
+    13966,
+    2554,
+    14116,
+    2590
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "AREA OF WORK SHOWN HATCHED",
+   "bbox": [
+    14330,
+    3401,
+    14811,
+    3438
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "BF-2",
+   "bbox": [
+    2426,
+    3439,
+    2512,
+    3472
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "28'-0\"",
+   "bbox": [
+    1922,
+    3805,
+    1961,
+    3910
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "W16x31 (14)",
+   "bbox": [
+    2232,
+    3756,
+    2273,
+    3968
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    2731,
+    3705,
+    2772,
+    4016
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    3231,
+    3705,
+    3273,
+    4015
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "3\"x20 GA. COMP. DECK",
+   "bbox": [
+    2803,
+    4314,
+    3139,
+    4348
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "W/ 31/4\" LW CONC.",
+   "bbox": [
+    2839,
+    4358,
+    3096,
+    4393
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "W21×44 (28) c=1\"",
+   "bbox": [
+    2818,
+    4498,
+    3118,
+    4541
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "1'-0\" 11",
+   "bbox": [
+    2074,
+    4623,
+    2242,
+    4665
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    2912,
+    4700,
+    3022,
+    4742
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "-X",
+   "bbox": [
+    2196,
+    4896,
+    2235,
+    4965
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "LEVEL 3 FRAMING PLAN",
+   "bbox": [
+    2567,
+    5382,
+    3311,
+    5446
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    2369,
+    5509,
+    2454,
+    5540
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "SCALE: 1/8\" = 1'-0\"",
+   "bbox": [
+    2565,
+    5505,
+    2919,
+    5550
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "T.O.S. EL. 100'-0\" U.N.O.",
+   "bbox": [
+    2976,
+    5503,
+    3447,
+    5551
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "3/4\"Ø x 5\" HEADED STUDS @ EA",
+   "bbox": [
+    2994,
+    5994,
+    3498,
+    6038
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "- 31/4\" LW CONC. TOPPING W/ 6x6",
+   "bbox": [
+    2976,
+    6126,
+    3498,
+    6168
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "3\" x 20 GA. GALV. COMPOSITE D",
+   "bbox": [
+    2993,
+    6258,
+    3498,
+    6299
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    3230,
+    3704,
+    3273,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    3730,
+    3704,
+    3774,
+    4028
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    4230,
+    3704,
+    4272,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    4729,
+    3703,
+    4772,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    5230,
+    3704,
+    5274,
+    4028
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (20) c=3/4\"",
+   "bbox": [
+    5647,
+    3705,
+    5689,
+    4016
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (20) c=3/4\"",
+   "bbox": [
+    6063,
+    3705,
+    6105,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    6480,
+    3705,
+    6523,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W21×44 (28) c=1\"",
+   "bbox": [
+    5692,
+    4498,
+    5992,
+    4541
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    4411,
+    4696,
+    4522,
+    4743
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "25'-0\"",
+   "bbox": [
+    5785,
+    4699,
+    5900,
+    4744
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "167'-0\"",
+   "bbox": [
+    6324,
+    4867,
+    6462,
+    4908
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "PLAN",
+   "bbox": [
+    3150,
+    5384,
+    3310,
+    5446
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": ". 100'-0\" U.N.O.",
+   "bbox": [
+    3150,
+    5503,
+    3447,
+    5553
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "HEADED STUDS @ EA. LOW FLUTE",
+   "bbox": [
+    3150,
+    5993,
+    3696,
+    6037
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "ONC. TOPPING W/ 6x6-W2.9xW2.9 WWF",
+   "bbox": [
+    3150,
+    6126,
+    3788,
+    6168
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "A. GALV. COMPOSITE DECK",
+   "bbox": [
+    3150,
+    6259,
+    3572,
+    6300
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W21x44 GIRDER (BF-1), SEE PLAN",
+   "bbox": [
+    5831,
+    5914,
+    6384,
+    5957
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W.P.",
+   "bbox": [
+    5157,
+    6424,
+    5216,
+    6454
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    4180,
+    3463,
+    4256,
+    3491
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W21x44 (28) c=1\"",
+   "bbox": [
+    4316,
+    4497,
+    4614,
+    4541
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    6481,
+    3700,
+    6522,
+    4016
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    6754,
+    4148,
+    6828,
+    4178
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    6981,
+    3706,
+    7023,
+    4016
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    7481,
+    3706,
+    7523,
+    4027
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    7980,
+    3704,
+    8023,
+    4016
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    8177,
+    4192,
+    8261,
+    4223
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "BF-1",
+   "bbox": [
+    7176,
+    4288,
+    7260,
+    4323
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W21x44 (28)",
+   "bbox": [
+    7113,
+    4499,
+    7322,
+    4541
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W18x35 (24)",
+   "bbox": [
+    9587,
+    4499,
+    9798,
+    4542
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    7159,
+    4699,
+    7272,
+    4742
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    8659,
+    4699,
+    8772,
+    4742
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "167'-0\"",
+   "bbox": [
+    6324,
+    4868,
+    6465,
+    4909
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "3/4\"Ø x 5\" HEADED STUDS",
+   "bbox": [
+    8433,
+    5914,
+    8847,
+    5954
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "(D SIM.)",
+   "bbox": [
+    9492,
+    5950,
+    9617,
+    5988
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "31/4\" LW CONC. TOPPING",
+   "bbox": [
+    8432,
+    6034,
+    8824,
+    6076
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "3\" x 20 GA. COMP. DECK",
+   "bbox": [
+    8432,
+    6156,
+    8827,
+    6195
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "1'-0\"",
+   "bbox": [
+    9658,
+    6286,
+    9735,
+    6322
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    8481,
+    3706,
+    8523,
+    4016
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    8981,
+    3706,
+    9023,
+    4027
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    9482,
+    3701,
+    9523,
+    4017
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W21x44 (28) c=1\"",
+   "bbox": [
+    8569,
+    4498,
+    8863,
+    4541
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "PLAN",
+   "bbox": [
+    6300,
+    5916,
+    6381,
+    5954
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    9479,
+    3705,
+    9522,
+    4017
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W18x35 (24) c=3/4\"",
+   "bbox": [
+    10030,
+    3704,
+    10074,
+    4017
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x31 (14) c=1/2\"",
+   "bbox": [
+    10510,
+    3704,
+    10552,
+    4015
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "28'-0\"",
+   "bbox": [
+    10820,
+    3805,
+    10857,
+    3921
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W18x35 (24) c=3/4\"",
+   "bbox": [
+    9586,
+    4498,
+    9899,
+    4541
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "-- >",
+   "bbox": [
+    10880,
+    4539,
+    11003,
+    4576
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "22'-0\"",
+   "bbox": [
+    9960,
+    4699,
+    10075,
+    4744
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "-X",
+   "bbox": [
+    10549,
+    4902,
+    10587,
+    4965
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "PLAN",
+   "bbox": [
+    9850,
+    5478,
+    9929,
+    5512
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "NORTH",
+   "bbox": [
+    9848,
+    5518,
+    9957,
+    5552
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "1'-0\"",
+   "bbox": [
+    9662,
+    6287,
+    9740,
+    6321
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "MEMBER TAKE-OFF - LEVEL 3 (FOR REFERENCE)",
+   "bbox": [
+    11497,
+    3203,
+    12800,
+    3262
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "SIZE",
+   "bbox": [
+    11518,
+    3359,
+    11609,
+    3397
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "QTY",
+   "bbox": [
+    12038,
+    3359,
+    12123,
+    3399
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "LENGTH (FT)",
+   "bbox": [
+    12400,
+    3358,
+    12642,
+    3402
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "WEIC",
+   "bbox": [
+    12857,
+    3358,
+    12948,
+    3396
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W24x55",
+   "bbox": [
+    11516,
+    3436,
+    11662,
+    3473
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "225.6",
+   "bbox": [
+    12400,
+    3436,
+    12500,
+    3474
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "12,40",
+   "bbox": [
+    12862,
+    3436,
+    12948,
+    3475
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W21x50",
+   "bbox": [
+    11518,
+    3511,
+    11659,
+    3550
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "46.4",
+   "bbox": [
+    12401,
+    3511,
+    12483,
+    3548
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "2,32",
+   "bbox": [
+    12857,
+    3512,
+    12945,
+    3552
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W21x44",
+   "bbox": [
+    11519,
+    3588,
+    11663,
+    3626
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "12",
+   "bbox": [
+    12040,
+    3590,
+    12085,
+    3625
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "312.4",
+   "bbox": [
+    12399,
+    3587,
+    12501,
+    3627
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "13,74",
+   "bbox": [
+    12860,
+    3588,
+    12948,
+    3626
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W18x40",
+   "bbox": [
+    11519,
+    3664,
+    11663,
+    3702
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "54.2",
+   "bbox": [
+    12397,
+    3665,
+    12478,
+    3701
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "2,16",
+   "bbox": [
+    12860,
+    3665,
+    12945,
+    3703
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W18x35",
+   "bbox": [
+    11519,
+    3739,
+    11662,
+    3778
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "94.6",
+   "bbox": [
+    12399,
+    3741,
+    12477,
+    3777
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "3,31]",
+   "bbox": [
+    12858,
+    3740,
+    12948,
+    3780
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x31",
+   "bbox": [
+    11521,
+    3815,
+    11663,
+    3855
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "104.8",
+   "bbox": [
+    12400,
+    3815,
+    12500,
+    3853
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "3,24",
+   "bbox": [
+    12860,
+    3816,
+    12944,
+    3856
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x26",
+   "bbox": [
+    11519,
+    3890,
+    11662,
+    3930
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "28",
+   "bbox": [
+    12043,
+    3895,
+    12085,
+    3926
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "749.8",
+   "bbox": [
+    12400,
+    3890,
+    12498,
+    3929
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "19,49",
+   "bbox": [
+    12862,
+    3891,
+    12948,
+    3929
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x19",
+   "bbox": [
+    11517,
+    3966,
+    11662,
+    4005
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "32.2",
+   "bbox": [
+    12400,
+    3968,
+    12477,
+    4004
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "612",
+   "bbox": [
+    12858,
+    3969,
+    12929,
+    4004
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W10x12",
+   "bbox": [
+    11519,
+    4043,
+    11663,
+    4083
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "20",
+   "bbox": [
+    12039,
+    4045,
+    12085,
+    4080
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "201.7",
+   "bbox": [
+    12396,
+    4044,
+    12499,
+    4082
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "2,420",
+   "bbox": [
+    12858,
+    4044,
+    12948,
+    4082
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12×79 COL. (BF)",
+   "bbox": [
+    11518,
+    4118,
+    11827,
+    4159
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "104.0",
+   "bbox": [
+    12399,
+    4119,
+    12497,
+    4158
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "8,216",
+   "bbox": [
+    12860,
+    4120,
+    12948,
+    4158
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x65 COL. (INT.)",
+   "bbox": [
+    11519,
+    4195,
+    11847,
+    4236
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "10",
+   "bbox": [
+    12039,
+    4196,
+    12084,
+    4232
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "130.0",
+   "bbox": [
+    12397,
+    4195,
+    12501,
+    4233
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "8,45(",
+   "bbox": [
+    12860,
+    4197,
+    12945,
+    4232
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x53 COL. (PERIM.)",
+   "bbox": [
+    11518,
+    4271,
+    11901,
+    4313
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "10",
+   "bbox": [
+    12040,
+    4273,
+    12084,
+    4309
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "130.0",
+   "bbox": [
+    12400,
+    4271,
+    12499,
+    4309
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "6,890",
+   "bbox": [
+    12860,
+    4273,
+    12948,
+    4312
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "HSS7x7x1/2 (BF-2)",
+   "bbox": [
+    11520,
+    4348,
+    11817,
+    4389
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "76.4",
+   "bbox": [
+    12400,
+    4347,
+    12476,
+    4384
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "3,213",
+   "bbox": [
+    12859,
+    4346,
+    12948,
+    4386
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "HSS6x6x3/8 (BF-1)",
+   "bbox": [
+    11519,
+    4423,
+    11815,
+    4464
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "79.4",
+   "bbox": [
+    12401,
+    4423,
+    12477,
+    4462
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "2,182",
+   "bbox": [
+    12858,
+    4423,
+    12948,
+    4464
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "TOTAL",
+   "bbox": [
+    11520,
+    4499,
+    11643,
+    4537
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "2,341.5",
+   "bbox": [
+    12399,
+    4500,
+    12546,
+    4539
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "88,6",
+   "bbox": [
+    12860,
+    4499,
+    12948,
+    4537
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "LENGTHS ARE CLEAR SPANS FROM PLAN GEOMETRY; EXCLUDES CONNECTION MATERIAL AND MISC. STI",
+   "bbox": [
+    11494,
+    4610,
+    12948,
+    4649
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "ABBREVIATIONS",
+   "bbox": [
+    11494,
+    4777,
+    11933,
+    4833
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "C/L",
+   "bbox": [
+    11498,
+    4922,
+    11558,
+    4958
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CENTERLINE",
+   "bbox": [
+    11742,
+    4920,
+    11953,
+    4959
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "PL",
+   "bbox": [
+    12657,
+    4921,
+    12707,
+    4957
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "PL",
+   "bbox": [
+    12905,
+    4919,
+    12944,
+    4956
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CLR.",
+   "bbox": [
+    11498,
+    4980,
+    11585,
+    5018
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CLEAR",
+   "bbox": [
+    11741,
+    4980,
+    11856,
+    5018
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "STD.",
+   "bbox": [
+    12655,
+    4980,
+    12747,
+    5018
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "ST",
+   "bbox": [
+    12907,
+    4981,
+    12943,
+    5017
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CONT.",
+   "bbox": [
+    11494,
+    5038,
+    11609,
+    5078
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CONTINUOUS",
+   "bbox": [
+    11742,
+    5037,
+    11970,
+    5079
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "T.O.S.",
+   "bbox": [
+    12655,
+    5039,
+    12764,
+    5079
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "TO",
+   "bbox": [
+    12904,
+    5041,
+    12948,
+    5077
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "E.O.S.",
+   "bbox": [
+    11492,
+    5100,
+    11615,
+    5139
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "EDGE OF SLAB",
+   "bbox": [
+    11742,
+    5099,
+    11989,
+    5139
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "TYP.",
+   "bbox": [
+    12655,
+    5099,
+    12736,
+    5138
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "TY",
+   "bbox": [
+    12905,
+    5104,
+    12948,
+    5137
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "EL.",
+   "bbox": [
+    11495,
+    5161,
+    11553,
+    5198
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "ELEVATION",
+   "bbox": [
+    11744,
+    5160,
+    11929,
+    5199
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "U.N.O.",
+   "bbox": [
+    12656,
+    5158,
+    12779,
+    5198
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "UN",
+   "bbox": [
+    12907,
+    5161,
+    12948,
+    5196
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "LW",
+   "bbox": [
+    11495,
+    5219,
+    11557,
+    5257
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "LIGHTWEIGHT",
+   "bbox": [
+    11742,
+    5218,
+    11981,
+    5258
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W.P.",
+   "bbox": [
+    12657,
+    5219,
+    12737,
+    5257
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "O.C.",
+   "bbox": [
+    11498,
+    5280,
+    11573,
+    5318
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "ON CENTER",
+   "bbox": [
+    11741,
+    5279,
+    11941,
+    5318
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "WWF",
+   "bbox": [
+    12655,
+    5278,
+    12757,
+    5318
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "WE",
+   "bbox": [
+    12901,
+    5278,
+    12948,
+    5317
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "COLUMN SCHEDULE",
+   "bbox": [
+    11496,
+    5477,
+    12030,
+    5533
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "TIER",
+   "bbox": [
+    11518,
+    5631,
+    11606,
+    5668
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "PERIMETER",
+   "bbox": [
+    12060,
+    5631,
+    12275,
+    5669
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "INTERIOR",
+   "bbox": [
+    12578,
+    5631,
+    12758,
+    5669
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "ROOF - L4",
+   "bbox": [
+    11520,
+    5708,
+    11694,
+    5746
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W10x49",
+   "bbox": [
+    12058,
+    5707,
+    12200,
+    5746
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x53",
+   "bbox": [
+    12577,
+    5707,
+    12722,
+    5746
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "L4 - L3",
+   "bbox": [
+    11521,
+    5784,
+    11639,
+    5820
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x53",
+   "bbox": [
+    12059,
+    5784,
+    12199,
+    5822
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x65",
+   "bbox": [
+    12577,
+    5783,
+    12722,
+    5822
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "L3 - L2",
+   "bbox": [
+    11519,
+    5860,
+    11639,
+    5897
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x65",
+   "bbox": [
+    12056,
+    5859,
+    12199,
+    5898
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x79",
+   "bbox": [
+    12577,
+    5859,
+    12722,
+    5899
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "L2 - FDN.",
+   "bbox": [
+    11520,
+    5937,
+    11676,
+    5973
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x79",
+   "bbox": [
+    12056,
+    5935,
+    12201,
+    5974
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x96",
+   "bbox": [
+    12577,
+    5936,
+    12722,
+    5973
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "COLUMN SPLICES 4'-0\" ABOVE L2 AND L4 FLOOR. BRACED FRAME COLUMNS: A4, A5, D4, D5, A1, B1, C",
+   "bbox": [
+    11495,
+    6038,
+    12948,
+    6077
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "BRACED FRAME SCHEDULE",
+   "bbox": [
+    11496,
+    6217,
+    12221,
+    6273
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "MARK",
+   "bbox": [
+    11519,
+    6371,
+    11635,
+    6410
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "GRID",
+   "bbox": [
+    11841,
+    6372,
+    11936,
+    6410
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "BRACE",
+   "bbox": [
+    12222,
+    6372,
+    12346,
+    6408
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CONFI",
+   "bbox": [
+    12820,
+    6370,
+    12948,
+    6411
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "BF-1",
+   "bbox": [
+    11519,
+    6449,
+    11597,
+    6483
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "A & D / 4-5",
+   "bbox": [
+    11840,
+    6448,
+    12030,
+    6488
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "HSS6x6x3/8",
+   "bbox": [
+    12219,
+    6449,
+    12402,
+    6487
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CHEVR",
+   "bbox": [
+    12818,
+    6449,
+    12943,
+    6486
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "BF-2",
+   "bbox": [
+    11517,
+    6526,
+    11598,
+    6559
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "1 / A-B, 7 / C-D",
+   "bbox": [
+    11839,
+    6522,
+    12096,
+    6565
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "HSS7x7x1/2",
+   "bbox": [
+    12220,
+    6523,
+    12403,
+    6564
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CHEVR",
+   "bbox": [
+    12819,
+    6525,
+    12942,
+    6561
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "E.O.S.",
+   "bbox": [
+    10021,
+    6599,
+    10110,
+    6630
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "(D SIM.)",
+   "bbox": [
+    9493,
+    5949,
+    9618,
+    5989
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "OFF - LEVEL 3 (FOR REFERENCE)",
+   "bbox": [
+    11920,
+    3198,
+    12799,
+    3265
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "QTY",
+   "bbox": [
+    12040,
+    3359,
+    12121,
+    3398
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "LENGTH (FT)",
+   "bbox": [
+    12397,
+    3357,
+    12640,
+    3401
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "WEIGHT (LB)",
+   "bbox": [
+    12855,
+    3356,
+    13102,
+    3402
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "LB/FT",
+   "bbox": [
+    13339,
+    3361,
+    13449,
+    3398
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "225.6",
+   "bbox": [
+    12401,
+    3436,
+    12500,
+    3474
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "12,408",
+   "bbox": [
+    12860,
+    3436,
+    12978,
+    3476
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "55",
+   "bbox": [
+    13340,
+    3437,
+    13385,
+    3473
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "46.4",
+   "bbox": [
+    12402,
+    3511,
+    12482,
+    3548
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2,320",
+   "bbox": [
+    12860,
+    3511,
+    12960,
+    3552
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "50",
+   "bbox": [
+    13342,
+    3513,
+    13382,
+    3548
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "12",
+   "bbox": [
+    12044,
+    3590,
+    12086,
+    3624
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "312.4",
+   "bbox": [
+    12399,
+    3589,
+    12501,
+    3626
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "13,746",
+   "bbox": [
+    12857,
+    3587,
+    12982,
+    3628
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "44",
+   "bbox": [
+    13344,
+    3588,
+    13382,
+    3624
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "54.2",
+   "bbox": [
+    12399,
+    3664,
+    12478,
+    3702
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2,168",
+   "bbox": [
+    12860,
+    3664,
+    12961,
+    3704
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "40",
+   "bbox": [
+    13339,
+    3664,
+    13389,
+    3701
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "94.6",
+   "bbox": [
+    12399,
+    3739,
+    12476,
+    3778
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "3,311",
+   "bbox": [
+    12859,
+    3739,
+    12955,
+    3779
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "35",
+   "bbox": [
+    13339,
+    3741,
+    13386,
+    3778
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "104.8",
+   "bbox": [
+    12400,
+    3816,
+    12500,
+    3853
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "3,249",
+   "bbox": [
+    12858,
+    3815,
+    12961,
+    3855
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "31",
+   "bbox": [
+    13339,
+    3816,
+    13382,
+    3852
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "28",
+   "bbox": [
+    12042,
+    3895,
+    12086,
+    3926
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "749.8",
+   "bbox": [
+    12401,
+    3891,
+    12500,
+    3929
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "19,495",
+   "bbox": [
+    12860,
+    3891,
+    12981,
+    3931
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "26",
+   "bbox": [
+    13340,
+    3894,
+    13382,
+    3929
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "32.2",
+   "bbox": [
+    12400,
+    3969,
+    12477,
+    4004
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "612",
+   "bbox": [
+    12860,
+    3968,
+    12929,
+    4005
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "19",
+   "bbox": [
+    13341,
+    3969,
+    13386,
+    4003
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "20",
+   "bbox": [
+    12040,
+    4046,
+    12085,
+    4080
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "201.7",
+   "bbox": [
+    12397,
+    4044,
+    12500,
+    4081
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2,420",
+   "bbox": [
+    12856,
+    4043,
+    12960,
+    4083
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "12",
+   "bbox": [
+    13340,
+    4045,
+    13382,
+    4080
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "104.0",
+   "bbox": [
+    12399,
+    4120,
+    12498,
+    4158
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "8,216",
+   "bbox": [
+    12860,
+    4120,
+    12961,
+    4159
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "79",
+   "bbox": [
+    13343,
+    4118,
+    13387,
+    4156
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "10",
+   "bbox": [
+    12040,
+    4199,
+    12085,
+    4232
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "130.0",
+   "bbox": [
+    12400,
+    4195,
+    12500,
+    4233
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "8,450",
+   "bbox": [
+    12860,
+    4197,
+    12959,
+    4235
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "65",
+   "bbox": [
+    13343,
+    4198,
+    13386,
+    4232
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "10",
+   "bbox": [
+    12043,
+    4273,
+    12085,
+    4308
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "130.0",
+   "bbox": [
+    12401,
+    4272,
+    12499,
+    4309
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "6,890",
+   "bbox": [
+    12860,
+    4272,
+    12960,
+    4311
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "53",
+   "bbox": [
+    13340,
+    4272,
+    13382,
+    4312
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "76.4",
+   "bbox": [
+    12399,
+    4347,
+    12481,
+    4385
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "3,213",
+   "bbox": [
+    12859,
+    4346,
+    12960,
+    4387
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "42.05",
+   "bbox": [
+    13341,
+    4348,
+    13442,
+    4384
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "79.4",
+   "bbox": [
+    12400,
+    4423,
+    12480,
+    4461
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2,182",
+   "bbox": [
+    12858,
+    4424,
+    12960,
+    4462
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "27.48",
+   "bbox": [
+    13337,
+    4424,
+    13438,
+    4462
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2,341.5",
+   "bbox": [
+    12399,
+    4500,
+    12544,
+    4540
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "88,680 (44.3 TONS)",
+   "bbox": [
+    12859,
+    4498,
+    13239,
+    4541
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "ROM PLAN GEOMETRY; EXCLUDES CONNECTION MATERIAL AND MISC. STEEL.",
+   "bbox": [
+    11920,
+    4610,
+    13004,
+    4648
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PL",
+   "bbox": [
+    12657,
+    4920,
+    12707,
+    4956
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PLATE",
+   "bbox": [
+    12904,
+    4919,
+    13011,
+    4957
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "STD.",
+   "bbox": [
+    12655,
+    4979,
+    12744,
+    5018
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "STANDARD",
+   "bbox": [
+    12905,
+    4981,
+    13087,
+    5018
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "US",
+   "bbox": [
+    11920,
+    5037,
+    11971,
+    5078
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "T.O.S.",
+   "bbox": [
+    12658,
+    5039,
+    12765,
+    5079
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "TOP OF STEEL",
+   "bbox": [
+    12901,
+    5039,
+    13135,
+    5078
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "LAB",
+   "bbox": [
+    11920,
+    5100,
+    11987,
+    5138
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "TYP.",
+   "bbox": [
+    12655,
+    5099,
+    12737,
+    5140
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "TYPICAL",
+   "bbox": [
+    12904,
+    5099,
+    13045,
+    5139
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "U.N.O.",
+   "bbox": [
+    12656,
+    5159,
+    12777,
+    5198
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "UNLESS NOTED OTHERWISE",
+   "bbox": [
+    12905,
+    5158,
+    13369,
+    5199
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "GHT",
+   "bbox": [
+    11920,
+    5220,
+    11978,
+    5259
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W.P.",
+   "bbox": [
+    12655,
+    5219,
+    12737,
+    5257
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "WORK POINT",
+   "bbox": [
+    12904,
+    5219,
+    13121,
+    5257
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "WWF",
+   "bbox": [
+    12654,
+    5279,
+    12754,
+    5317
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "WELDED WIRE FABRIC",
+   "bbox": [
+    12903,
+    5278,
+    13269,
+    5319
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "ULE",
+   "bbox": [
+    11920,
+    5479,
+    12028,
+    5531
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PERIMETER",
+   "bbox": [
+    12057,
+    5631,
+    12272,
+    5670
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "INTERIOR",
+   "bbox": [
+    12578,
+    5631,
+    12760,
+    5670
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "BRACED FRAME",
+   "bbox": [
+    13096,
+    5630,
+    13394,
+    5670
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W10x49",
+   "bbox": [
+    12059,
+    5706,
+    12201,
+    5745
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x53",
+   "bbox": [
+    12578,
+    5707,
+    12719,
+    5746
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x65",
+   "bbox": [
+    13099,
+    5707,
+    13239,
+    5745
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x53",
+   "bbox": [
+    12059,
+    5784,
+    12201,
+    5822
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x65",
+   "bbox": [
+    12577,
+    5783,
+    12720,
+    5822
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x79",
+   "bbox": [
+    13099,
+    5783,
+    13241,
+    5823
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x65",
+   "bbox": [
+    12055,
+    5859,
+    12197,
+    5898
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x79",
+   "bbox": [
+    12577,
+    5860,
+    12719,
+    5897
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x96",
+   "bbox": [
+    13099,
+    5859,
+    13242,
+    5898
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x79",
+   "bbox": [
+    12057,
+    5934,
+    12199,
+    5975
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x96",
+   "bbox": [
+    12577,
+    5936,
+    12722,
+    5974
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W14x120",
+   "bbox": [
+    13098,
+    5936,
+    13260,
+    5974
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "L2 AND L4 FLOOR. BRACED FRAME COLUMNS: A4, A5, D4, D5, A1, B1, C7, D7.",
+   "bbox": [
+    11920,
+    6038,
+    13026,
+    6077
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SCHEDULE",
+   "bbox": [
+    11920,
+    6219,
+    12219,
+    6272
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "BRACE",
+   "bbox": [
+    12219,
+    6372,
+    12348,
+    6408
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CONFIG.",
+   "bbox": [
+    12820,
+    6372,
+    12973,
+    6410
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DETAIL",
+   "bbox": [
+    13322,
+    6372,
+    13451,
+    6410
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "/ 4-5",
+   "bbox": [
+    11922,
+    6448,
+    12028,
+    6487
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "HSS6x6x3/8",
+   "bbox": [
+    12220,
+    6449,
+    12399,
+    6487
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CHEVRON",
+   "bbox": [
+    12821,
+    6448,
+    12988,
+    6486
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "3/S-201",
+   "bbox": [
+    13319,
+    6447,
+    13450,
+    6486
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "-B, 7 / C-D",
+   "bbox": [
+    11923,
+    6523,
+    12097,
+    6564
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "HSS7x7x1/2",
+   "bbox": [
+    12220,
+    6524,
+    12403,
+    6563
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CHEVRON",
+   "bbox": [
+    12819,
+    6524,
+    12987,
+    6561
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SIM.",
+   "bbox": [
+    13319,
+    6525,
+    13396,
+    6561
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "AREA OF WORK SHOWN HATCHED",
+   "bbox": [
+    14328,
+    3401,
+    14810,
+    3437
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "REVISIONS",
+   "bbox": [
+    13965,
+    3595,
+    14132,
+    3629
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "NO.",
+   "bbox": [
+    13942,
+    3743,
+    14005,
+    3775
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DATE",
+   "bbox": [
+    14101,
+    3743,
+    14194,
+    3775
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DESCRIPTION",
+   "bbox": [
+    14460,
+    3742,
+    14697,
+    3777
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2026-09-14",
+   "bbox": [
+    14098,
+    3829,
+    14287,
+    3865
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "ISSUED FOR COORDINATION",
+   "bbox": [
+    14459,
+    3828,
+    14905,
+    3865
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2026-10-05",
+   "bbox": [
+    14099,
+    3917,
+    14283,
+    3953
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "ISSUED FOR REVIEW",
+   "bbox": [
+    14459,
+    3917,
+    14787,
+    3953
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2026-10-26",
+   "bbox": [
+    14098,
+    4005,
+    14287,
+    4041
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "ISSUED FOR TENDER",
+   "bbox": [
+    14459,
+    4004,
+    14792,
+    4041
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DRAWN BY",
+   "bbox": [
+    13949,
+    4359,
+    14098,
+    4388
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "X.X.",
+   "bbox": [
+    13948,
+    4439,
+    14039,
+    4477
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CHECKED BY",
+   "bbox": [
+    14594,
+    4357,
+    14778,
+    4391
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "Y.Y.",
+   "bbox": [
+    14599,
+    4436,
+    14674,
+    4480
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DESIGNED BY",
+   "bbox": [
+    13948,
+    4550,
+    14137,
+    4583
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "Z.Z.",
+   "bbox": [
+    13944,
+    4627,
+    14044,
+    4670
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DATE",
+   "bbox": [
+    14598,
+    4550,
+    14675,
+    4583
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2026-10-26",
+   "bbox": [
+    14597,
+    4627,
+    14860,
+    4673
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SCALE",
+   "bbox": [
+    13948,
+    4743,
+    14042,
+    4775
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PROJECT NO.",
+   "bbox": [
+    14599,
+    4741,
+    14777,
+    4776
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "AS NOTED",
+   "bbox": [
+    13944,
+    4819,
+    14184,
+    4865
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2026-041",
+   "bbox": [
+    14595,
+    4818,
+    14816,
+    4865
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CAD FILE",
+   "bbox": [
+    13944,
+    4933,
+    14076,
+    4967
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "S-201.dwg",
+   "bbox": [
+    13947,
+    5011,
+    14191,
+    5064
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SHEET SIZE",
+   "bbox": [
+    14594,
+    4932,
+    14763,
+    4969
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "ARCH D (36x24)",
+   "bbox": [
+    14589,
+    5009,
+    14963,
+    5062
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SHEET TITLE",
+   "bbox": [
+    13960,
+    5158,
+    14161,
+    5194
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "LEVEL 3",
+   "bbox": [
+    14424,
+    5362,
+    14715,
+    5430
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "FRAMING PLAN",
+   "bbox": [
+    14288,
+    5490,
+    14845,
+    5563
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "AND DETAILS",
+   "bbox": [
+    14322,
+    5624,
+    14810,
+    5694
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SHEET NO.",
+   "bbox": [
+    13965,
+    5859,
+    14129,
+    5895
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "31/4\" LW CONC. TOPPING W/ 6x6",
+   "bbox": [
+    2996,
+    6126,
+    3498,
+    6167
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "3\" x 20 GA. GALV. COMPOSITE D",
+   "bbox": [
+    2992,
+    6259,
+    3493,
+    6300
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "61/4\"",
+   "bbox": [
+    1390,
+    6791,
+    1418,
+    6856
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": ": D",
+   "bbox": [
+    2639,
+    6916,
+    2685,
+    6951
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "·D",
+   "bbox": [
+    2037,
+    6950,
+    2068,
+    6970
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "1/4",
+   "bbox": [
+    2444,
+    8222,
+    2470,
+    8252
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "E70XX",
+   "bbox": [
+    2764,
+    8239,
+    2865,
+    8272
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "1/4",
+   "bbox": [
+    2439,
+    8262,
+    2469,
+    8289
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "W24x55 GIRDER",
+   "bbox": [
+    1416,
+    8336,
+    1681,
+    8372
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "SEE PLAN",
+   "bbox": [
+    1416,
+    8379,
+    1574,
+    8414
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "SECTION - BEAM TO GIRDER",
+   "bbox": [
+    1587,
+    9042,
+    2489,
+    9105
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    1390,
+    9170,
+    1468,
+    9200
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "SCALE: 11/2\" = 1'-0\"",
+   "bbox": [
+    1589,
+    9164,
+    1959,
+    9209
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "ONC. TOPPING W/ 6x6-W2.9xW2.9 WWF",
+   "bbox": [
+    3150,
+    6125,
+    3788,
+    6168
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "A. GALV. COMPOSITE DECK",
+   "bbox": [
+    3150,
+    6259,
+    3574,
+    6300
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "T.O. SLAB EL. 100'-61/4\"",
+   "bbox": [
+    3898,
+    6641,
+    4267,
+    6683
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "T.O.S. EL. 100'-0\"",
+   "bbox": [
+    3905,
+    6956,
+    4176,
+    6994
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "COPE TOP FLANGE",
+   "bbox": [
+    3596,
+    7075,
+    3897,
+    7112
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "AS REQ'D",
+   "bbox": [
+    3596,
+    7119,
+    3751,
+    7155
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "W16x26 BEAM",
+   "bbox": [
+    3597,
+    7274,
+    3833,
+    7312
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "SEE PLAN",
+   "bbox": [
+    3596,
+    7318,
+    3755,
+    7355
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "(3) 3/4\"Ø A325-N BOLTS",
+   "bbox": [
+    3597,
+    7494,
+    3961,
+    7533
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "@ 3\" O.C., STD. HOLES",
+   "bbox": [
+    3593,
+    7536,
+    3962,
+    7577
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "PL 3/8 x 41/2 x 0'-9\"",
+   "bbox": [
+    3594,
+    7734,
+    3883,
+    7773
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "SHEAR TAB",
+   "bbox": [
+    3594,
+    7776,
+    3779,
+    7815
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "W.P.",
+   "bbox": [
+    5156,
+    6424,
+    5214,
+    6455
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "11",
+   "bbox": [
+    6139,
+    7251,
+    6181,
+    7302
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "3/8",
+   "bbox": [
+    5664,
+    7463,
+    5690,
+    7491
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "PL TO COL.",
+   "bbox": [
+    5965,
+    7478,
+    6130,
+    7513
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "3/8",
+   "bbox": [
+    5661,
+    7502,
+    5691,
+    7531
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "10",
+   "bbox": [
+    5988,
+    7739,
+    6028,
+    7769
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "4 PLACES",
+   "bbox": [
+    5530,
+    7758,
+    5675,
+    7792
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "5/16",
+   "bbox": [
+    5861,
+    7740,
+    5966,
+    7777
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "5/16",
+   "bbox": [
+    5856,
+    7779,
+    5951,
+    7811
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "10",
+   "bbox": [
+    5989,
+    7781,
+    6029,
+    7813
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "W12x79 COLUMN, SEE SCHEDULE",
+   "bbox": [
+    5421,
+    8373,
+    5980,
+    8416
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "TYP. BRACE GUSSET @ BEAM/COLUMN",
+   "bbox": [
+    5047,
+    9041,
+    6221,
+    9108
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    4851,
+    9169,
+    4930,
+    9199
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "SCALE: 3/4\" = 1'-0\"",
+   "bbox": [
+    5050,
+    9164,
+    5395,
+    9209
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "3/8 FILLET BOTH SIDES, PL TO BM.",
+   "bbox": [
+    6754,
+    6795,
+    7285,
+    6835
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "- PL 3/4 GUSSET (A572 GR. 50)",
+   "bbox": [
+    6739,
+    6934,
+    7205,
+    6977
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "SLOT HSS FOR PL,",
+   "bbox": [
+    7034,
+    7094,
+    7321,
+    7133
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "1/8\" CLR. EA. SIDE",
+   "bbox": [
+    7034,
+    7137,
+    7318,
+    7175
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "HSS6x6x3/8 BRACE",
+   "bbox": [
+    7034,
+    7375,
+    7328,
+    7413
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "SEE ELEV. BF-1",
+   "bbox": [
+    7037,
+    7416,
+    7276,
+    7454
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "15'-0\"",
+   "bbox": [
+    6890,
+    7688,
+    6976,
+    7721
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "13'-0\"",
+   "bbox": [
+    7060,
+    7812,
+    7146,
+    7845
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "3\" x 20 GA. COMP. DECK",
+   "bbox": [
+    8432,
+    6154,
+    8829,
+    6195
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "1'-0\"",
+   "bbox": [
+    9660,
+    6287,
+    9737,
+    6324
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "1.",
+   "bbox": [
+    9077,
+    6693,
+    9103,
+    6714
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "61/4\"",
+   "bbox": [
+    8271,
+    6793,
+    8300,
+    6858
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": ". D",
+   "bbox": [
+    8869,
+    6929,
+    8907,
+    6954
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "TYP. SLAB EDGE @ SPANDREL",
+   "bbox": [
+    8343,
+    9039,
+    9259,
+    9109
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    8147,
+    9168,
+    8229,
+    9200
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "SCALE: 11/2\" = 1'-0\"",
+   "bbox": [
+    8349,
+    9163,
+    8720,
+    9209
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "1'-0\"",
+   "bbox": [
+    9663,
+    6287,
+    9736,
+    6323
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "E.O.S.",
+   "bbox": [
+    10021,
+    6599,
+    10112,
+    6630
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "BENT PL 1/4 POUR STOP,",
+   "bbox": [
+    10217,
+    6654,
+    10598,
+    6693
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "CONT.",
+   "bbox": [
+    10214,
+    6697,
+    10315,
+    6735
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "L3x3x1/4 KICKER",
+   "bbox": [
+    10217,
+    7316,
+    10472,
+    7353
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "@ 4'-0\" O.C. MAX.",
+   "bbox": [
+    10220,
+    7357,
+    10500,
+    7397
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "W21x44 SPANDREL",
+   "bbox": [
+    10216,
+    7656,
+    10527,
+    7694
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "SEE PLAN",
+   "bbox": [
+    10216,
+    7697,
+    10376,
+    7735
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "PL TO FLG.",
+   "bbox": [
+    10164,
+    8077,
+    10325,
+    8114
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "3/16 / 11/2-12",
+   "bbox": [
+    9821,
+    8098,
+    10048,
+    8136
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "BRACED FRAME SCHEDULE",
+   "bbox": [
+    11496,
+    6217,
+    12223,
+    6273
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "MARK",
+   "bbox": [
+    11518,
+    6372,
+    11634,
+    6409
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "GRID",
+   "bbox": [
+    11841,
+    6372,
+    11935,
+    6407
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "BRACE",
+   "bbox": [
+    12221,
+    6371,
+    12348,
+    6409
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "CONFI",
+   "bbox": [
+    12820,
+    6372,
+    12948,
+    6410
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "BF-1",
+   "bbox": [
+    11520,
+    6450,
+    11595,
+    6483
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "A & D / 4-5",
+   "bbox": [
+    11839,
+    6446,
+    12029,
+    6487
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "HSS6x6x3/8",
+   "bbox": [
+    12219,
+    6447,
+    12403,
+    6487
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "CHEVRO",
+   "bbox": [
+    12821,
+    6449,
+    12948,
+    6484
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "BF-2",
+   "bbox": [
+    11522,
+    6525,
+    11597,
+    6562
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "1 / A-B, 7 / C-D",
+   "bbox": [
+    11840,
+    6522,
+    12097,
+    6565
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "HSS7x7x1/2",
+   "bbox": [
+    12218,
+    6525,
+    12403,
+    6562
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "CHEVR",
+   "bbox": [
+    12818,
+    6523,
+    12948,
+    6563
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "DESIGN LOADS - TYPICAL FLOOR",
+   "bbox": [
+    11494,
+    6757,
+    12396,
+    6815
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "LOAD",
+   "bbox": [
+    11519,
+    6912,
+    11623,
+    6948
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "SLAB + DECK SELF-WEIGHT (61/4\" LW)",
+   "bbox": [
+    11519,
+    6984,
+    12137,
+    7028
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "SUPERIMPOSED DEAD (CEILING / MEP / FINISHES)",
+   "bbox": [
+    11518,
+    7061,
+    12330,
+    7105
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "PARTITIONS",
+   "bbox": [
+    11521,
+    7140,
+    11716,
+    7178
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "LIVE - OFFICE",
+   "bbox": [
+    11520,
+    7214,
+    11766,
+    7254
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "LIVE - CORRIDORS ABOVE FIRST FLOOR",
+   "bbox": [
+    11520,
+    7291,
+    12189,
+    7331
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "LIVE - STAIRS",
+   "bbox": [
+    11519,
+    7368,
+    11763,
+    7407
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "DEFLECTION LIMITS: L/360 LIVE, L/240 TOTAL. CONSTRUCTION LIVE LOAD 20 PSF.",
+   "bbox": [
+    11495,
+    7469,
+    12643,
+    7510
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "SCHEDULE",
+   "bbox": [
+    11927,
+    6219,
+    12219,
+    6271
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "BRACE",
+   "bbox": [
+    12220,
+    6372,
+    12348,
+    6409
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "CONFIG.",
+   "bbox": [
+    12819,
+    6373,
+    12977,
+    6409
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "DETAIL",
+   "bbox": [
+    13321,
+    6372,
+    13451,
+    6409
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "/ 4-5",
+   "bbox": [
+    11920,
+    6447,
+    12029,
+    6488
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "HSS6x6x3/8",
+   "bbox": [
+    12220,
+    6449,
+    12403,
+    6487
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "CHEVRON",
+   "bbox": [
+    12819,
+    6449,
+    12987,
+    6485
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "3/S-201",
+   "bbox": [
+    13321,
+    6448,
+    13450,
+    6486
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "-B, 7 / C-D",
+   "bbox": [
+    11925,
+    6521,
+    12097,
+    6565
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "HSS7x7x1/2",
+   "bbox": [
+    12220,
+    6525,
+    12403,
+    6563
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "CHEVRON",
+   "bbox": [
+    12819,
+    6524,
+    12987,
+    6562
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "SIM.",
+   "bbox": [
+    13320,
+    6525,
+    13397,
+    6562
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "- TYPICAL FLOOR",
+   "bbox": [
+    11920,
+    6756,
+    12396,
+    6814
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "PSF",
+   "bbox": [
+    12962,
+    6913,
+    13034,
+    6949
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "GHT (61/4\" LW)",
+   "bbox": [
+    11920,
+    6984,
+    12136,
+    7029
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "47",
+   "bbox": [
+    12961,
+    6989,
+    13007,
+    7025
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "CEILING / MEP / FINISHES)",
+   "bbox": [
+    11921,
+    7062,
+    12327,
+    7105
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "20",
+   "bbox": [
+    12963,
+    7066,
+    13008,
+    7102
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "15",
+   "bbox": [
+    12962,
+    7141,
+    12999,
+    7177
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "50",
+   "bbox": [
+    12962,
+    7217,
+    12999,
+    7252
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "VE FIRST FLOOR",
+   "bbox": [
+    11920,
+    7293,
+    12191,
+    7330
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "80",
+   "bbox": [
+    12963,
+    7294,
+    13005,
+    7328
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "100",
+   "bbox": [
+    12961,
+    7368,
+    13028,
+    7405
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "'E, L/240 TOTAL. CONSTRUCTION LIVE LOAD 20 PSF.",
+   "bbox": [
+    11920,
+    7469,
+    12644,
+    7510
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    14199,
+    7476,
+    14940,
+    7702
+   ],
+   "tile_index": 14
+  }
+ ],
+ "lines": [
+  {
+   "text": "COLUMN SPLICES 4'-0\" ABOVE L2 AND L4 FLOOR. BRACED FRAME COLUMNS: A4, A5, D4, D5, A1, B1, C",
+   "bbox": [
+    11495,
+    6038,
+    12948,
+    6077
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "LENGTHS ARE CLEAR SPANS FROM PLAN GEOMETRY; EXCLUDES CONNECTION MATERIAL AND MISC. STI",
+   "bbox": [
+    11494,
+    4610,
+    12948,
+    4649
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "LTS: 3/4\"Ø ASTM F3125 GR. A325, TYPE N, SNUG-TIGHT U.N.O. BRACE CONNECTIONS",
+   "bbox": [
+    11920,
+    610,
+    13357,
+    656
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "HESES, e.g. (22), INDICATES QTY. OF 3/4\"Ø x 5\" HEADED SHEAR STUDS, EQUALLY",
+   "bbox": [
+    11920,
+    888,
+    13292,
+    935
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "ONFORM TO AWS D1.1 USING E70XX ELECTRODES. ALL WELDS BY CERTIFIED WELDERS.",
+   "bbox": [
+    11920,
+    740,
+    13409,
+    783
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "S NOT DETAILED SHALL BE SINGLE-PLATE SHEAR CONNECTIONS PER DETAIL 2/S-201,",
+   "bbox": [
+    11920,
+    1091,
+    13378,
+    1133
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "DEFLECTION LIMITS: L/360 LIVE, L/240 TOTAL. CONSTRUCTION LIVE LOAD 20 PSF.",
+   "bbox": [
+    11495,
+    7469,
+    12643,
+    7510
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "NUMBER IN PARENTHESES, e.g. (22), INDICATES QTY. OF 3/4\"Ø x 5\" HEADED SHE",
+   "bbox": [
+    11582,
+    888,
+    12948,
+    934
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "T.O.S. = EL. 100'-0\" U.N.O. ON PLAN. ELEVATIONS NOTED ARE TO TOP OF STEEL",
+   "bbox": [
+    11584,
+    813,
+    12948,
+    858
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "10. CONTRACTOR SHALL VERIFY ALL DIMENSIONS AND ELEVATIONS IN FIELD PRIOR",
+   "bbox": [
+    11499,
+    1474,
+    12948,
+    1517
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "DGE ANGLES AT ALL FLOOR OPENINGS. COORDINATE OPENINGS WITH ARCH. AND MEP",
+   "bbox": [
+    11922,
+    1347,
+    13395,
+    1389
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "0 GA. GALV. COMPOSITE DECK, 3-SPAN CONTINUOUS MIN., W/ 31/4\" LW CONCRETE",
+   "bbox": [
+    11920,
+    1217,
+    13320,
+    1261
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "HIGH-STRENGTH BOLTS: 3/4\"Ø ASTM F3125 GR. A325, TYPE N, SNUG-TIGHT U.N.C",
+   "bbox": [
+    11583,
+    611,
+    12948,
+    656
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "FLOOR DECK: 3\" x 20 GA. GALV. COMPOSITE DECK, 3-SPAN CONTINUOUS MIN., V",
+   "bbox": [
+    11581,
+    1218,
+    12948,
+    1261
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "11. SHOP DRAWINGS SHALL BE SUBMITTED FOR REVIEW PRIOR TO FABRICATION.",
+   "bbox": [
+    11496,
+    1547,
+    12910,
+    1591
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "STRUCTURAL STEEL W-SHAPES: ASTM A992, Fy = 50 KSI. HSS: ASTM A500 GR.",
+   "bbox": [
+    11584,
+    484,
+    12938,
+    528
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "PROVIDE L4x4x1/4 EDGE ANGLES AT ALL FLOOR OPENINGS. COORDINATE OPENIN",
+   "bbox": [
+    11582,
+    1347,
+    12948,
+    1390
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "L VERIFY ALL DIMENSIONS AND ELEVATIONS IN FIELD PRIOR TO FABRICATION.",
+   "bbox": [
+    11920,
+    1474,
+    13247,
+    1517
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "c=3/4\" INDICATES REQUIRED BEAM CAMBER. NO CAMBER INDICATED = NONE RE",
+   "bbox": [
+    11584,
+    1016,
+    12945,
+    1060
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W-SHAPES: ASTM A992, Fy = 50 KSI. HSS: ASTM A500 GR. C, Fy = 50 KSI.",
+   "bbox": [
+    11920,
+    483,
+    13186,
+    529
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "WELDING SHALL CONFORM TO AWS D1.1 USING E70XX ELECTRODES. ALL WELL",
+   "bbox": [
+    11581,
+    740,
+    12948,
+    782
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "BEAM CONNECTIONS NOT DETAILED SHALL BE SINGLE-PLATE SHEAR CONNECTI",
+   "bbox": [
+    11581,
+    1091,
+    12948,
+    1133
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "VERTICAL BRACED FRAME - SEE ELEVATIONS (BF-1, BF-2)",
+   "bbox": [
+    11933,
+    2186,
+    12931,
+    2232
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "DECK SPAN DIRECTION (SHADED END = DECK START)",
+   "bbox": [
+    11931,
+    2339,
+    12858,
+    2384
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "PLATES, ANGLES AND CHANNELS: ASTM A36 U.N.O.",
+   "bbox": [
+    11581,
+    539,
+    12466,
+    580
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "SUPERIMPOSED DEAD (CEILING / MEP / FINISHES)",
+   "bbox": [
+    11518,
+    7061,
+    12330,
+    7105
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "MEMBER TAKE-OFF - LEVEL 3 (FOR REFERENCE)",
+   "bbox": [
+    11497,
+    3203,
+    12800,
+    3262
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "DESIGNED FOR 1/2 UNIFORM LOAD CAPACITY.",
+   "bbox": [
+    11585,
+    1143,
+    12344,
+    1187
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "SECTION CUT: DETAIL NO. / SHEET NO.",
+   "bbox": [
+    11935,
+    2507,
+    12598,
+    2552
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "STEEL COLUMN - SEE COLUMN SCHEDULE",
+   "bbox": [
+    11932,
+    1883,
+    12679,
+    1927
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "BEAM: SIZE, (NO. OF STUDS), CAMBER",
+   "bbox": [
+    11936,
+    2035,
+    12598,
+    2079
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "SLAB + DECK SELF-WEIGHT (61/4\" LW)",
+   "bbox": [
+    11519,
+    6984,
+    12137,
+    7028
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "LIVE - CORRIDORS ABOVE FIRST FLOOR",
+   "bbox": [
+    11520,
+    7291,
+    12189,
+    7331
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "ONC. TOPPING W/ 6x6-W2.9xW2.9 WWF",
+   "bbox": [
+    3150,
+    6125,
+    3788,
+    6168
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "3/8 FILLET BOTH SIDES, PL TO BM.",
+   "bbox": [
+    6754,
+    6795,
+    7285,
+    6835
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "L4x4x1/4 EDGE ANGLE CONT. (TYP.)",
+   "bbox": [
+    5641,
+    2157,
+    6140,
+    2193
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "TYP. BRACE GUSSET @ BEAM/COLUMN",
+   "bbox": [
+    5047,
+    9041,
+    6221,
+    9108
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "- 31/4\" LW CONC. TOPPING W/ 6x6",
+   "bbox": [
+    2976,
+    6126,
+    3498,
+    6168
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "GENERAL STRUCTURAL STEEL NOTES",
+   "bbox": [
+    11496,
+    333,
+    12492,
+    386
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W21x44 GIRDER (BF-1), SEE PLAN",
+   "bbox": [
+    5831,
+    5914,
+    6384,
+    5957
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "3\" x 20 GA. GALV. COMPOSITE D",
+   "bbox": [
+    2993,
+    6258,
+    3498,
+    6299
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "- PL 3/4 GUSSET (A572 GR. 50)",
+   "bbox": [
+    6739,
+    6934,
+    7205,
+    6977
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "FICTIONAL FIRM - SAMPLE SHEET",
+   "bbox": [
+    14314,
+    616,
+    14855,
+    653
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "DESIGN LOADS - TYPICAL FLOOR",
+   "bbox": [
+    11494,
+    6757,
+    12396,
+    6815
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "HEADED STUDS @ EA. LOW FLUTE",
+   "bbox": [
+    3150,
+    5993,
+    3696,
+    6037
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "3/4\"Ø x 5\" HEADED STUDS @ EA",
+   "bbox": [
+    2994,
+    5994,
+    3498,
+    6038
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "123 EXAMPLE STREET, ANYTOWN",
+   "bbox": [
+    14280,
+    1273,
+    14858,
+    1317
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "W12x79 COLUMN, SEE SCHEDULE",
+   "bbox": [
+    5421,
+    8373,
+    5980,
+    8416
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "100 SAMPLE AVENUE, ANYTOWN",
+   "bbox": [
+    14300,
+    754,
+    14839,
+    796
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "AREA OF WORK SHOWN HATCHED",
+   "bbox": [
+    14330,
+    3401,
+    14811,
+    3438
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "TYP. SLAB EDGE @ SPANDREL",
+   "bbox": [
+    8343,
+    9039,
+    9259,
+    9109
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "T.O.S. EL. 100'-0\" U.N.O.",
+   "bbox": [
+    2976,
+    5503,
+    3447,
+    5551
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "SECTION - BEAM TO GIRDER",
+   "bbox": [
+    1587,
+    9042,
+    2489,
+    9105
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "T.O. SLAB EL. 100'-61/4\"",
+   "bbox": [
+    3898,
+    6641,
+    4267,
+    6683
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "3/4\"Ø x 5\" HEADED STUDS",
+   "bbox": [
+    8433,
+    5914,
+    8847,
+    5954
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "ISSUED FOR COORDINATION",
+   "bbox": [
+    14459,
+    3828,
+    14905,
+    3865
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SAMPLE OFFICE BUILDING",
+   "bbox": [
+    14142,
+    1080,
+    14993,
+    1143
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "SHALL BE PRETENSIONED.",
+   "bbox": [
+    11582,
+    666,
+    12038,
+    709
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "UNLESS NOTED OTHERWISE",
+   "bbox": [
+    12905,
+    5158,
+    13369,
+    5199
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "TOPPING (61/4\" TOTAL).",
+   "bbox": [
+    11585,
+    1272,
+    11975,
+    1315
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "31/4\" LW CONC. TOPPING",
+   "bbox": [
+    8432,
+    6034,
+    8824,
+    6076
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "3\" x 20 GA. COMP. DECK",
+   "bbox": [
+    8432,
+    6154,
+    8829,
+    6195
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "BENT PL 1/4 POUR STOP,",
+   "bbox": [
+    10217,
+    6654,
+    10598,
+    6693
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "(3) 3/4\"Ø A325-N BOLTS",
+   "bbox": [
+    3597,
+    7494,
+    3961,
+    7533
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "BRACED FRAME SCHEDULE",
+   "bbox": [
+    11496,
+    6217,
+    12223,
+    6273
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "EDGE OF SLAB (E.O.S.)",
+   "bbox": [
+    11931,
+    2994,
+    12336,
+    3041
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "@ 3\" O.C., STD. HOLES",
+   "bbox": [
+    3593,
+    7536,
+    3962,
+    7577
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "PL 3/8 x 41/2 x 0'-9\"",
+   "bbox": [
+    3594,
+    7734,
+    3883,
+    7773
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "T.O.S. EL. 99'-101/2\"",
+   "bbox": [
+    5445,
+    1256,
+    5714,
+    1293
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "LEVEL 3 FRAMING PLAN",
+   "bbox": [
+    2567,
+    5382,
+    3311,
+    5446
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "4-STOREY STEEL FRAME",
+   "bbox": [
+    14324,
+    1190,
+    14813,
+    1237
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "SCALE: 11/2\" = 1'-0\"",
+   "bbox": [
+    8349,
+    9163,
+    8720,
+    9209
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "SPACED ALONG MEMBER.",
+   "bbox": [
+    11584,
+    944,
+    12018,
+    983
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "SCALE: 11/2\" = 1'-0\"",
+   "bbox": [
+    1589,
+    9164,
+    1959,
+    9209
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "W12x53 COL. (PERIM.)",
+   "bbox": [
+    11518,
+    4271,
+    11901,
+    4313
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "3\"x20 GA. COMP. DECK",
+   "bbox": [
+    8551,
+    2114,
+    8888,
+    2148
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "3\"x20 GA. COMP. DECK",
+   "bbox": [
+    2803,
+    4314,
+    3139,
+    4348
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "SCALE: 1/8\" = 1'-0\"",
+   "bbox": [
+    2565,
+    5505,
+    2919,
+    5550
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "SCALE: 3/4\" = 1'-0\"",
+   "bbox": [
+    5050,
+    9164,
+    5395,
+    9209
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    4302,
+    3099,
+    4634,
+    3141
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    4302,
+    2571,
+    4642,
+    2612
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    2801,
+    3099,
+    3132,
+    3141
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    2805,
+    2571,
+    3135,
+    2612
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    7054,
+    3100,
+    7384,
+    3141
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    8554,
+    3100,
+    8884,
+    3141
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    7053,
+    2571,
+    7382,
+    2611
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W24x55 (36) c=11/4\"",
+   "bbox": [
+    8553,
+    2571,
+    8882,
+    2611
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "STAIR 2 - SEE ARCH.",
+   "bbox": [
+    5685,
+    1875,
+    6001,
+    1909
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "EXAMPLE STRUCTURAL",
+   "bbox": [
+    14321,
+    436,
+    14973,
+    493
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "88,680 (44.3 TONS)",
+   "bbox": [
+    12859,
+    4498,
+    13239,
+    4541
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "WELDED WIRE FABRIC",
+   "bbox": [
+    12903,
+    5278,
+    13269,
+    5319
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    4228,
+    1704,
+    4274,
+    2017
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    4728,
+    1704,
+    4774,
+    2017
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    3730,
+    3704,
+    3774,
+    4028
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    5230,
+    3704,
+    5274,
+    4028
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W18x35 (24) c=3/4\"",
+   "bbox": [
+    10030,
+    3704,
+    10074,
+    4017
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    3229,
+    1704,
+    3273,
+    2016
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    3730,
+    1705,
+    3774,
+    2017
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    2730,
+    1705,
+    2773,
+    2024
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    9478,
+    1706,
+    9522,
+    2015
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    4729,
+    3703,
+    4772,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    6480,
+    1703,
+    6523,
+    2017
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W18x35 (24) c=3/4\"",
+   "bbox": [
+    10030,
+    1703,
+    10073,
+    2017
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    3230,
+    3704,
+    3273,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    7481,
+    3706,
+    7523,
+    4027
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    8981,
+    3706,
+    9023,
+    4027
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W18x40 (24) c=3/4\"",
+   "bbox": [
+    5358,
+    1707,
+    5402,
+    2013
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W18x35 (24) c=3/4\"",
+   "bbox": [
+    9586,
+    1170,
+    9899,
+    1213
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    6480,
+    3705,
+    6523,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W18x35 (24) c=3/4\"",
+   "bbox": [
+    9586,
+    4498,
+    9899,
+    4541
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x65 COL. (INT.)",
+   "bbox": [
+    11519,
+    4195,
+    11847,
+    4236
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    7980,
+    3704,
+    8023,
+    4016
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    9479,
+    3705,
+    9522,
+    4017
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x31 (14) c=1/2\"",
+   "bbox": [
+    2230,
+    1704,
+    2272,
+    2022
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    4230,
+    3704,
+    4272,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (20) c=3/4\"",
+   "bbox": [
+    6063,
+    3705,
+    6105,
+    4018
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    7981,
+    1703,
+    8023,
+    2015
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (20) c=3/4\"",
+   "bbox": [
+    5647,
+    3705,
+    5689,
+    4016
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W16x31 (14) c=1/2\"",
+   "bbox": [
+    10510,
+    3704,
+    10552,
+    4015
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    6981,
+    1704,
+    7023,
+    2014
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    6981,
+    3706,
+    7023,
+    4016
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    8481,
+    3706,
+    8523,
+    4016
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x26 (16) c=1/2\"",
+   "bbox": [
+    5231,
+    1704,
+    5272,
+    2016
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W21x44 (26) c=3/4\"",
+   "bbox": [
+    9587,
+    2571,
+    9898,
+    2612
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    2731,
+    3705,
+    2772,
+    4016
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    7481,
+    1704,
+    7522,
+    2014
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    8981,
+    1704,
+    9022,
+    2013
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W21x44 (26) c=3/4\"",
+   "bbox": [
+    9587,
+    3100,
+    9899,
+    3140
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    8481,
+    1704,
+    8521,
+    2012
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W18x40 (24) c=3/4\"",
+   "bbox": [
+    6282,
+    1704,
+    6321,
+    2012
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "1/8\" CLR. EA. SIDE",
+   "bbox": [
+    7034,
+    7137,
+    7318,
+    7175
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "T.O.S. EL. 100'-0\"",
+   "bbox": [
+    3905,
+    6956,
+    4176,
+    6994
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "W16x26 (22) c=3/4\"",
+   "bbox": [
+    11545,
+    2025,
+    11813,
+    2061
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "TEL. 000-000-0000",
+   "bbox": [
+    14408,
+    822,
+    14728,
+    863
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "ISSUED FOR TENDER",
+   "bbox": [
+    14459,
+    4004,
+    14792,
+    4041
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "HSS7x7x1/2 (BF-2)",
+   "bbox": [
+    11520,
+    4348,
+    11817,
+    4389
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "HSS6x6x3/8 (BF-1)",
+   "bbox": [
+    11519,
+    4423,
+    11815,
+    4464
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "ISSUED FOR REVIEW",
+   "bbox": [
+    14459,
+    3917,
+    14787,
+    3953
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "@ 4'-0\" O.C. MAX.",
+   "bbox": [
+    10220,
+    7357,
+    10500,
+    7397
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "W/ 31/4\" LW CONC.",
+   "bbox": [
+    8586,
+    2156,
+    8847,
+    2194
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "E.O.S. 1'-0\" FROM",
+   "bbox": [
+    2317,
+    1443,
+    2579,
+    1479
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W/ 31/4\" LW CONC.",
+   "bbox": [
+    2839,
+    4358,
+    3096,
+    4393
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "ENGINEERING LTD.",
+   "bbox": [
+    14318,
+    525,
+    14839,
+    581
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "DETAIL REFERENCE",
+   "bbox": [
+    11937,
+    2674,
+    12274,
+    2718
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "COLUMN GRID LINE",
+   "bbox": [
+    11936,
+    2844,
+    12274,
+    2887
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W21x44 (28) c=1\"",
+   "bbox": [
+    4316,
+    4497,
+    4614,
+    4541
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W21×44 (28) c=1\"",
+   "bbox": [
+    2818,
+    4498,
+    3118,
+    4541
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "W21×44 (28) c=1\"",
+   "bbox": [
+    5692,
+    4498,
+    5992,
+    4541
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "W12×79 COL. (BF)",
+   "bbox": [
+    11518,
+    4118,
+    11827,
+    4159
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W21x44 (28) c=1\"",
+   "bbox": [
+    2816,
+    1170,
+    3117,
+    1212
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W21x44 (28) c=1\"",
+   "bbox": [
+    8569,
+    4498,
+    8863,
+    4541
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W21x44 (28) c=1\"",
+   "bbox": [
+    4317,
+    1170,
+    4616,
+    1212
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W21x50 (30) c=1\"",
+   "bbox": [
+    5692,
+    3100,
+    5991,
+    3141
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W21×44 (28) c=1\"",
+   "bbox": [
+    8569,
+    1171,
+    8868,
+    1212
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W21×44 (28) c=1\"",
+   "bbox": [
+    5484,
+    1170,
+    5778,
+    1211
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W21×50 (30) c=1\"",
+   "bbox": [
+    5695,
+    2571,
+    5992,
+    2611
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "SLOT HSS FOR PL,",
+   "bbox": [
+    7034,
+    7094,
+    7321,
+    7133
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "HSS6x6x3/8 BRACE",
+   "bbox": [
+    7034,
+    7375,
+    7328,
+    7413
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "1 / A-B, 7 / C-D",
+   "bbox": [
+    11839,
+    6522,
+    12096,
+    6565
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "COLUMN SCHEDULE",
+   "bbox": [
+    11496,
+    5477,
+    12030,
+    5533
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W21x44 SPANDREL",
+   "bbox": [
+    10216,
+    7656,
+    10527,
+    7694
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "COPE TOP FLANGE",
+   "bbox": [
+    3596,
+    7075,
+    3897,
+    7112
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "L3x3x1/4 KICKER",
+   "bbox": [
+    10217,
+    7316,
+    10472,
+    7353
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "C/L GRID (TYP.)",
+   "bbox": [
+    2319,
+    1481,
+    2537,
+    1519
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "ARCH D (36x24)",
+   "bbox": [
+    14589,
+    5009,
+    14963,
+    5062
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SEE ELEV. BF-1",
+   "bbox": [
+    7037,
+    7416,
+    7276,
+    7454
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "3/16 / 11/2-12",
+   "bbox": [
+    9821,
+    8098,
+    10048,
+    8136
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "ABBREVIATIONS",
+   "bbox": [
+    11494,
+    4777,
+    11933,
+    4833
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "LIVE - OFFICE",
+   "bbox": [
+    11520,
+    7214,
+    11766,
+    7254
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "W24x55 GIRDER",
+   "bbox": [
+    1416,
+    8336,
+    1681,
+    8372
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "LIVE - STAIRS",
+   "bbox": [
+    11519,
+    7368,
+    11763,
+    7407
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "FRAMING PLAN",
+   "bbox": [
+    14288,
+    5490,
+    14845,
+    5563
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CONSTRUCTION",
+   "bbox": [
+    14375,
+    2081,
+    14758,
+    2131
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "BRACED FRAME",
+   "bbox": [
+    13096,
+    5630,
+    13394,
+    5670
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "EDGE OF SLAB",
+   "bbox": [
+    11742,
+    5099,
+    11989,
+    5139
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "TOP OF STEEL",
+   "bbox": [
+    12901,
+    5039,
+    13135,
+    5078
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "AND DETAILS",
+   "bbox": [
+    14322,
+    5624,
+    14810,
+    5694
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "WEIGHT (LB)",
+   "bbox": [
+    12859,
+    3355,
+    13102,
+    3403
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "LENGTH (FT)",
+   "bbox": [
+    12399,
+    3357,
+    12641,
+    3403
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "LIGHTWEIGHT",
+   "bbox": [
+    11742,
+    5218,
+    11981,
+    5258
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x31 (14)",
+   "bbox": [
+    10510,
+    1756,
+    10553,
+    1966
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W16x26 BEAM",
+   "bbox": [
+    3597,
+    7274,
+    3833,
+    7312
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "W21x44 (28)",
+   "bbox": [
+    7113,
+    4499,
+    7322,
+    4541
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "W16x31 (14)",
+   "bbox": [
+    2232,
+    3756,
+    2273,
+    3968
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "DESCRIPTION",
+   "bbox": [
+    14460,
+    3742,
+    14697,
+    3777
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W21×44 (28)",
+   "bbox": [
+    7113,
+    1172,
+    7323,
+    1211
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "A & D / 4-5",
+   "bbox": [
+    11839,
+    6446,
+    12029,
+    6487
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "SHEET TITLE",
+   "bbox": [
+    13960,
+    5158,
+    14161,
+    5194
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DESIGNED BY",
+   "bbox": [
+    13948,
+    4550,
+    14137,
+    4583
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PROJECT NO.",
+   "bbox": [
+    14599,
+    4741,
+    14777,
+    4776
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2026-10-26",
+   "bbox": [
+    14597,
+    4627,
+    14860,
+    4673
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CONTINUOUS",
+   "bbox": [
+    11742,
+    5037,
+    11970,
+    5079
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    5644,
+    2757,
+    5689,
+    2958
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    2231,
+    2761,
+    2273,
+    2959
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    10511,
+    2761,
+    10553,
+    2959
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    9480,
+    2757,
+    9521,
+    2959
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "WORK POINT",
+   "bbox": [
+    12904,
+    5219,
+    13121,
+    5257
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CENTERLINE",
+   "bbox": [
+    11742,
+    4920,
+    11953,
+    4959
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    2731,
+    2754,
+    2771,
+    2959
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    3231,
+    2763,
+    3273,
+    2958
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    6482,
+    2762,
+    6523,
+    2959
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    6981,
+    2764,
+    7022,
+    2957
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    8481,
+    2764,
+    8522,
+    2957
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    3732,
+    2761,
+    3772,
+    2957
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    4732,
+    2763,
+    4772,
+    2959
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    7982,
+    2763,
+    8022,
+    2959
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    10031,
+    2763,
+    10071,
+    2959
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W12×19 (8)",
+   "bbox": [
+    5535,
+    2321,
+    5726,
+    2362
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    6065,
+    2764,
+    6105,
+    2959
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    4231,
+    2764,
+    4271,
+    2958
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    5232,
+    2764,
+    5272,
+    2958
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    7481,
+    2764,
+    7521,
+    2958
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W10x12 (6)",
+   "bbox": [
+    8981,
+    2764,
+    9021,
+    2958
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "W12×19 (8)",
+   "bbox": [
+    5536,
+    1349,
+    5725,
+    1390
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "HSS7x7x1/2",
+   "bbox": [
+    12220,
+    6523,
+    12403,
+    6564
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "PARTITIONS",
+   "bbox": [
+    11521,
+    7140,
+    11716,
+    7178
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "HSS6x6x3/8",
+   "bbox": [
+    12219,
+    6447,
+    12403,
+    6487
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "W10x12 (4)",
+   "bbox": [
+    6062,
+    1236,
+    6241,
+    1277
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "W10x12 (4)",
+   "bbox": [
+    6062,
+    2412,
+    6242,
+    2450
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "2026-09-14",
+   "bbox": [
+    14098,
+    3829,
+    14287,
+    3865
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2026-10-26",
+   "bbox": [
+    14098,
+    4005,
+    14287,
+    4041
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2026-10-05",
+   "bbox": [
+    14099,
+    3917,
+    14283,
+    3953
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CHECKED BY",
+   "bbox": [
+    14594,
+    4357,
+    14778,
+    4391
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SHEET SIZE",
+   "bbox": [
+    14594,
+    4932,
+    14763,
+    4969
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PL TO FLG.",
+   "bbox": [
+    10164,
+    8077,
+    10325,
+    8114
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "PL TO COL.",
+   "bbox": [
+    5965,
+    7478,
+    6130,
+    7513
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "S-201.dwg",
+   "bbox": [
+    13947,
+    5011,
+    14191,
+    5064
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PERIMETER",
+   "bbox": [
+    12057,
+    5631,
+    12272,
+    5670
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DRAWINGS.",
+   "bbox": [
+    11585,
+    1402,
+    11787,
+    1442
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "ON CENTER",
+   "bbox": [
+    11741,
+    5279,
+    11941,
+    5318
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "ELEVATION",
+   "bbox": [
+    11744,
+    5160,
+    11929,
+    5199
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "SHEAR TAB",
+   "bbox": [
+    3594,
+    7776,
+    3779,
+    7815
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "ROOF - L4",
+   "bbox": [
+    11520,
+    5708,
+    11694,
+    5746
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "SHEET NO.",
+   "bbox": [
+    13965,
+    5859,
+    14129,
+    5895
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "REVISIONS",
+   "bbox": [
+    13965,
+    3595,
+    14132,
+    3629
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "L2 - FDN.",
+   "bbox": [
+    11520,
+    5937,
+    11676,
+    5973
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "AS NOTED",
+   "bbox": [
+    13944,
+    4819,
+    14184,
+    4865
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2026-041",
+   "bbox": [
+    14595,
+    4818,
+    14816,
+    4865
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "167'-0\"\"",
+   "bbox": [
+    6323,
+    617,
+    6477,
+    664
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "INTERIOR",
+   "bbox": [
+    12578,
+    5631,
+    12760,
+    5670
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "1'-0\" 11",
+   "bbox": [
+    2074,
+    4623,
+    2242,
+    4665
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "STANDARD",
+   "bbox": [
+    12905,
+    4981,
+    13087,
+    5018
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "SEE PLAN",
+   "bbox": [
+    10216,
+    7697,
+    10376,
+    7735
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "SEE PLAN",
+   "bbox": [
+    3596,
+    7318,
+    3755,
+    7355
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "AS REQ'D",
+   "bbox": [
+    3596,
+    7119,
+    3751,
+    7155
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "SEE PLAN",
+   "bbox": [
+    1416,
+    8379,
+    1574,
+    8414
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "KEY PLAN",
+   "bbox": [
+    13966,
+    2554,
+    14116,
+    2590
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "(D SIM.)",
+   "bbox": [
+    9493,
+    5949,
+    9618,
+    5989
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "4 PLACES",
+   "bbox": [
+    5530,
+    7758,
+    5675,
+    7792
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "CAD FILE",
+   "bbox": [
+    13944,
+    4933,
+    14076,
+    4967
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DRAWN BY",
+   "bbox": [
+    13949,
+    4359,
+    14098,
+    4388
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "LEVEL 3",
+   "bbox": [
+    14424,
+    5362,
+    14715,
+    5430
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "NOT FOR",
+   "bbox": [
+    14457,
+    1990,
+    14677,
+    2036
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "OPENING",
+   "bbox": [
+    5751,
+    1807,
+    5935,
+    1845
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "CHEVRON",
+   "bbox": [
+    12819,
+    6524,
+    12987,
+    6562
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "CHEVRON",
+   "bbox": [
+    12821,
+    6448,
+    12988,
+    6486
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W14x120",
+   "bbox": [
+    13098,
+    5936,
+    13260,
+    5974
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CONFIG.",
+   "bbox": [
+    12820,
+    6372,
+    12973,
+    6410
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2,341.5",
+   "bbox": [
+    12399,
+    4500,
+    12544,
+    4540
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "167'-0\"",
+   "bbox": [
+    6324,
+    4868,
+    6465,
+    4909
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "TYPICAL",
+   "bbox": [
+    12904,
+    5099,
+    13045,
+    5139
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PROJECT",
+   "bbox": [
+    13962,
+    973,
+    14100,
+    1012
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "3/S-201",
+   "bbox": [
+    13319,
+    6447,
+    13450,
+    6486
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "L3 - L2",
+   "bbox": [
+    11519,
+    5860,
+    11639,
+    5897
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "L4 - L3",
+   "bbox": [
+    11521,
+    5784,
+    11639,
+    5820
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "SAMPLE",
+   "bbox": [
+    14416,
+    1857,
+    14716,
+    1924
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "LEGEND",
+   "bbox": [
+    11494,
+    1702,
+    11715,
+    1756
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "W12x79",
+   "bbox": [
+    12057,
+    5934,
+    12199,
+    5975
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x79",
+   "bbox": [
+    12577,
+    5859,
+    12722,
+    5899
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W10x12",
+   "bbox": [
+    11519,
+    4043,
+    11663,
+    4083
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x26",
+   "bbox": [
+    11519,
+    3890,
+    11662,
+    3930
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W16x31",
+   "bbox": [
+    11521,
+    3815,
+    11663,
+    3855
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x79",
+   "bbox": [
+    13099,
+    5783,
+    13241,
+    5823
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x19",
+   "bbox": [
+    11517,
+    3966,
+    11662,
+    4005
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x53",
+   "bbox": [
+    12577,
+    5707,
+    12722,
+    5746
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x65",
+   "bbox": [
+    12577,
+    5783,
+    12722,
+    5822
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W18x35",
+   "bbox": [
+    11519,
+    3739,
+    11662,
+    3778
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x65",
+   "bbox": [
+    12056,
+    5859,
+    12199,
+    5898
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x96",
+   "bbox": [
+    13099,
+    5859,
+    13242,
+    5898
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W10x49",
+   "bbox": [
+    12058,
+    5707,
+    12200,
+    5746
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x96",
+   "bbox": [
+    12577,
+    5936,
+    12722,
+    5974
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W21x50",
+   "bbox": [
+    11518,
+    3511,
+    11659,
+    3550
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W21x44",
+   "bbox": [
+    11519,
+    3588,
+    11663,
+    3626
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W18x40",
+   "bbox": [
+    11519,
+    3664,
+    11663,
+    3702
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W24x55",
+   "bbox": [
+    11516,
+    3436,
+    11662,
+    3473
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "W12x53",
+   "bbox": [
+    12059,
+    5784,
+    12201,
+    5822
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W12x65",
+   "bbox": [
+    13099,
+    5707,
+    13239,
+    5745
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    4411,
+    4696,
+    4522,
+    4743
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "25'-0\"",
+   "bbox": [
+    5785,
+    4699,
+    5900,
+    4744
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "22'-0\"",
+   "bbox": [
+    9960,
+    4699,
+    10075,
+    4744
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "13,746",
+   "bbox": [
+    12857,
+    3587,
+    12982,
+    3628
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "U.N.O.",
+   "bbox": [
+    12656,
+    5158,
+    12779,
+    5198
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "68'-0\"",
+   "bbox": [
+    1758,
+    2800,
+    1800,
+    2917
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "DETAIL",
+   "bbox": [
+    13322,
+    6372,
+    13451,
+    6410
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    7159,
+    4699,
+    7272,
+    4742
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    8659,
+    4699,
+    8772,
+    4742
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "12,408",
+   "bbox": [
+    12860,
+    3435,
+    12981,
+    3475
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "19,495",
+   "bbox": [
+    12860,
+    3891,
+    12981,
+    3931
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "E.O.S.",
+   "bbox": [
+    11492,
+    5100,
+    11615,
+    5139
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "68'-0\"",
+   "bbox": [
+    10978,
+    2802,
+    11020,
+    2916
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "22'-0\"",
+   "bbox": [
+    9960,
+    771,
+    10073,
+    813
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    2912,
+    4700,
+    3022,
+    4742
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    4412,
+    773,
+    4524,
+    813
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "25'-0\"",
+   "bbox": [
+    5789,
+    773,
+    5897,
+    814
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "T.O.S.",
+   "bbox": [
+    12655,
+    5039,
+    12764,
+    5079
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "28'-0\"",
+   "bbox": [
+    10819,
+    1804,
+    10857,
+    1917
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "28'-0\"",
+   "bbox": [
+    10820,
+    3805,
+    10857,
+    3921
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    2913,
+    773,
+    3023,
+    812
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    8660,
+    774,
+    8772,
+    812
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "30'-0\"",
+   "bbox": [
+    7161,
+    774,
+    7272,
+    812
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "28'-0\"",
+   "bbox": [
+    1922,
+    1805,
+    1961,
+    1913
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "28'-0\"",
+   "bbox": [
+    1922,
+    3805,
+    1961,
+    3910
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "12'-0\"",
+   "bbox": [
+    1923,
+    2805,
+    1961,
+    2910
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "12'-0\"",
+   "bbox": [
+    10819,
+    2805,
+    10856,
+    2912
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    2920,
+    938,
+    3018,
+    976
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    9170,
+    938,
+    9268,
+    976
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    2421,
+    938,
+    2518,
+    976
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    7170,
+    937,
+    7266,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    8172,
+    937,
+    8267,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    7670,
+    938,
+    7767,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "11'-0\"",
+   "bbox": [
+    10247,
+    938,
+    10341,
+    976
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    3421,
+    937,
+    3514,
+    975
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    4921,
+    937,
+    5014,
+    975
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    4423,
+    938,
+    4518,
+    975
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    6670,
+    939,
+    6767,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    3923,
+    937,
+    4014,
+    975
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "11'-0\"",
+   "bbox": [
+    9695,
+    938,
+    9788,
+    975
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "10'-0\"",
+   "bbox": [
+    8670,
+    939,
+    8765,
+    975
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "15'-0\"",
+   "bbox": [
+    6890,
+    7688,
+    6976,
+    7721
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "13'-0\"",
+   "bbox": [
+    7060,
+    7812,
+    7146,
+    7845
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "E.O.S.",
+   "bbox": [
+    10021,
+    6599,
+    10112,
+    6630
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    14199,
+    7476,
+    14940,
+    7702
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "BRACE",
+   "bbox": [
+    12221,
+    6371,
+    12348,
+    6409
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "TOTAL",
+   "bbox": [
+    11520,
+    4499,
+    11643,
+    4537
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CONT.",
+   "bbox": [
+    11494,
+    5038,
+    11609,
+    5078
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "CLEAR",
+   "bbox": [
+    11741,
+    4980,
+    11856,
+    5018
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "2,420",
+   "bbox": [
+    12856,
+    4043,
+    12960,
+    4083
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "3,213",
+   "bbox": [
+    12859,
+    4346,
+    12960,
+    4387
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "3,249",
+   "bbox": [
+    12858,
+    3815,
+    12961,
+    3855
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2,320",
+   "bbox": [
+    12860,
+    3511,
+    12960,
+    3552
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "312.4",
+   "bbox": [
+    12399,
+    3587,
+    12501,
+    3627
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "LB/FT",
+   "bbox": [
+    13339,
+    3361,
+    13449,
+    3398
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PLATE",
+   "bbox": [
+    12904,
+    4919,
+    13011,
+    4957
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2,168",
+   "bbox": [
+    12860,
+    3664,
+    12961,
+    3704
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "130.0",
+   "bbox": [
+    12397,
+    4195,
+    12501,
+    4233
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "8,216",
+   "bbox": [
+    12860,
+    4120,
+    12961,
+    4159
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "225.6",
+   "bbox": [
+    12399,
+    3434,
+    12502,
+    3472
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "201.7",
+   "bbox": [
+    12396,
+    4044,
+    12499,
+    4082
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "6,890",
+   "bbox": [
+    12860,
+    4272,
+    12960,
+    4311
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "2,182",
+   "bbox": [
+    12858,
+    4424,
+    12960,
+    4462
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "3,311",
+   "bbox": [
+    12859,
+    3739,
+    12955,
+    3779
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "27.48",
+   "bbox": [
+    13337,
+    4424,
+    13438,
+    4462
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CONT.",
+   "bbox": [
+    10214,
+    6697,
+    10315,
+    6735
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "749.8",
+   "bbox": [
+    12400,
+    3890,
+    12498,
+    3929
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "104.0",
+   "bbox": [
+    12399,
+    4119,
+    12497,
+    4158
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "104.8",
+   "bbox": [
+    12400,
+    3815,
+    12500,
+    3853
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "130.0",
+   "bbox": [
+    12400,
+    4271,
+    12499,
+    4309
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "8,450",
+   "bbox": [
+    12860,
+    4197,
+    12959,
+    4235
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "NORTH",
+   "bbox": [
+    9848,
+    5518,
+    9957,
+    5552
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "42.05",
+   "bbox": [
+    13341,
+    4348,
+    13442,
+    4384
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "E70XX",
+   "bbox": [
+    2764,
+    8239,
+    2865,
+    8272
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "SCALE",
+   "bbox": [
+    13948,
+    4743,
+    14042,
+    4775
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "4'-0\"",
+   "bbox": [
+    6327,
+    938,
+    6410,
+    974
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "1'-0\"",
+   "bbox": [
+    9660,
+    6287,
+    9737,
+    6324
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    2369,
+    5509,
+    2454,
+    5540
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    8147,
+    9168,
+    8229,
+    9200
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    8177,
+    4192,
+    8261,
+    4223
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "8'-6\"",
+   "bbox": [
+    5594,
+    939,
+    5669,
+    972
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "4'-0\"",
+   "bbox": [
+    5280,
+    940,
+    5357,
+    972
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "8'-6\"",
+   "bbox": [
+    6022,
+    940,
+    6094,
+    974
+   ],
+   "tile_index": 1
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    4851,
+    9169,
+    4930,
+    9199
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    11698,
+    2543,
+    11779,
+    2572
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    1390,
+    9170,
+    1468,
+    9200
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    11636,
+    2712,
+    11717,
+    2740
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    6754,
+    4148,
+    6828,
+    4178
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "S-201",
+   "bbox": [
+    4180,
+    3463,
+    4256,
+    3491
+   ],
+   "tile_index": 6
+  },
+  {
+   "text": "61/4\"",
+   "bbox": [
+    8271,
+    6793,
+    8300,
+    6858
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "61/4\"",
+   "bbox": [
+    1390,
+    6791,
+    1418,
+    6856
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "-- >",
+   "bbox": [
+    10880,
+    4539,
+    11003,
+    4576
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "MARK",
+   "bbox": [
+    11519,
+    6371,
+    11635,
+    6410
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "Z.Z.",
+   "bbox": [
+    13944,
+    4627,
+    14044,
+    4670
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "5/16",
+   "bbox": [
+    5861,
+    7740,
+    5966,
+    7777
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "LOAD",
+   "bbox": [
+    11519,
+    6912,
+    11623,
+    6948
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "SIZE",
+   "bbox": [
+    11517,
+    3359,
+    11610,
+    3398
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "GRID",
+   "bbox": [
+    11841,
+    6372,
+    11936,
+    6410
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "STD.",
+   "bbox": [
+    12655,
+    4980,
+    12747,
+    5018
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "X.X.",
+   "bbox": [
+    13948,
+    4439,
+    14039,
+    4477
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "TYP.",
+   "bbox": [
+    12655,
+    5099,
+    12737,
+    5140
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "CLR.",
+   "bbox": [
+    11498,
+    4980,
+    11585,
+    5018
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "Y.Y.",
+   "bbox": [
+    14599,
+    4436,
+    14674,
+    4480
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "TIER",
+   "bbox": [
+    11518,
+    5631,
+    11606,
+    5668
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "76.4",
+   "bbox": [
+    12399,
+    4347,
+    12481,
+    4385
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W.P.",
+   "bbox": [
+    12655,
+    5219,
+    12737,
+    5257
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "79.4",
+   "bbox": [
+    12400,
+    4423,
+    12480,
+    4461
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "5/16",
+   "bbox": [
+    5856,
+    7779,
+    5951,
+    7811
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "46.4",
+   "bbox": [
+    12401,
+    3511,
+    12483,
+    3548
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "94.6",
+   "bbox": [
+    12399,
+    3739,
+    12476,
+    3778
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "54.2",
+   "bbox": [
+    12399,
+    3664,
+    12478,
+    3702
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "DATE",
+   "bbox": [
+    14101,
+    3743,
+    14194,
+    3775
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "BF-1",
+   "bbox": [
+    7176,
+    4288,
+    7260,
+    4323
+   ],
+   "tile_index": 7
+  },
+  {
+   "text": "BF-2",
+   "bbox": [
+    10276,
+    1439,
+    10362,
+    1473
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "BF-2",
+   "bbox": [
+    2426,
+    3438,
+    2511,
+    3472
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "O.C.",
+   "bbox": [
+    11498,
+    5280,
+    11573,
+    5318
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "SIM.",
+   "bbox": [
+    13320,
+    6525,
+    13397,
+    6562
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "BF-2",
+   "bbox": [
+    11522,
+    6525,
+    11597,
+    6562
+   ],
+   "tile_index": 13
+  },
+  {
+   "text": "32.2",
+   "bbox": [
+    12400,
+    3968,
+    12477,
+    4004
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "PLAN",
+   "bbox": [
+    9850,
+    5478,
+    9929,
+    5512
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "BF-1",
+   "bbox": [
+    7180,
+    1389,
+    7261,
+    1422
+   ],
+   "tile_index": 2
+  },
+  {
+   "text": "BF-1",
+   "bbox": [
+    11519,
+    6449,
+    11597,
+    6483
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "SEAL",
+   "bbox": [
+    13962,
+    1457,
+    14043,
+    1489
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "DATE",
+   "bbox": [
+    14598,
+    4550,
+    14675,
+    4583
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "W.P.",
+   "bbox": [
+    5156,
+    6424,
+    5214,
+    6455
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "WWF",
+   "bbox": [
+    12655,
+    5278,
+    12757,
+    5318
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "QTY",
+   "bbox": [
+    12038,
+    3358,
+    12119,
+    3402
+   ],
+   "tile_index": 4
+  },
+  {
+   "text": "PSF",
+   "bbox": [
+    12962,
+    6913,
+    13034,
+    6949
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "612",
+   "bbox": [
+    12860,
+    3968,
+    12929,
+    4005
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "100",
+   "bbox": [
+    12961,
+    7368,
+    13028,
+    7405
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "C/L",
+   "bbox": [
+    11498,
+    4922,
+    11558,
+    4958
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "EL.",
+   "bbox": [
+    11495,
+    5161,
+    11553,
+    5198
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "NO.",
+   "bbox": [
+    13942,
+    3743,
+    14005,
+    3775
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": ": D",
+   "bbox": [
+    2639,
+    6916,
+    2685,
+    6951
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": ". D",
+   "bbox": [
+    8869,
+    6929,
+    8907,
+    6954
+   ],
+   "tile_index": 12
+  },
+  {
+   "text": "3/8",
+   "bbox": [
+    5661,
+    7502,
+    5691,
+    7531
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "1/4",
+   "bbox": [
+    2439,
+    8262,
+    2469,
+    8289
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "1/4",
+   "bbox": [
+    2444,
+    8222,
+    2470,
+    8252
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "3/8",
+   "bbox": [
+    5664,
+    7463,
+    5690,
+    7491
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "-X",
+   "bbox": [
+    2196,
+    4896,
+    2235,
+    4965
+   ],
+   "tile_index": 5
+  },
+  {
+   "text": "-X",
+   "bbox": [
+    10549,
+    4902,
+    10587,
+    4965
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "X-",
+   "bbox": [
+    2195,
+    647,
+    2240,
+    700
+   ],
+   "tile_index": 0
+  },
+  {
+   "text": "LW",
+   "bbox": [
+    11495,
+    5219,
+    11557,
+    5257
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "11",
+   "bbox": [
+    6139,
+    7251,
+    6181,
+    7302
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "40",
+   "bbox": [
+    13339,
+    3664,
+    13389,
+    3701
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "PL",
+   "bbox": [
+    12657,
+    4921,
+    12707,
+    4957
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "35",
+   "bbox": [
+    13339,
+    3741,
+    13386,
+    3778
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "53",
+   "bbox": [
+    13340,
+    4272,
+    13382,
+    4312
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "79",
+   "bbox": [
+    13343,
+    4118,
+    13387,
+    4156
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "47",
+   "bbox": [
+    12961,
+    6989,
+    13007,
+    7025
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "10",
+   "bbox": [
+    12039,
+    4196,
+    12084,
+    4232
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "55",
+   "bbox": [
+    13340,
+    3437,
+    13385,
+    3473
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "20",
+   "bbox": [
+    12963,
+    7066,
+    13008,
+    7102
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "20",
+   "bbox": [
+    12039,
+    4045,
+    12085,
+    4080
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "10",
+   "bbox": [
+    12040,
+    4273,
+    12084,
+    4309
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "12",
+   "bbox": [
+    12040,
+    3590,
+    12085,
+    3625
+   ],
+   "tile_index": 8
+  },
+  {
+   "text": "31",
+   "bbox": [
+    13339,
+    3816,
+    13382,
+    3852
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "19",
+   "bbox": [
+    13341,
+    3969,
+    13386,
+    4003
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "26",
+   "bbox": [
+    13340,
+    3894,
+    13382,
+    3929
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "12",
+   "bbox": [
+    13340,
+    4045,
+    13382,
+    4080
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "65",
+   "bbox": [
+    13343,
+    4198,
+    13386,
+    4232
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "80",
+   "bbox": [
+    12963,
+    7294,
+    13005,
+    7328
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "50",
+   "bbox": [
+    13342,
+    3513,
+    13382,
+    3548
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "7.",
+   "bbox": [
+    11500,
+    1093,
+    11537,
+    1130
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "44",
+   "bbox": [
+    13344,
+    3588,
+    13382,
+    3624
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "28",
+   "bbox": [
+    12042,
+    3895,
+    12086,
+    3926
+   ],
+   "tile_index": 9
+  },
+  {
+   "text": "15",
+   "bbox": [
+    12962,
+    7141,
+    12999,
+    7177
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "50",
+   "bbox": [
+    12962,
+    7217,
+    12999,
+    7252
+   ],
+   "tile_index": 14
+  },
+  {
+   "text": "10",
+   "bbox": [
+    5989,
+    7781,
+    6029,
+    7813
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "10",
+   "bbox": [
+    5988,
+    7739,
+    6028,
+    7769
+   ],
+   "tile_index": 11
+  },
+  {
+   "text": "2.",
+   "bbox": [
+    11500,
+    616,
+    11532,
+    651
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "3.",
+   "bbox": [
+    11499,
+    745,
+    11533,
+    777
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "9.",
+   "bbox": [
+    11499,
+    1349,
+    11530,
+    1384
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "4.",
+   "bbox": [
+    11500,
+    820,
+    11530,
+    853
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "5.",
+   "bbox": [
+    11501,
+    893,
+    11531,
+    926
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "1.",
+   "bbox": [
+    11503,
+    489,
+    11530,
+    525
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "8.",
+   "bbox": [
+    11499,
+    1223,
+    11526,
+    1256
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "6.",
+   "bbox": [
+    11503,
+    1022,
+    11528,
+    1054
+   ],
+   "tile_index": 3
+  },
+  {
+   "text": "·D",
+   "bbox": [
+    2037,
+    6950,
+    2068,
+    6970
+   ],
+   "tile_index": 10
+  },
+  {
+   "text": "1.",
+   "bbox": [
+    9077,
+    6693,
+    9103,
+    6714
+   ],
+   "tile_index": 12
+  }
+ ]
+}

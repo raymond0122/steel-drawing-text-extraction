@@ -9,7 +9,11 @@ from typing import NamedTuple
 # per request changes. On a 14,400 x 9,600 px test sheet, tiles of 2,000 to 4,500 px read
 # equally well and larger ones read worse (docs/DESIGN.md), so 3,500 px leaves a margin.
 TILE_SIZE = 3500
-OVERLAP = 300
+# A text no longer than the overlap that crosses a tile edge is always whole in one of the two
+# tiles. The longest beam label on the test sheet (400 dpi) is 342 px, so 350 px keeps every label
+# whole; text is longer at a higher resolution, which is why the overlap can be set per run.
+OVERLAP = 350
+MAX_OVERLAP = 1_000
 TILE_GROWTH = 1.15  # when the grid has more than max_tiles tiles
 MAX_TILE_SIZE = 10_000  # Azure Document Intelligence rejects an image over 10,000 px on a side
 DEFAULT_MAX_TILES = 20
@@ -59,16 +63,20 @@ def _tile_starts(side: int, tile_size: int, stride: int) -> list[int]:
     return [*range(0, side - tile_size, stride), side - tile_size]
 
 
-def choose_tiling(width: int, height: int, *, max_tiles: int = DEFAULT_MAX_TILES) -> TilingChoice:
-    """Pick the tile size and overlap for a page.
+def choose_tiling(
+    width: int, height: int, *, max_tiles: int = DEFAULT_MAX_TILES, overlap: int = OVERLAP
+) -> TilingChoice:
+    """Pick the tile size for a page.
 
     A page that fits in one TILE_SIZE tile is sent whole. A larger one is cut into
-    TILE_SIZE tiles that overlap by OVERLAP px. If that grid would have more than
+    TILE_SIZE tiles that overlap by `overlap` px. If that grid would have more than
     max_tiles tiles, the tile size grows by 15% until it fits, but never past
     MAX_TILE_SIZE: a page that still needs more tiles raises TileLimitError.
     """
     if max_tiles < 1:
         raise TileLimitError("max_tiles must be at least 1")
+    if not 0 <= overlap <= MAX_OVERLAP:
+        raise ValueError(f"the overlap must be from 0 to {MAX_OVERLAP:,} px")
     side = max(width, height)
     if side <= TILE_SIZE:
         reason = f"The longest side is {side:,} px, which fits in one {TILE_SIZE:,} px tile, so the page is sent whole."
@@ -76,9 +84,9 @@ def choose_tiling(width: int, height: int, *, max_tiles: int = DEFAULT_MAX_TILES
 
     tile_size = TILE_SIZE
     reason = (
-        f"The longest side is {side:,} px, so the page is cut into {tile_size:,} px tiles that overlap by {OVERLAP} px."
+        f"The longest side is {side:,} px, so the page is cut into {tile_size:,} px tiles that overlap by {overlap} px."
     )
-    count = len(make_tiles(width, height, tile_size=tile_size, overlap=OVERLAP))
+    count = len(make_tiles(width, height, tile_size=tile_size, overlap=overlap))
     while count > max_tiles:
         if tile_size == MAX_TILE_SIZE:
             raise TileLimitError(
@@ -86,10 +94,10 @@ def choose_tiling(width: int, height: int, *, max_tiles: int = DEFAULT_MAX_TILES
                 f"of at most {MAX_TILE_SIZE:,} px, but max_tiles is {max_tiles}"
             )
         tile_size = min(int(tile_size * TILE_GROWTH) + 1, MAX_TILE_SIZE)
-        count = len(make_tiles(width, height, tile_size=tile_size, overlap=OVERLAP))
+        count = len(make_tiles(width, height, tile_size=tile_size, overlap=overlap))
     if tile_size != TILE_SIZE:
         reason += (
             f" That grid had more than {max_tiles} tiles, "
             f"so the tile size grew in {TILE_GROWTH - 1:.0%} steps to {tile_size:,} px."
         )
-    return TilingChoice(tile_size, OVERLAP, reason)
+    return TilingChoice(tile_size, overlap, reason)

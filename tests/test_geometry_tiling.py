@@ -1,7 +1,7 @@
 import pytest
 
 from steel_text import geometry as g
-from steel_text.tiling import MAX_TILE_SIZE, TileLimitError, choose_tiling, make_tiles
+from steel_text.tiling import MAX_TILE_SIZE, OVERLAP, TileLimitError, choose_tiling, make_tiles
 
 
 def test_poly_to_bbox_accepts_both_azure_formats():
@@ -38,9 +38,20 @@ def test_small_page_is_not_tiled():
 
 def test_a_page_larger_than_one_tile_is_cut_into_3500_px_tiles():
     assert choose_tiling(3500, 2000).overlap == 0  # fits in one tile
-    assert choose_tiling(3600, 2000)[:2] == (3500, 300)
-    assert choose_tiling(9000, 6000)[:2] == (3500, 300)
+    assert choose_tiling(3600, 2000)[:2] == (3500, 350)
+    assert choose_tiling(9000, 6000)[:2] == (3500, 350)
     assert "3,500 px tiles" in choose_tiling(9000, 6000).reason
+    assert choose_tiling(9000, 6000, overlap=500)[:2] == (3500, 500)
+
+
+def test_the_overlap_is_longer_than_the_longest_beam_label():
+    import json
+    from pathlib import Path
+
+    answer_key = Path(__file__).resolve().parents[1] / "experiments" / "tiling" / "ground_truth.json"
+    labels = json.loads(answer_key.read_text(encoding="utf-8"))
+    longest = max(max(g["bbox"][2] - g["bbox"][0], g["bbox"][3] - g["bbox"][1]) for g in labels)
+    assert longest == 342 and OVERLAP > longest  # the rule behind OVERLAP, on the test sheet
 
 
 def test_tile_size_grows_until_under_the_cap():

@@ -102,6 +102,7 @@
     // A field left empty is not sent, so the server's default applies.
     if ($('#batch-size').value) params.set('batch_size', $('#batch-size').value);
     if ($('#max-tiles').value) params.set('max_tiles', $('#max-tiles').value);
+    if ($('#overlap').value) params.set('overlap', $('#overlap').value);
     const file = live ? $('#image').files[0] : null;
     $('#run-btn').disabled = true;
     $('#loading').hidden = false;

@@ -3,11 +3,11 @@
 Everything here is made up. Some texts are placed on purpose where the
 default 9000x6000 tile grid will cut or duplicate them:
 
-  tiles (3500 px, 300 px overlap):  x: [0,3500] [3200,6700] [5500,9000]
+  tiles (3500 px, 350 px overlap):  x: [0,3500] [3150,6650] [5500,9000]
                                     y: [0,3500] [2500,6000]
 
   "SEE NOTE 6"      crosses x=3500 -> left tile sees only "SEE"          (fragment)
-  "WT155*79"        crosses x=6700 -> middle tile sees only "WT15"       (fragment)
+  "WT155*79"        crosses x=6650 -> middle tile sees only "WT1"        (fragment)
   "HSS152X152X9.5"  inside the x overlap band -> read by two tiles       (duplicate)
   "W310X39", "2400" inside the y overlap band -> read by two tiles       (duplicate)
   "TYP." twice, far apart                     -> must NOT be merged

@@ -38,7 +38,7 @@ from ..page_image import PageTooLargeError, open_page
 from ..pipeline import MissingCredentialsError, PipelineResult, make_clients, run_pipeline
 from ..sample_drawing import GroundTruthText, check_truth, make_sample_drawing
 from ..settings import ENV_FILE, Settings, is_filled, load_settings
-from ..tiling import DEFAULT_MAX_TILES, TileLimitError
+from ..tiling import DEFAULT_MAX_TILES, MAX_OVERLAP, OVERLAP, TileLimitError
 from .schemas import (
     Chunk,
     DedupDecisionOut,
@@ -142,6 +142,7 @@ def _run(
     simulate_llm_failure: bool,
     batch_size: int | None,
     max_tiles: int,
+    overlap: int,
 ) -> RunResponse:
     """Load the page, pick the clients, run the pipeline, and answer with every step's result.
 
@@ -162,7 +163,9 @@ def _run(
         raise HTTPException(400, f"Live mode needs credentials ({e}). {hint}") from e
 
     try:
-        outcome = run_pipeline(page, ocr_client, labeler, live=live, max_tiles=max_tiles, batch_size=batch_size)
+        outcome = run_pipeline(
+            page, ocr_client, labeler, live=live, max_tiles=max_tiles, overlap=overlap, batch_size=batch_size
+        )
     except TileLimitError as e:
         raise HTTPException(400, f"Too few tiles allowed: {e}") from e
     except TileReadError as e:  # no tile could be read at all; a single failed tile is in the result
@@ -286,6 +289,7 @@ async def run(
     simulate_llm_failure: bool = False,
     batch_size: int | None = Query(None, ge=1, le=200),  # None: the pipeline's default for the mode
     max_tiles: int = Query(DEFAULT_MAX_TILES, ge=1, le=100),
+    overlap: int = Query(OVERLAP, ge=0, le=MAX_OVERLAP),
 ) -> RunResponse:
     """Body: optional raw image bytes (live mode only). Without one, the synthetic drawing is used."""
     image_bytes = await request.body()
@@ -299,4 +303,5 @@ async def run(
         simulate_llm_failure=simulate_llm_failure,
         batch_size=batch_size,
         max_tiles=max_tiles,
+        overlap=overlap,
     )
