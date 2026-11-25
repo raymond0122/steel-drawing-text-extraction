@@ -168,6 +168,7 @@ The LLM's counts per run (in `results/overlap_llm_*.json`) vary for reasons that
 
 - **One drawing,** cleanly rendered and synthetic. Scanned drawings have noise and skew and may break down earlier, and other resolutions or denser text may move the point where accuracy drops. The results are a measured default for drawings like this one, not a rule for every drawing.
 - **Each condition ran once.** The 3,500 px tiled run was repeated and gave exactly the same output ([`results/tiled_first_run.json`](results/tiled_first_run.json)).
+- **Experiment 1 is scored on the lines as merged on the day it ran,** stored in `results/tiled.json`, and the answer key was built from them. Today's dedup, run on the same raw OCR, keeps 464 lines instead of 457, with the same 82 beam labels at the same places, the same label scores and the same 23 smallest lines. `analyze.py` keeps the stored lines, so `summary.json` stays as recorded.
 - **Experiments 1 and 2 sent RGB tiles.** The app now keeps a grayscale page like this one grayscale. The 3,500 px run repeated with grayscale tiles read the same 696 lines, with the same text and boxes ([`results/tiled_grayscale.json`](results/tiled_grayscale.json)).
 - **The whole-page images were shrunk from the 400 dpi image.** Rendering the PDF at a lower dpi could differ slightly.
 - **Only the beam labels and the smallest lines are verified.** `summary.json` also compares all 391 lines against the tiled reading, which is agreement, not accuracy.
