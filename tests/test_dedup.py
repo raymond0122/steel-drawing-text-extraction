@@ -64,6 +64,14 @@ def test_label_printed_twice_in_one_tile_stays_twice():
     assert texts(merge_tile_results([a, b], TILES)) == ["W310X39", "W310X39"]
 
 
+def test_overlapping_texts_that_one_tile_read_are_both_kept():
+    # A stud count printed over a label, in the band tile 0 shares with tile 1. One tile read both,
+    # so they are two printed texts, although one box lies inside the other.
+    label = OcrChunk("W310X39", (3250, 100, 3480, 160), tile_index=0)
+    studs = OcrChunk("(6)", (3400, 110, 3450, 150), tile_index=0)
+    assert texts(merge_tile_results([label, studs], TILES)) == ["(6)", "W310X39"]
+
+
 def test_equal_values_in_neighbouring_table_rows_are_not_merged():
     # Two "10"s in rows 75 px apart, inside the shared area, and each tile read only one of them:
     # they share no area, so they are two printed texts, not one read twice.
