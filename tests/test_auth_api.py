@@ -18,7 +18,7 @@ def settings(tmp_path):
 @pytest.fixture
 def client(settings, monkeypatch):
     monkeypatch.setitem(app.dependency_overrides, get_settings, lambda: settings)
-    return TestClient(app)
+    return TestClient(app, base_url="http://127.0.0.1")
 
 
 def login(client):
@@ -28,6 +28,10 @@ def login(client):
 
 def bearer(token):
     return {"Authorization": f"Bearer {token}"}
+
+
+def test_the_auth_api_on_its_own_refuses_another_host(client):
+    assert client.post("/auth/register", json=CREDS, headers={"Host": "attacker.example"}).status_code == 400
 
 
 def test_register_login_and_access_protected_route(client):

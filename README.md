@@ -66,7 +66,7 @@ Live mode calls the real Azure and OpenAI services. Copy `.env.example` to `.env
 ### Development
 
 ```bash
-python -m pytest                               # 139 tests
+python -m pytest                               # 143 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # the web UI, restarted on every code change
@@ -93,7 +93,7 @@ Thresholds, retry rules and the web UI are described in [docs/DESIGN.md](docs/DE
 - **Dedup can't tell a misreading from the correct reading** of the same label. Azure's text lines carry no confidence, so it keeps the longer one, which is sometimes the misreading.
 - **No review step.** The web UI shows the results but cannot correct or approve them.
 - **Tokens can't be revoked** (they are stateless), and passlib's default PBKDF2 iteration count is below current OWASP guidance.
-- **The web UI is for local use only.** Live runs need a login, but anyone who can reach the page can register, so the login doesn't protect the API credit of a public server.
+- **The web UI is for local use only.** It answers only requests addressed to `127.0.0.1` or `localhost`, so a web page elsewhere can't reach it through the visitor's browser (DNS rebinding). Live runs need a login, but anyone who can reach the page can register, so the login doesn't protect the API credit of a public server.
 
 ## Layout
 

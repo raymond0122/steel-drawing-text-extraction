@@ -11,6 +11,7 @@ from functools import lru_cache
 from typing import Annotated, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field, StringConstraints
 
@@ -27,9 +28,15 @@ from .security import (
 
 logger = logging.getLogger(__name__)
 
+# Requests are served only when addressed to this machine by name. A web page elsewhere can point
+# its own domain at 127.0.0.1 (DNS rebinding) and call the API from the visitor's browser; those
+# requests carry that domain as their Host, so they are refused.
+LOCAL_HOSTS = ["127.0.0.1", "localhost"]
+
 app = FastAPI(
     title="Steel text extraction: auth API", description="Register, login, refresh, and a protected endpoint."
 )
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=LOCAL_HOSTS)
 bearer = HTTPBearer(auto_error=False)
 
 

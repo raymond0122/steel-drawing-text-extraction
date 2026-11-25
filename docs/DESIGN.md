@@ -161,6 +161,7 @@ Live runs in the web UI spend Azure and OpenAI credit, so they need a valid acce
 - Spaces around a username are removed before validation, so a username of only spaces is rejected.
 - `/me` is protected by a FastAPI dependency that requires a valid access token.
 - Without `JWT_SECRET_KEY`, a random signing key is used and a warning is logged, so tokens stop working on restart.
+- Both the auth API and the web UI answer only requests addressed to `127.0.0.1` or `localhost`. Otherwise a web page elsewhere could point its own domain at this machine (DNS rebinding), then register, log in and start live runs from the visitor's browser.
 
 ## Offline mode
 

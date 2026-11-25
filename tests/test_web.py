@@ -16,7 +16,7 @@ AUTH_SETTINGS = Settings(_env_file=None, jwt_secret_key="test-secret-at-least-32
 def client():
     for a in (app, auth_app):
         a.dependency_overrides[auth_settings] = lambda: AUTH_SETTINGS
-    yield TestClient(app)
+    yield TestClient(app, base_url="http://127.0.0.1")
     for a in (app, auth_app):
         a.dependency_overrides.pop(auth_settings, None)
 
@@ -140,6 +140,12 @@ def test_the_overlap_chosen_on_the_page_is_used(client):
     d = client.post("/api/run", params={"overlap": 500}).json()
     assert d["tiling"]["overlap"] == 500 and "overlap by 500 px" in d["tiling"]["reason"]
     assert client.post("/api/run", params={"overlap": 5000}).status_code == 422  # over the 1,000 px cap
+
+
+@pytest.mark.parametrize("path", ["/", "/api/live-status", "/auth-api/me"])
+def test_a_request_addressed_to_another_host_is_refused(client, path):
+    assert client.get(path, headers={"Host": "attacker.example"}).status_code == 400  # DNS rebinding
+    assert client.get(path, headers={"Host": "localhost:8000"}).status_code != 400
 
 
 @pytest.mark.parametrize("name", ["index.html", "server.py", "..%2Fserver.py"])

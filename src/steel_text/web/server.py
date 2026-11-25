@@ -22,12 +22,13 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import run_in_threadpool
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 from fastapi.responses import FileResponse
 from fastapi.security import HTTPAuthorizationCredentials
 from PIL import Image
 
+from ..auth.main import LOCAL_HOSTS, bearer, current_user
 from ..auth.main import app as auth_app
-from ..auth.main import bearer, current_user
 from ..auth.main import get_settings as auth_settings
 from ..dedup import DedupDecision
 from ..geometry import BBox, region_around
@@ -71,6 +72,7 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
 
 
 app = FastAPI(title="Steel text extraction: demo UI", lifespan=lifespan)
+app.add_middleware(TrustedHostMiddleware, allowed_hosts=LOCAL_HOSTS)  # why: see LOCAL_HOSTS
 app.mount("/auth-api", auth_app)
 
 

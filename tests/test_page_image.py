@@ -82,7 +82,8 @@ def test_upload_over_the_pixel_limit_is_a_413(monkeypatch):
     auth = Settings(_env_file=None, jwt_secret_key="test-secret-at-least-32-bytes-long")
     monkeypatch.setitem(server.app.dependency_overrides, auth_settings, lambda: auth)  # uploads are live: log in
     login = {"Authorization": f"Bearer {create_token('tester', 'access', auth.jwt_secret_key)}"}
-    r = TestClient(server.app).post("/api/run", params={"live": True}, content=png_bytes(20, 20), headers=login)
+    client = TestClient(server.app, base_url="http://127.0.0.1")
+    r = client.post("/api/run", params={"live": True}, content=png_bytes(20, 20), headers=login)
     assert r.status_code == 413 and "too large" in r.json()["detail"]
 
 
