@@ -157,6 +157,11 @@ def test_openai_client_retries_a_rate_limit_and_honours_retry_after():
         (FakeResponse(429, {"error": {"code": "rate_limit_exceeded"}}), 5, "HTTP 429"),
         (FakeResponse(503, {"error": "overloaded"}), 5, "HTTP 503"),
         (FakeResponse(429, {"error": {"code": "insufficient_quota"}}), 1, "HTTP 429"),  # waiting won't refill it
+        (  # out of credit: same type, another code, as OpenAI sent on 2026-11-24
+            FakeResponse(429, {"error": {"code": "credit_balance_exhausted", "type": "insufficient_quota"}}),
+            1,
+            "HTTP 429",
+        ),
         (FakeResponse(401, {"error": {"code": "invalid_api_key"}}), 1, "HTTP 401"),
         (FakeResponse(200, {"output": []}), 1, "unparseable"),
     ],

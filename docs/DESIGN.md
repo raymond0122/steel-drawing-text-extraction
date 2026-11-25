@@ -129,7 +129,7 @@ Azure and OpenAI requests go through the same retry rule. Azure Document Intelli
 - **When the server sends `Retry-After`** (in seconds): wait that long, but at most 60 s. A longer wait, such as a quota window, isn't worth holding a request for.
 - **Otherwise:** exponential backoff of 1, 2, 4, 8 s, capped at 30 s.
 - **Other 4xx errors** (for example 401, or 404 for an unknown operation): fail immediately, on the POST and while polling, because retrying won't help.
-- **OpenAI's 429 for a used-up quota** (error code `insufficient_quota`): fails immediately too. Unlike a rate limit, it lasts until the billing changes, so retrying would only add 15 s of waiting to every batch.
+- **OpenAI's 429 for used-up quota or credit** (error type `insufficient_quota`, with the code `insufficient_quota` or `credit_balance_exhausted`): fails immediately too. Unlike a rate limit, it lasts until the billing changes, so retrying would only add 15 s of waiting to every batch.
 - **Polling gives up** when every attempt of a poll request fails with a network error, or when the 5-minute poll timeout passes. The timeout is checked after each request as well, since a request's retries can take a while.
 
 A tile that still fails after all this is skipped and marked as not read (see [When a tile can't be read](#when-a-tile-cant-be-read)). An LLM batch that still fails is skipped and its lines are marked as not checked (see [LLM label filter](#llm-label-filter-steel_textllm_filterpy)).

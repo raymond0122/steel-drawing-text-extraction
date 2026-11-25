@@ -5,8 +5,8 @@ Design points:
   * The model only returns an ID and a label. Boxes and raw text are joined back
     from the OCR results by ID, so the model cannot invent a location. IDs that
     were not in that batch, and repeats of an ID already labelled, are dropped.
-  * Requests are retried like Azure's (steel_text/http.py), except a 429 for a
-    used-up quota, which lasts until the billing changes.
+  * Requests are retried like Azure's (steel_text/http.py), except a 429 for
+    used-up quota or credit, which lasts until the billing changes.
   * Text is sent in batches. A batch that still fails is logged and skipped, so
     one bad request does not lose the whole page. Its lines are kept as "not
     checked", so every output can show that they may hold labels.
@@ -155,20 +155,22 @@ class OpenAIResponsesClient:
 
 
 def _worth_retrying(resp: HttpResponse) -> bool:
-    """429 and 5xx, except the 429 for a used-up quota: it lasts until the billing changes."""
-    if resp.status_code == 429 and _error_code(resp) == "insufficient_quota":
+    """429 and 5xx, except a 429 for used-up quota or credit: it lasts until the billing changes."""
+    if resp.status_code == 429 and _billing_error(resp):
         return False
     return is_retry_status(resp)
 
 
-def _error_code(resp: HttpResponse) -> object:
-    """`error.code` from an OpenAI error body, or None."""
+def _billing_error(resp: HttpResponse) -> bool:
+    """An OpenAI error of type insufficient_quota. Its code varies: insufficient_quota, credit_balance_exhausted."""
     try:
         body = resp.json()
     except ValueError:
-        return None
+        return False
     error = body.get("error") if isinstance(body, dict) else None
-    return error.get("code") if isinstance(error, dict) else None
+    if not isinstance(error, dict):
+        return False
+    return "insufficient_quota" in (error.get("type"), error.get("code"))
 
 
 @dataclass
