@@ -4,7 +4,7 @@ from typing import Any
 import pytest
 import requests
 
-from steel_text.llm_filter import LlmCallError, NotChecked, OpenAIResponsesClient, filter_labels
+from steel_text.llm_filter import LlmCallError, NotChecked, OpenAIResponsesClient, build_prompt, filter_labels
 from steel_text.mock_clients import RuleBasedLabeler, match_section
 from steel_text.ocr_types import OcrChunk
 
@@ -163,7 +163,7 @@ def test_openai_client_retries_a_rate_limit_and_honours_retry_after():
             "HTTP 429",
         ),
         (FakeResponse(401, {"error": {"code": "invalid_api_key"}}), 1, "HTTP 401"),
-        (FakeResponse(200, {"output": []}), 1, "unparseable"),
+        (FakeResponse(200, {"output": [{"content": [{"type": "output_text", "text": "not json"}]}]}), 1, "unparseable"),
     ],
 )
 def test_openai_client_turns_every_failure_into_llm_call_error(outcome, attempts, message):
@@ -173,6 +173,20 @@ def test_openai_client_turns_every_failure_into_llm_call_error(outcome, attempts
         make_openai_client(fake, sleeps).extract(ITEMS)
     assert len(fake.payloads) == attempts
     assert sleeps == [1.0, 2.0, 4.0, 8.0][: attempts - 1]
+
+
+def test_a_reply_with_no_text_is_asked_for_once_more():
+    empty = FakeResponse(200, {"output": []})
+    fake = FakeSession(empty, REPLY)
+    assert make_openai_client(fake, []).extract(ITEMS) == {"entries": []}
+    assert len(fake.payloads) == 2
+    with pytest.raises(LlmCallError, match="no text in the reply, 2 times"):
+        make_openai_client(FakeSession(empty, empty), []).extract(ITEMS)  # a third request would fail the test
+
+
+def test_the_prompt_asks_for_the_section_alone():
+    prompt = build_prompt([{"id": "0", "raw_text": "W10x12 (6)"}])
+    assert "the section designation only" in prompt and "'W10x12 (6)' -> 'W10X12'" in prompt
 
 
 def test_mock_labeler_fixes_common_ocr_confusions():

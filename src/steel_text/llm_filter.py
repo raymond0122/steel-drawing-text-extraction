@@ -10,6 +10,7 @@ Design points:
   * Text is sent in batches. A batch that still fails is logged and skipped, so
     one bad request does not lose the whole page. Its lines are kept as "not
     checked", so every output can show that they may hold labels.
+  * A reply with no text is asked for once more before its batch counts as failed.
 """
 
 from __future__ import annotations
@@ -31,9 +32,12 @@ from .settings import DEFAULT_OPENAI_BASE_URL, DEFAULT_OPENAI_MODEL, Settings
 
 logger = logging.getLogger(__name__)
 
-# OCR lines per request. On the test sheet 25 found every beam label in 5 runs of 5, while 10
-# missed up to 10 and 50 or more missed more (experiments/llm_batch).
+# OCR lines per request. With the section-only prompt below, 10 and 25 found the test sheet's beam
+# labels alike with gpt-4o, and 25 took half the time and a third fewer tokens; 50 or more missed
+# labels (experiments/llm_batch).
 DEFAULT_BATCH_SIZE = 25
+# A reply with no text came back twice in the batch experiments; it is asked for once more.
+EMPTY_REPLY_ATTEMPTS = 2
 MATERIAL_KINDS: tuple[str, ...] = ("HSS", "H", "L", "C", "Other")
 
 SCHEMA: dict[str, Any] = {
@@ -68,8 +72,9 @@ def build_prompt(items: Sequence[dict[str, str]]) -> str:
         "- Decide whether each OCR line contains a steel component size/shape label.\n"
         "- If YES, output an entry with:\n"
         "  - str_id: copy from input 'id'\n"
-        "  - normalized_label: fix OCR mistakes, uppercase, remove spaces "
-        "(e.g., 'CS0' -> 'C50', 'C 50' -> 'C50'); keep '*' as is\n"
+        "  - normalized_label: the section designation only: fix OCR mistakes, uppercase, remove spaces, and drop "
+        "anything after the section such as stud counts, cambers or notes "
+        "(e.g., 'CS0' -> 'C50', 'C 50' -> 'C50', 'W10x12 (6)' -> 'W10X12'); keep '*' as is\n"
         f"  - material_kind: one of {kinds} (use 'Other' if it is a valid steel label "
         "but not in the main categories)\n"
         "- If NO (dimensions, notes, grid marks, title block text), output nothing for that line.\n\n"
@@ -121,6 +126,23 @@ class OpenAIResponsesClient:
             "input": build_prompt(items),
             "text": {"format": {"type": "json_schema", "name": "label_extract", "schema": SCHEMA, "strict": True}},
         }
+        for attempt in range(1, EMPTY_REPLY_ATTEMPTS + 1):
+            texts, req_id = self._reply_texts(payload)
+            if texts:
+                break
+            logger.warning("reply with no text (request_id=%s), %d of %d", req_id, attempt, EMPTY_REPLY_ATTEMPTS)
+        else:
+            raise LlmCallError(f"no text in the reply, {EMPTY_REPLY_ATTEMPTS} times (request_id={req_id})")
+        try:
+            parsed = json.loads(texts[0])
+        except ValueError as e:
+            raise LlmCallError(f"unparseable response (request_id={req_id}): {e}") from e
+        if not isinstance(parsed, dict):
+            raise LlmCallError(f"unparseable response (request_id={req_id}): not a JSON object")
+        return parsed
+
+    def _reply_texts(self, payload: dict[str, Any]) -> tuple[list[str], str | None]:
+        """Send the request, with retries, and return the reply's output texts and its request ID."""
         r = send_with_retry(
             self.session,
             "POST",
@@ -134,24 +156,19 @@ class OpenAIResponsesClient:
         )
         if r is None:
             raise LlmCallError(f"network error on all {self.max_attempts} attempts")
-
         req_id = r.headers.get("x-request-id")
         if r.status_code >= 400:
             raise LlmCallError(f"HTTP {r.status_code} (request_id={req_id}): {r.text[:300]}")
         try:
-            data = r.json()
             texts = [
                 c["text"]
-                for out in data.get("output", [])
+                for out in r.json().get("output", [])
                 for c in (out.get("content") or [])
                 if c.get("type") == "output_text"
             ]
-            parsed = json.loads(texts[0])
-        except (ValueError, KeyError, IndexError, TypeError, AttributeError) as e:
+        except (ValueError, KeyError, TypeError, AttributeError) as e:
             raise LlmCallError(f"unparseable response (request_id={req_id}): {e}") from e
-        if not isinstance(parsed, dict):
-            raise LlmCallError(f"unparseable response (request_id={req_id}): not a JSON object")
-        return parsed
+        return texts, req_id
 
 
 def _worth_retrying(resp: HttpResponse) -> bool:

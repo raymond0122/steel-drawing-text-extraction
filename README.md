@@ -61,12 +61,12 @@ It prints a summary and writes an image per step, `labels.json`, `labels.xlsx` (
 
 ### Live mode
 
-Live mode calls the real Azure and OpenAI services. Copy `.env.example` to `.env` in the repository root and fill in the keys. Then choose **Live** in the web UI, after **Log in** at the top right, and optionally upload a page image. Or run `steel-demo --live` for the synthetic drawing, or `steel-demo --live --image page.png` for your own page image.
+Live mode calls the real Azure and OpenAI services. Copy `.env.example` to `.env` in the repository root and fill in the keys; `OPENAI_MODEL` picks the model (default `gpt-4o`). Then choose **Live** in the web UI, after **Log in** at the top right, and optionally upload a page image. Or run `steel-demo --live` for the synthetic drawing, or `steel-demo --live --image page.png` for your own page image.
 
 ### Development
 
 ```bash
-python -m pytest                               # 115 tests
+python -m pytest                               # 118 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # the web UI, restarted on every code change
@@ -119,7 +119,7 @@ src/steel_text/          one package, installed with pip install -e .
   web/                   local web UI: a FastAPI server, its response models, and the page (index.html, app.js, style.css)
 tests/                   unit tests, an offline end-to-end test, web API tests, and a check that the experiment still runs
 experiments/tiling/      the tiling experiment: tiles against a shrunk page, and tile sizes, measured with Azure
-experiments/llm_batch/   the LLM batch size experiment: OCR lines per request, measured with OpenAI
+experiments/llm_batch/   the LLM experiments: OCR lines per request and the prompt, measured with OpenAI
 docs/                    design notes and README images
 .github/                 CI: ruff, mypy and pytest on every push to main and every pull request
 pyproject.toml           dependencies, the steel-demo command, and the pytest, ruff and mypy settings
