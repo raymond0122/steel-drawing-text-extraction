@@ -7,9 +7,10 @@ Design points:
     were not in that batch, and repeats of an ID already labelled, are dropped.
   * Requests are retried like Azure's (steel_text/http.py), except a 429 for
     used-up quota or credit, which lasts until the billing changes.
-  * Text is sent in batches. A batch that still fails is logged and skipped, so
-    one bad request does not lose the whole page. Its lines are kept as "not
-    checked", so every output can show that they may hold labels.
+  * Text is sent in batches. A batch that still fails, or whose reply doesn't
+    match the schema, is logged and skipped, so one bad request does not lose
+    the whole page. Its lines are kept as "not checked", so every output can
+    show that they may hold labels.
   * A reply with no text is asked for once more before its batch counts as failed.
 """
 
@@ -264,7 +265,7 @@ def filter_labels(
 
         start = time.perf_counter()
         try:
-            parsed = extractor.extract(items)
+            reply = _reply_entries(extractor.extract(items))
         except LlmCallError as e:
             # Skip this batch and keep going: one bad request should not lose the page.
             failed.append((b_idx, str(e)))
@@ -274,7 +275,7 @@ def filter_labels(
         finally:
             batch_ms.append(round((time.perf_counter() - start) * 1000))
 
-        found, dropped = _join_reply(parsed, {sid: by_id[sid] for sid in batch_ids})
+        found, dropped = _join_reply(reply, {sid: by_id[sid] for sid in batch_ids})
         entries.extend(found)
         if dropped:
             logger.warning("batch %d: dropped %d entries (unknown or repeated ID, or empty label)", b_idx, dropped)
@@ -291,18 +292,31 @@ def filter_labels(
     )
 
 
-def _join_reply(parsed: dict[str, Any], sent: Mapping[str, OcrChunk]) -> tuple[list[LabelEntry], int]:
+def _reply_entries(parsed: Any) -> list[dict[str, Any]]:
+    """The reply's entries, or LlmCallError when the reply doesn't have the shape SCHEMA asks for.
+
+    Structured outputs should rule this out. If it happens anyway, the batch fails
+    like any other, so its lines are kept as not checked instead of failing the page.
+    """
+    entries = parsed.get("entries") if isinstance(parsed, dict) else None
+    if not isinstance(entries, list) or not all(isinstance(item, dict) for item in entries):
+        raise LlmCallError(f"reply doesn't match the schema: {str(parsed)[:300]}")
+    return entries
+
+
+def _join_reply(reply: Sequence[Mapping[str, Any]], sent: Mapping[str, OcrChunk]) -> tuple[list[LabelEntry], int]:
     """Join a batch's reply back to the lines `sent` in it, by ID: the labels, and how many entries were dropped.
 
     Dropped: an ID the batch never sent (invented, or from another batch), a repeat
-    of an ID already labelled, or an empty label. Batches share no IDs, so repeats
+    of an ID already labelled, or an empty or missing label. Batches share no IDs, so repeats
     are only looked for within the batch.
     """
     entries: list[LabelEntry] = []
     dropped = 0
-    for item in parsed.get("entries", []) if isinstance(parsed, dict) else []:
+    for item in reply:
         sid = str(item.get("str_id", "")).strip()
-        label = normalize_label(str(item.get("normalized_label", "")))
+        raw_label = item.get("normalized_label")
+        label = normalize_label(raw_label) if isinstance(raw_label, str) else ""  # null is no label, not "NONE"
         if sid not in sent or any(e.str_id == sid for e in entries) or not label:
             dropped += 1
             continue

@@ -228,3 +228,21 @@ def test_mock_labeler_can_simulate_a_failed_call():
     with pytest.raises(LlmCallError):
         labeler.extract([{"id": "0", "raw_text": "C50"}])
     assert labeler.extract([{"id": "0", "raw_text": "C50"}])["entries"][0]["normalized_label"] == "C50"
+
+
+@pytest.mark.parametrize("reply", [{"entries": None}, {}, {"entries": "C50"}, {"entries": [None]}])
+def test_a_reply_that_breaks_the_schema_fails_only_its_batch(reply):
+    ex = ScriptedExtractor(
+        [reply, {"entries": [{"str_id": "2", "normalized_label": "W310X39", "material_kind": "H"}]}, {"entries": []}]
+    )
+    res = filter_labels(CHUNKS, ex, batch_size=2)
+    assert res.ok and [b for b, _ in res.failed_batches] == [0]
+    assert "schema" in res.failed_batches[0][1]
+    assert [n.str_id for n in res.not_checked] == ["0", "1"]  # its lines are kept as not checked
+    assert [e.normalized_label for e in res.entries] == ["W310X39"]  # the other batches still count
+
+
+def test_a_null_label_is_dropped_not_read_as_none():
+    ex = ScriptedExtractor([{"entries": [{"str_id": "0", "normalized_label": None, "material_kind": "C"}]}])
+    res = filter_labels(CHUNKS, ex, batch_size=50)
+    assert res.ok and res.entries == []
