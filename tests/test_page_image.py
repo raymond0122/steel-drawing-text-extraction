@@ -13,9 +13,14 @@ from steel_text.web import server
 
 
 def png_bytes(width, height, mode="L"):
+    return png(Image.new(mode, (width, height), "white")).getvalue()
+
+
+def png(img):
     buf = io.BytesIO()
-    Image.new(mode, (width, height), "white").save(buf, format="PNG")
-    return buf.getvalue()
+    img.save(buf, format="PNG")
+    buf.seek(0)
+    return buf
 
 
 @pytest.mark.parametrize(
@@ -25,6 +30,7 @@ def png_bytes(width, height, mode="L"):
         ("1", "L", 255),
         ("RGB", "RGB", (255, 255, 255)),
         ("RGBA", "RGB", (255, 255, 255)),
+        ("LA", "L", 255),
         ("P", "RGB", (255, 255, 255)),
     ],
 )
@@ -32,6 +38,28 @@ def test_page_is_opened_as_grayscale_or_rgb(mode, opened_as, white):
     page = open_page(io.BytesIO(png_bytes(20, 10, mode)))
     assert page.mode == opened_as and page.size == (20, 10)
     assert page.getpixel((0, 0)) == white  # decoded, not just the header
+
+
+@pytest.mark.parametrize("mode, opened_as", [("RGBA", "RGB"), ("LA", "L"), ("P", "RGB")])
+def test_a_transparent_background_becomes_white_paper_with_the_ink_kept(mode, opened_as):
+    img = Image.new(mode, (20, 10))  # every pixel 0: black, and transparent where there is alpha
+    if mode == "P":
+        img.info["transparency"] = 0  # palette entry 0 is the transparent one
+        img.putpalette([0, 0, 0, 10, 10, 10])
+        img.putpixel((5, 5), 1)  # ink: palette entry 1, opaque
+    else:
+        img.putpixel((5, 5), (10, 10, 10, 255) if mode == "RGBA" else (10, 255))
+    page = open_page(png(img))
+    ink = (10, 10, 10) if opened_as == "RGB" else 10
+    paper = (255, 255, 255) if opened_as == "RGB" else 255
+    assert page.mode == opened_as and page.getpixel((5, 5)) == ink and page.getpixel((0, 0)) == paper
+
+
+def test_a_16_bit_scan_is_scaled_not_clipped():
+    img = Image.new("I;16", (20, 10), 60_000)  # paper
+    img.putpixel((5, 5), 3_000)  # ink
+    page = open_page(png(img))
+    assert page.mode == "L" and page.getpixel((0, 0)) == 233 and page.getpixel((5, 5)) == 11
 
 
 def test_page_file_is_closed_once_opened(tmp_path):

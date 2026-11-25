@@ -23,12 +23,15 @@ class PageTooLargeError(ValueError):
 
 
 def open_page(source: str | Path | BinaryIO) -> Image.Image:
-    """Open a page image, refusing one over MAX_PAGE_PIXELS before its pixels are decoded.
+    """Open a page image as grayscale ("L") or RGB, refusing one over MAX_PAGE_PIXELS before it is decoded.
 
-    A grayscale page stays grayscale ("L"; a 1-bit scan becomes "L"): as RGB it would
-    hold each pixel's one value three times, three times the memory for nothing.
-    Every other page is opened as RGB. Raises PageTooLargeError, or OSError for a
-    file PIL can't read.
+    A grayscale page stays grayscale: as RGB it would hold each pixel's one value
+    three times, three times the memory for nothing. A 1-bit scan becomes "L", and a
+    16-bit one is scaled to 8 bits: a plain conversion would turn every value over
+    255, nearly all of a scan, white. A transparent background becomes white, the
+    paper it stands for: dropping the transparency would leave the colour stored
+    under it, usually black. Every other page is opened as RGB. Raises
+    PageTooLargeError, or OSError for a file PIL can't read.
     """
     try:
         img = Image.open(source)  # reads only the header
@@ -37,10 +40,22 @@ def open_page(source: str | Path | BinaryIO) -> Image.Image:
     with img:  # closes a file PIL opened itself; the decoded pixels stay usable
         if img.width * img.height > MAX_PAGE_PIXELS:
             raise PageTooLargeError(f"{img.width} x {img.height} px is over the limit of {MAX_PAGE_PIXELS:,} pixels")
-        if img.mode in ("L", "RGB"):
+        if img.mode in ("L", "RGB") and not img.has_transparency_data:
             img.load()  # convert() would decode the page and then copy it: twice the memory at its peak
             return img
-        return img.convert("L" if img.mode == "1" else "RGB")
+        return _to_gray_or_rgb(img)
+
+
+def _to_gray_or_rgb(img: Image.Image) -> Image.Image:
+    if img.mode.startswith("I"):  # 16-bit grayscale: 65,535 is white
+        return img.point(lambda v: v * (1 / 257)).convert("L")
+    mode = "L" if img.mode in ("1", "L", "LA") else "RGB"
+    if not img.has_transparency_data:
+        return img.convert(mode)
+    alpha = img.getchannel("A") if "A" in img.getbands() else img.convert("RGBA").getchannel("A")
+    page = Image.new(mode, img.size, "white")
+    page.paste(img.convert(mode), mask=alpha)
+    return page
 
 
 def shrink(page: Image.Image, max_side: int) -> tuple[Image.Image, float]:
