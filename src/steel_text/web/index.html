@@ -47,8 +47,10 @@
           <label><input type="radio" name="mode" value="live"><span>Live</span></label>
         </div>
       </div>
-      <label class="field"><span class="label">LLM batch size</span><input type="number" id="batch-size" min="1" max="200"></label>
-      <label class="field"><span class="label">Max tiles</span><input type="number" id="max-tiles" value="20" min="1" max="100"></label>
+      <label class="field"><span class="label">LLM batch size</span><input type="number" id="batch-size" min="1" max="200">
+        <span class="hint" id="batch-hint" title="OCR lines per LLM request. On the test sheet, 25 found every beam label; 10 missed some, and 50 or more missed more. Offline, 10 keeps several batches on the small synthetic drawing."></span></label>
+      <label class="field"><span class="label">Max tiles</span><input type="number" id="max-tiles" value="20" min="1" max="100">
+        <span class="hint" title="At most one Azure request per tile. A lower cap makes the tiles larger, and tiles of 6,000 px or more read worse.">Recommended: 20</span></label>
       <label class="check" id="ocr-fail-wrap"><input type="checkbox" id="simulate-ocr-failure"> Make OCR tile 1 fail</label>
       <label class="check" id="fail-wrap"><input type="checkbox" id="simulate-failure"> Make LLM batch 1 fail</label>
       <label class="field"><span class="label" id="image-label">Page image</span><input type="file" id="image" accept="image/*"></label>

@@ -53,6 +53,7 @@
     $('#mode-note').hidden = live; // in live mode, the key and login status line below says what matters
     // Left empty, the server uses its default for the mode: DEFAULT_BATCH_SIZE live, OFFLINE_BATCH_SIZE offline.
     $('#batch-size').placeholder = live ? BATCH_SIZE_LIVE : BATCH_SIZE_OFFLINE;
+    $('#batch-hint').textContent = `Recommended: ${$('#batch-size').placeholder}`;
     refreshLiveStatus();
   }
   document.querySelectorAll('input[name="mode"]').forEach(r => r.addEventListener('change', syncMode));

@@ -117,12 +117,15 @@ def test_the_page_script_and_styles_are_served_with_their_types(client, name, me
     assert r.headers["cache-control"] == "no-cache"
 
 
-def test_the_batch_size_shown_on_the_page_is_the_servers_default(client):
+def test_the_values_the_page_shows_and_recommends_are_the_servers_defaults(client):
     from steel_text.llm_filter import DEFAULT_BATCH_SIZE
     from steel_text.pipeline import OFFLINE_BATCH_SIZE
+    from steel_text.tiling import DEFAULT_MAX_TILES
 
     script = client.get("/static/app.js").text
     assert f"const BATCH_SIZE_LIVE = '{DEFAULT_BATCH_SIZE}', BATCH_SIZE_OFFLINE = '{OFFLINE_BATCH_SIZE}';" in script
+    page = client.get("/").text
+    assert f'id="max-tiles" value="{DEFAULT_MAX_TILES}"' in page and f"Recommended: {DEFAULT_MAX_TILES}<" in page
 
 
 @pytest.mark.parametrize("name", ["index.html", "server.py", "..%2Fserver.py"])

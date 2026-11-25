@@ -86,6 +86,7 @@ main { max-width: 1480px; margin: 0 auto; padding: 20px 24px 40px; }
 .controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 20px; padding: 14px 16px; }
 .field { display: flex; flex-direction: column; gap: 4px; }
 .field .label { font-size: 12px; color: var(--muted); font-weight: 500; }
+.field .hint { font-size: 11px; color: var(--muted); cursor: help; }
 .field input[type="number"], .field input[type="text"], .field input[type="password"] {
   width: 100%; padding: 6px 9px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface);
 }

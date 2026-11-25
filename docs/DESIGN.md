@@ -159,7 +159,7 @@ Both the demo and the web UI pick their clients and run the stages through `stee
 
 ## Web UI (`steel_text/web/`)
 
-- **Pipeline tab:** pick offline or live mode, the LLM batch size and the tile limit, then run. Offline, an OCR tile or an LLM batch can be made to fail on purpose. Four steps can be inspected on the page:
+- **Pipeline tab:** pick offline or live mode, the LLM batch size and the tile limit, each with its recommended value below it, then run. Offline, an OCR tile or an LLM batch can be made to fail on purpose. Four steps can be inspected on the page:
   - **Tiles:** the grid, how many lines each tile read, and which tiles could not be read. Those stay hatched red on every step.
   - **Raw OCR:** every line from every tile, with the ones dedup will drop marked.
   - **Dedup:** each decision with its reason and a before/after close-up.
