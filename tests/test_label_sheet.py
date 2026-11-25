@@ -58,3 +58,13 @@ def test_lines_the_llm_never_checked_mark_the_file_incomplete():
         ("5", "=SUM(A1)", 0, 200, 90, 250, "HTTP 500"),
     ]
     assert sheet["B3"].data_type == "s"  # OCR text starting with "=" stays text, not a formula
+
+
+def test_control_characters_are_removed_so_the_file_can_still_be_written():
+    buf = io.BytesIO()
+    write_label_sheet(["W10\x00X12"], buf, not_checked=[("4", "SEE\x1bNOTE", (0, 0, 10, 10), "bad\x07 reply")])
+    wb = load_workbook(buf)
+    assert wb.worksheets[0]["A2"].value == "W10X12"
+    assert list(wb["Not checked"].iter_rows(min_row=2, values_only=True)) == [
+        ("4", "SEENOTE", 0, 0, 10, 10, "bad reply")
+    ]

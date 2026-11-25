@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import BinaryIO
 
 from openpyxl import Workbook
+from openpyxl.cell.cell import ILLEGAL_CHARACTERS_RE
 from openpyxl.styles import Font
 
 from .geometry import BBox
@@ -40,7 +41,7 @@ def write_label_sheet(
     ws.append(["Profile"])
     ws["A1"].font = Font(bold=True)
     for row, label in enumerate(sorted(labels), start=2):
-        cell = ws.cell(row=row, column=1, value=label)
+        cell = ws.cell(row=row, column=1, value=_text(label))
         cell.data_type = "s"  # always text: a label starting with "=" must not become a formula
     ws.column_dimensions["A"].width = 22
     ws.freeze_panes = "A2"  # keep the header visible while scrolling
@@ -52,6 +53,14 @@ def write_label_sheet(
         lines = [(line, text, *box, error) for line, text, box, error in not_checked]
         _add_gap_sheet(wb, "Not checked", ("Line", "Text", "x0", "y0", "x1", "y1", "Error"), lines, {"B": 40, "G": 80})
     wb.save(target)
+
+
+def _text(value: str) -> str:
+    """The text without the control characters an Excel file can't hold; openpyxl refuses them.
+
+    Tab and newline are allowed, so they stay.
+    """
+    return ILLEGAL_CHARACTERS_RE.sub("", value)
 
 
 def _add_gap_sheet(
@@ -67,7 +76,7 @@ def _add_gap_sheet(
         cell.font = Font(bold=True)
     for r, values in enumerate(rows, start=2):
         for c, value in enumerate(values, start=1):
-            cell = ws.cell(row=r, column=c, value=value)
+            cell = ws.cell(row=r, column=c, value=_text(value) if isinstance(value, str) else value)
             if isinstance(value, str):
                 cell.data_type = "s"  # OCR text or an error starting with "=" must not become a formula
     for column, width in widths.items():
