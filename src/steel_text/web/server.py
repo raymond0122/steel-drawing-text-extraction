@@ -58,6 +58,7 @@ from .schemas import (
 logger = logging.getLogger(__name__)
 
 PREVIEW_MAX_SIDE = 4000  # the browser gets a downscaled page; close-ups are cropped at full resolution
+MAX_UPLOAD_BYTES = 100_000_000  # far more than a page needs: the 14,400 x 9,600 px test sheet is 1.5 MB as PNG
 CLOSEUP_PAD = 120
 
 
@@ -279,6 +280,18 @@ def live_status(settings: SettingsDep) -> LiveStatus:
     )
 
 
+async def _read_upload(request: Request) -> bytes:
+    """The request body, refused with 413 as soon as it passes MAX_UPLOAD_BYTES, before the rest arrives."""
+    parts: list[bytes] = []
+    size = 0
+    async for part in request.stream():
+        size += len(part)
+        if size > MAX_UPLOAD_BYTES:
+            raise HTTPException(413, f"Upload too large: over {MAX_UPLOAD_BYTES // 1_000_000} MB")
+        parts.append(part)
+    return b"".join(parts)
+
+
 @app.post("/api/run", dependencies=[Depends(require_login_for_live)])
 async def run(
     request: Request,
@@ -291,7 +304,7 @@ async def run(
     overlap: int = Query(OVERLAP, ge=0, le=MAX_OVERLAP),
 ) -> RunResponse:
     """Body: optional raw image bytes (live mode only). Without one, the synthetic drawing is used."""
-    image_bytes = await request.body()
+    image_bytes = await _read_upload(request)
     # Live calls block for seconds, so keep them off the event loop.
     return await run_in_threadpool(
         _run,

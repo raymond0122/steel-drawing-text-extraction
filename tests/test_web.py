@@ -88,6 +88,12 @@ def test_image_upload_needs_live_mode(client):
     assert client.post("/api/run", content=b"not an image").status_code == 400
 
 
+def test_an_upload_over_the_size_cap_is_refused(client, monkeypatch):
+    monkeypatch.setattr(server, "MAX_UPLOAD_BYTES", 10)
+    r = client.post("/api/run", content=b"x" * 11)
+    assert r.status_code == 413 and "Upload too large" in r.json()["detail"]
+
+
 def test_keys_added_to_env_file_are_picked_up_without_a_restart(client, tmp_path, monkeypatch):
     env = tmp_path / ".env"
     monkeypatch.setitem(app.dependency_overrides, server.live_settings, lambda: load_settings(env))

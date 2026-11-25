@@ -7,10 +7,8 @@ and OpenAI settings; the auth API needs JWT_SECRET_KEY.
 
 from __future__ import annotations
 
-import secrets
 from pathlib import Path
 
-from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 ENV_FILE = Path(".env")  # relative to the working directory, like the commands in the README
@@ -34,13 +32,9 @@ class Settings(BaseSettings):
     openai_model: str = DEFAULT_OPENAI_MODEL
     openai_base_url: str = DEFAULT_OPENAI_BASE_URL
 
-    # Auth API. Without JWT_SECRET_KEY a random key is used, so tokens stop working on restart.
-    jwt_secret_key: str = Field(default_factory=lambda: secrets.token_urlsafe(32))
+    # Auth API. Without JWT_SECRET_KEY, the auth API makes a random key (steel_text/auth/main.py).
+    jwt_secret_key: str = ""
     auth_db_path: Path = Path("auth.db")
-
-    @property
-    def jwt_secret_is_random(self) -> bool:
-        return "jwt_secret_key" not in self.model_fields_set
 
 
 def load_settings(env_file: Path | None = ENV_FILE) -> Settings:

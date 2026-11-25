@@ -6,6 +6,7 @@ uvicorn steel_text.auth.main:app --reload     then open http://127.0.0.1:8000/do
 from __future__ import annotations
 
 import logging
+import secrets
 from functools import lru_cache
 from typing import Annotated, Literal
 
@@ -34,10 +35,14 @@ bearer = HTTPBearer(auto_error=False)
 
 @lru_cache(maxsize=1)
 def get_settings() -> Settings:
-    """Read once per process: the signing key must not change while the server runs."""
+    """Read once per process: the signing key must not change while the server runs.
+
+    Without JWT_SECRET_KEY, a random key is made here, so tokens stop working on restart.
+    """
     settings = load_settings()
-    if settings.jwt_secret_is_random:
+    if not settings.jwt_secret_key:
         logger.warning("JWT_SECRET_KEY not set: using a random key, tokens stop working on restart")
+        settings = settings.model_copy(update={"jwt_secret_key": secrets.token_urlsafe(32)})
     return settings
 
 

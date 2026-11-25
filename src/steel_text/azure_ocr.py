@@ -92,13 +92,13 @@ class AzureReadClient:
 
     # -- internals --------------------------------------------------------------
 
-    def _send_with_retry(self, method: str, url: str, **kwargs: Any) -> HttpResponse | None:
-        return send_with_retry(self.session, method, url, max_attempts=self.max_attempts, sleep=self.sleep, **kwargs)
-
     def _submit(self, image_bytes: bytes) -> str:
-        resp = self._send_with_retry(
+        resp = send_with_retry(
+            self.session,
             "POST",
             self.url,
+            max_attempts=self.max_attempts,
+            sleep=self.sleep,
             headers={"Ocp-Apim-Subscription-Key": self.key, "Content-Type": "application/octet-stream"},
             data=image_bytes,
             timeout=self.post_timeout_s,
@@ -116,9 +116,12 @@ class AzureReadClient:
     def _poll(self, poll_url: str) -> dict[str, Any]:
         start = self.clock()
         while True:
-            resp = self._send_with_retry(
+            resp = send_with_retry(
+                self.session,
                 "GET",
                 poll_url,
+                max_attempts=self.max_attempts,
+                sleep=self.sleep,
                 headers={"Ocp-Apim-Subscription-Key": self.key},
                 timeout=self.get_timeout_s,
             )

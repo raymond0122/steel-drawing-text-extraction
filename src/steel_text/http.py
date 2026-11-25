@@ -71,17 +71,20 @@ def send_with_retry(
     max_attempts: int,
     sleep: Callable[[float], None],
     should_retry: Callable[[HttpResponse], bool] = is_retry_status,
-    **kwargs: Any,
+    headers: Mapping[str, str] | None = None,
+    data: bytes | None = None,
+    json: Any = None,
+    timeout: float | None = None,
 ) -> HttpResponse | None:
     """Send one request, retrying network errors and the responses `should_retry` picks.
 
     Returns the last response, which may still be an error status, or None if
-    every attempt raised a network exception. `kwargs` go to session.request.
+    every attempt raised a network exception. `headers` to `timeout` go to session.request.
     """
     resp: HttpResponse | None = None
     for attempt in range(max_attempts):
         try:
-            resp = session.request(method, url, **kwargs)
+            resp = session.request(method, url, headers=headers, data=data, json=json, timeout=timeout)
         except requests.RequestException as e:
             resp = None
             reason = f"network error: {e}"

@@ -112,3 +112,16 @@ def test_expired_access_token_is_rejected(client, monkeypatch):
     tokens = login(client)
     r = client.get("/me", headers=bearer(tokens["access_token"]))
     assert r.status_code == 401 and "expired" in r.json()["detail"]
+
+
+def test_without_jwt_secret_key_the_auth_api_makes_one_random_key(tmp_path, monkeypatch, caplog):
+    monkeypatch.chdir(tmp_path)  # no .env here
+    monkeypatch.delenv("JWT_SECRET_KEY", raising=False)
+    get_settings.cache_clear()
+    try:
+        key = get_settings().jwt_secret_key
+        assert len(key) >= 32 and get_settings().jwt_secret_key == key  # kept while the server runs
+    finally:
+        get_settings.cache_clear()
+    assert "JWT_SECRET_KEY not set" in caplog.text
+    assert Settings(_env_file=None).jwt_secret_key == ""  # settings read elsewhere make no key
