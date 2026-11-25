@@ -72,6 +72,7 @@ class LabelOut(BaseModel):
     kind: str
     bbox: BBox
     raw_text: str
+    corrected: bool  # the model changed what OCR read (CS0 -> C50), not only took the section out
 
 
 class Timings(BaseModel):

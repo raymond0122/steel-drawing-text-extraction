@@ -35,6 +35,7 @@ def test_offline_run_returns_every_step(client):
     assert d["truth_check"]["missing"] == [] and d["truth_check"]["unexpected"] == []
     merged_ids = {c["id"] for c in d["merged"]}
     assert all(label["str_id"] in merged_ids for label in d["labels"])
+    assert {label["label"] for label in d["labels"] if label["corrected"]} == {"C50", "W310X39"}  # read CS0, W31OX39
     assert len(d["timings_ms"]["tiles"]) == len(d["tiling"]["tiles"])
     assert len(d["timings_ms"]["llm_batches"]) == len(d["llm"]["batches"])
     assert [i for b in d["llm"]["batches"] for i in b["ids"]] == [c["id"] for c in d["merged"]]  # each line once

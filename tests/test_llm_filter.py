@@ -4,7 +4,14 @@ from typing import Any
 import pytest
 import requests
 
-from steel_text.llm_filter import LlmCallError, NotChecked, OpenAIResponsesClient, build_prompt, filter_labels
+from steel_text.llm_filter import (
+    LabelEntry,
+    LlmCallError,
+    NotChecked,
+    OpenAIResponsesClient,
+    build_prompt,
+    filter_labels,
+)
 from steel_text.mock_clients import RuleBasedLabeler, match_section
 from steel_text.ocr_types import OcrChunk
 
@@ -173,6 +180,20 @@ def test_openai_client_turns_every_failure_into_llm_call_error(outcome, attempts
         make_openai_client(fake, sleeps).extract(ITEMS)
     assert len(fake.payloads) == attempts
     assert sleeps == [1.0, 2.0, 4.0, 8.0][: attempts - 1]
+
+
+@pytest.mark.parametrize(
+    "label, raw, corrected",
+    [
+        ("C50", "CS0", True),  # a misread fixed
+        ("W310X39", "W31OX39", True),
+        ("W24X55", 'W24x55 (36) c=11/4"', False),  # only the section taken out of the line
+        ("WT155*79", "WT155*79", False),
+        ("W21X44", "W21×44 (26)", True),  # the multiplication sign written as X
+    ],
+)
+def test_a_label_is_corrected_only_when_the_model_changed_what_ocr_read(label, raw, corrected):
+    assert LabelEntry("0", label, "H", (0, 0, 1, 1), raw).corrected is corrected
 
 
 def test_a_reply_with_no_text_is_asked_for_once_more():

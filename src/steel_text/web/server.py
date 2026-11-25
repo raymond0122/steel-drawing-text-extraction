@@ -224,7 +224,14 @@ def _response(
             batches=[LlmBatch(ids=ids, error=errors.get(b)) for b, ids in enumerate(filtered.batch_ids)],
         ),
         labels=[
-            LabelOut(str_id=e.str_id, label=e.normalized_label, kind=e.material_kind, bbox=e.bbox, raw_text=e.raw_text)
+            LabelOut(
+                str_id=e.str_id,
+                label=e.normalized_label,
+                kind=e.material_kind,
+                bbox=e.bbox,
+                raw_text=e.raw_text,
+                corrected=e.corrected,
+            )
             for e in filtered.entries
         ],
         truth_check=check_truth(truth, filtered.entries) if truth is not None else None,

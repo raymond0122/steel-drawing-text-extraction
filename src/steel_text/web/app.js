@@ -300,8 +300,7 @@
         }
       }
       for (const l of d.labels) {
-        const fixed = l.label !== l.raw_text.replace(/\s+/g, '').toUpperCase();
-        box(g, l.bbox, k, { stroke: C.label, width: 3, tip: `${l.label}  ·  kind ${l.kind}\nOCR read "${l.raw_text}"${fixed ? ' (corrected)' : ''}` });
+        box(g, l.bbox, k, { stroke: C.label, width: 3, tip: `${l.label}  ·  kind ${l.kind}\nOCR read "${l.raw_text}"${l.corrected ? ' (corrected)' : ''}` });
         tagAbove(g, l.bbox, l.label, C.label, k); // kind is in the tooltip and the table; keeps tags from overlapping
       }
     }
@@ -537,11 +536,8 @@
     }
     if (!d.llm.ok) banner += '<p class="banner warn">Every batch failed, so the page is marked as failed.</p>';
 
-    const rows = d.labels.map(l => {
-      const fixed = l.label !== l.raw_text.replace(/\s+/g, '').toUpperCase();
-      return `<tr ${zoomAttr(l.bbox)}><td class="mono">${esc(l.label)}</td><td><span class="kind">${esc(l.kind)}</span></td>
-        <td class="mono">${esc(l.raw_text)}${fixed ? '<span class="fixed">corrected</span>' : ''}</td></tr>`;
-    }).join('');
+    const rows = d.labels.map(l => `<tr ${zoomAttr(l.bbox)}><td class="mono">${esc(l.label)}</td><td><span class="kind">${esc(l.kind)}</span></td>
+        <td class="mono">${esc(l.raw_text)}${l.corrected ? '<span class="fixed">corrected</span>' : ''}</td></tr>`).join('');
 
     return `
       <h2>Step 4 · LLM label filter</h2>

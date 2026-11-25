@@ -142,8 +142,7 @@ def print_summary(ocr: TiledOcrResult, result: FilterResult, truth: list[GroundT
         )
     print(f"Steel labels found: {len(result.entries)}")
     for e in result.entries:
-        corrected = e.normalized_label != e.raw_text.replace(" ", "").upper()
-        note = f"   (OCR read '{e.raw_text}')" if corrected else ""
+        note = f"   (OCR read '{e.raw_text}')" if e.corrected else ""
         print(f"  - {e.normalized_label:<16} {e.material_kind:<6}{note}")
 
     if truth is None:

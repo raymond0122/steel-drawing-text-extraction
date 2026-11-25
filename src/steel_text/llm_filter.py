@@ -198,6 +198,11 @@ class LabelEntry:
     bbox: BBox
     raw_text: str
 
+    @property
+    def corrected(self) -> bool:
+        """The model changed what OCR read (CS0 -> C50), rather than only taking the section out of the line."""
+        return self.normalized_label not in normalize_label(self.raw_text)
+
 
 class NotChecked(NamedTuple):
     """An OCR line the LLM never saw, because its batch failed. It may hold a label."""
