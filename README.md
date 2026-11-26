@@ -63,6 +63,8 @@ It prints a summary and writes an image per step, `labels.json`, `labels.xlsx` (
 
 Live mode calls the real Azure and OpenAI services. Copy `.env.example` to `.env` in the repository root and fill in the keys; `OPENAI_MODEL` picks the model (default `gpt-4o`). Then choose **Live** in the web UI, after **Log in** at the top right, and optionally upload a page image. Or run `steel-demo --live` for the synthetic drawing, or `steel-demo --live --image page.png` for your own page image.
 
+The test sheet the measurements in [docs/DESIGN.md](docs/DESIGN.md) were made on, a synthetic 36 × 24 in steel framing plan at 400 dpi, is in the repository: `steel-demo --live --image experiments/tiling/steel_framing_plan_S-201_400dpi.png`.
+
 ### Development
 
 ```bash
