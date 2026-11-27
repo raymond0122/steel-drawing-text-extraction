@@ -68,7 +68,7 @@ The test sheet the measurements in [docs/DESIGN.md](docs/DESIGN.md) were made on
 ### Development
 
 ```bash
-python -m pytest                               # 148 tests
+python -m pytest                               # 154 tests
 ruff check . && ruff format --check .          # lint and formatting (drop --check to apply it)
 mypy                                           # type check, strict
 uvicorn steel_text.web.server:app --reload     # the web UI, restarted on every code change
